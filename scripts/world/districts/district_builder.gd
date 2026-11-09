@@ -37,6 +37,17 @@ static func secret_shard(parent: Node3D, id: StringName, pos: Vector3) -> void:
 	place(parent, c, pos)
 
 
+## NPC-Rivale mit Aura-Battle: in der Zeit mehr Aura farmen als der Rivale (Score-Challenge).
+static func rival(parent: Node3D, rival_name: String, pos: Vector3, score: int, seconds: float, reward: int, style: StringName, color: Color) -> void:
+	var n := npc(parent, rival_name, pos, PackedStringArray([
+		"Du willst Aura? Dann zeig's mir.",
+		"Schaffst du %s Aura in %d Sekunden? Ich schon." % [UIFormat.number(score), int(seconds)],
+		"Tritt in den Ring neben mir, wenn du bereit bist.",
+	]), 1.5)
+	n.style = style
+	challenge(parent, pos + Vector3(3.2, 0, 0), "Battle: " + rival_name, "score", score, seconds, reward, color)
+
+
 static func shop(parent: Node3D, shop_name: String, pos: Vector3, min_r: int, max_r: int, color: Color) -> void:
 	WorldKit.box(parent, Vector3(2.2, 1.2, 1.0), pos + Vector3(0, 0.6, 0), WorldKit.mat(Color("1f1235"), 0.4, 0.4))
 	WorldKit.box(parent, Vector3(1.8, 0.9, 0.06), pos + Vector3(0, 1.75, -0.2), WorldKit.mat(color, 0.3, 0.0, 2.0), false)
@@ -57,6 +68,22 @@ static func station(parent: Node3D, screen: StringName, label: String, pos: Vect
 	s.prompt = label
 	s.only_when_daily_available = daily
 	place(parent, s, pos)
+
+
+## Getränkeautomat „Aura-Kiosk“ (öffnet die Drink-Auswahl).
+static func kiosk(parent: Node3D, pos: Vector3, yaw := 0.0) -> void:
+	var k := Node3D.new()
+	k.rotation.y = yaw
+	place(parent, k, pos)
+	WorldKit.box(k, Vector3(1.3, 2.1, 0.8), Vector3(0, 1.05, 0), WorldKit.mat(Color("1e1b4b"), 0.35, 0.5))
+	WorldKit.box(k, Vector3(1.0, 1.3, 0.05), Vector3(0, 1.25, 0.41), WorldKit.mat(Color("22d3ee"), 0.2, 0.0, 1.6), false)
+	for i in 3:
+		WorldKit.box(k, Vector3(0.22, 0.32, 0.06), Vector3(-0.3 + i * 0.3, 1.25, 0.45), WorldKit.mat([Color("a3e635"), Color("fbbf24"), Color("f9a8d4")][i], 0.3, 0.0, 1.2), false)
+	WorldKit.sign_text(k, Vector3(0, 2.6, 0), "Aura-Kiosk", Color("67e8f9"), 64, 0.0, true)
+	var s := ScreenStation.new()
+	s.screen = &"drinks"
+	s.prompt = "Aura-Kiosk"
+	place(k, s, Vector3(0, 0, 0.9))
 
 
 static func info(parent: Node3D, pos: Vector3, title: String, lines: PackedStringArray, yaw := 0.0) -> void:

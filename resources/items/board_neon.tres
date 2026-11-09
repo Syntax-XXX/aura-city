@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"board_neon"
+display_name = "Neon Glider"
+description = "Leuchtende Kanten. 15 m/s."
+price = 9000
+rarity = 2
+category = &"board"
+icon_glyph = "▭"
+color = Color(0.118, 0.106, 0.294, 1)
+accent_color = Color(0.957, 0.447, 0.714, 1)
+variant = &"neon"

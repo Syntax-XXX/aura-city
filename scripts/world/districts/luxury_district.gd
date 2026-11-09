@@ -9,7 +9,7 @@ const ARRIVAL := CENTER + Vector3(-30, 1, 4)
 
 static func build(root: Node3D) -> void:
 	var c := CENTER
-	WorldKit.box(root, Vector3(76, 0.04, 76), c + Vector3(0, 0.02, 0), WorldKit.mat(Color("f5f5f4"), 0.25, 0.1), false)
+	WorldKit.box(root, Vector3(76, 0.04, 76), c + Vector3(0, 0.02, 0), WorldKit.surface(&"tiles", Color(1.0, 0.97, 0.9), 0.5), false)
 	WorldKit.district_area(root, &"luxury", c + Vector3(0, 5, 0), Vector3(80, 14, 80))
 	DistrictBuilder.gate(root, Vector3(0, 0, -62), 0.0, "Luxury District", 3)
 	WorldKit.sign_text(root, c + Vector3(0, 14, -32), "LUXURY DISTRICT", Color("fbbf24"), 320)

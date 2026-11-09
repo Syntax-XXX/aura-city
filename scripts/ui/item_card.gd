@@ -19,7 +19,7 @@ func setup(it: ItemDef, show_price: bool) -> ItemCard:
 	add_theme_stylebox_override("hover", UITheme.box(Color("261d42"), 14, c, 2, 8))
 	add_theme_stylebox_override("pressed", UITheme.box(Color("2f2452"), 14, UITheme.CYAN, 2, 8))
 	var v := UIKit.vbox(self, 6)
-	v.set_anchors_preset(Control.PRESET_FULL_RECT)
+	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	v.offset_left = 10
 	v.offset_right = -10
 	v.offset_top = 10

@@ -35,6 +35,10 @@ class Game {
     return p < r.length ? r.length - p : 0;
   }
   rushMult(ms) { return this.rushLeft(ms) > 0 ? this.G.constants.rush.multiplier : 1; }
+  boostMult(p, ms) {
+    const d = p.boost_id && (this.G.drinks || {})[p.boost_id];
+    return d && ms < (p.boost_until || 0) ? d.aura : 1;
+  }
 
   // ── Profil ─────────────────────────────────────────────
   _starterInventory() {
@@ -58,7 +62,7 @@ class Game {
       mastery: {}, loadout: [...this.G.starter_loadout],
       quests: { daily_key: '', weekly_key: '', progress: {}, completed: {}, visited_today: {}, visited_week: {} },
       ach: { unlocked: {}, stats: {}, districts: {} },
-      found_secrets: {}, shard_times: {},
+      found_secrets: {}, shard_times: {}, boost_id: '', boost_until: 0,
       flags: {}, violations: [], perf_window: [],
     };
   }
@@ -85,9 +89,14 @@ class Game {
   // Format exakt wie die from_dict()-Methoden im Client
   toClient(p) {
     this.checkReset(p);
+    // neue Start-Items (z. B. nach einem Update) bekommen auch bestehende Profile
+    for (const id of Object.keys(this.starter.owned)) p.owned[id] = true;
     return {
       id: p.id, name: p.name, flagged: Object.keys(p.flags).length > 0,
-      economy: { aura: p.aura, lifetime: p.lifetime, daily_last_claim: p.daily_last_claim, daily_streak: p.daily_streak },
+      economy: {
+        aura: p.aura, lifetime: p.lifetime, daily_last_claim: p.daily_last_claim, daily_streak: p.daily_streak,
+        boost_id: p.boost_id || '', boost_until: (p.boost_until || 0) / 1000,
+      },
       inventory: { owned: Object.keys(p.owned), equipped: p.equipped },
       tricks: { unlocked: this.unlockedTricks(p), mastery: p.mastery, loadout: p.loadout },
       quests: {
@@ -102,7 +111,7 @@ class Game {
 
   // ── Gutschriften, Quests, Erfolge ─────────────────────
   grant(p, amount, ctx) {
-    const g = Math.round(amount * this.rushMult(ctx.ms));
+    const g = Math.round(amount * this.rushMult(ctx.ms) * this.boostMult(p, ctx.ms));
     if (!(g > 0)) return 0;
     p.aura += g;
     p.lifetime += g;
@@ -328,6 +337,17 @@ const HANDLERS = {
     p.owned[ev.id] = true;
     this.questAdd(p, 'unlock', 1, -1, ctx);
     this.setMax(p, 'legendary_items', Object.keys(p.owned).filter((id) => (this.G.items[id] || {}).rarity >= 4).length, ctx);
+    return { ok: true };
+  },
+
+  drink(p, s, ev, ctx) {
+    const d = (this.G.drinks || {})[ev.id];
+    if (!d) return { ok: false, error: 'Unbekannter Drink' };
+    if (this.rankFor(p.lifetime) < d.rank) return { ok: false, error: 'Benötigt Rang ' + this.G.ranks[d.rank].name };
+    if (p.aura < d.price) return { ok: false, error: 'Nicht genug Aura' };
+    p.aura -= d.price;
+    p.boost_id = ev.id;
+    p.boost_until = ctx.ms + d.seconds * 1000;
     return { ok: true };
   },
 

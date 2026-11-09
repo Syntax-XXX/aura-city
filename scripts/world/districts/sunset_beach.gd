@@ -7,7 +7,7 @@ const CENTER := Vector3(330, 0, 0)
 
 static func build(root: Node3D) -> void:
 	var c := CENTER
-	WorldKit.box(root, Vector3(110, 0.05, 160), c + Vector3(10, 0.03, 0), WorldKit.mat(Color("fcd34d"), 1.0), false)
+	WorldKit.box(root, Vector3(110, 0.05, 160), c + Vector3(10, 0.03, 0), WorldKit.surface(&"sand"), false)
 	WorldKit.district_area(root, &"beach", c + Vector3(0, 8, 0), Vector3(120, 20, 160))
 	DistrictBuilder.gate(root, Vector3(262, 0, 0), PI / 2, "Sunset Beach", 2)
 	WorldKit.sign_text(root, c + Vector3(-20, 12, -60), "SUNSET BEACH", Color("fb923c"), 320)
@@ -15,7 +15,7 @@ static func build(root: Node3D) -> void:
 	WorldKit.box(root, Vector3(60, 0.2, 440), c + Vector3(80, 0.07, 0), WorldKit.mat(Color("0ea5e9"), 0.05, 0.2, 0.2), false)
 	WorldKit.invisible_wall(root, Vector3(1, 12, 440), c + Vector3(51, 6, 0))
 	# Boardwalk aus Holz mit Geländer
-	var wood := WorldKit.mat(Color("a16207"), 0.8)
+	var wood := WorldKit.surface(&"wood")
 	WorldKit.box(root, Vector3(8, 0.5, 150), c + Vector3(-36, 0.25, 0), wood)
 	for i in 16:
 		WorldKit.street_light(root, c + Vector3(-39, 0.5, -70 + i * 9.5), Color("fdba74"))

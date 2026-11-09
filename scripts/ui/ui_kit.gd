@@ -164,3 +164,15 @@ static func scroll(parent: Node, content: Control) -> ScrollContainer:
 	s.add_child(content)
 	parent.add_child(s)
 	return s
+
+
+## Control an eine Bildschirmposition heften. Die Wachstumsrichtung sorgt dafür, dass das Element
+## am Rand bzw. in der Mitte bleibt, wenn sein Inhalt (und damit die Mindestgröße) später wächst.
+static func pin(c: Control, preset: int, margin := 0) -> void:
+	c.set_anchors_and_offsets_preset(preset, Control.PRESET_MODE_MINSIZE, margin)
+	var right := preset in [Control.PRESET_TOP_RIGHT, Control.PRESET_BOTTOM_RIGHT, Control.PRESET_CENTER_RIGHT]
+	var bottom := preset in [Control.PRESET_BOTTOM_LEFT, Control.PRESET_BOTTOM_RIGHT, Control.PRESET_CENTER_BOTTOM]
+	var hcenter := preset in [Control.PRESET_CENTER_TOP, Control.PRESET_CENTER_BOTTOM, Control.PRESET_CENTER]
+	var vcenter := preset in [Control.PRESET_CENTER_LEFT, Control.PRESET_CENTER_RIGHT, Control.PRESET_CENTER]
+	c.grow_horizontal = Control.GROW_DIRECTION_BOTH if hcenter else (Control.GROW_DIRECTION_BEGIN if right else Control.GROW_DIRECTION_END)
+	c.grow_vertical = Control.GROW_DIRECTION_BOTH if vcenter else (Control.GROW_DIRECTION_BEGIN if bottom else Control.GROW_DIRECTION_END)

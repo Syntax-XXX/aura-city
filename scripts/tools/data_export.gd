@@ -20,7 +20,10 @@ static func run(main: Node, path: String) -> bool:
 		"slots": Inventory.SLOTS.map(func(s): return String(s)),
 		"tricks": {}, "items": {}, "quests": {}, "achievements": {}, "challenges": {}, "collectibles": {},
 		"districts": DistrictArea.NAMES.keys().map(func(k): return String(k)),
+		"drinks": {},
 	}
+	for d in Drinks.LIST:
+		data["drinks"][d["id"]] = {"name": d["name"], "price": d["price"], "rank": d["rank"], "seconds": d["seconds"], "aura": d["aura"]}
 	for t: TrickDef in TrickDB.all():
 		data["tricks"][String(t.id)] = {"name": t.display_name, "difficulty": t.difficulty, "base_aura": t.base_aura,
 			"duration": t.duration, "cooldown": t.cooldown, "combo_bonus": t.combo_bonus, "unlock": t.unlock_lifetime_aura}

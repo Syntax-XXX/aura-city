@@ -7,8 +7,7 @@ const CENTER := Vector3(120, 0, 0)
 
 static func build(root: Node3D) -> void:
 	var c := CENTER
-	var concrete := WorldKit.mat(Color("a8a29e"), 0.95)
-	WorldKit.box(root, Vector3(76, 0.04, 76), c + Vector3(0, 0.02, 0), concrete, false)
+	WorldKit.box(root, Vector3(76, 0.04, 76), c + Vector3(0, 0.02, 0), WorldKit.surface(&"concrete"), false)
 	WorldKit.district_area(root, &"skate", c + Vector3(0, 5, 0), Vector3(80, 14, 80))
 	WorldKit.sign_text(root, c + Vector3(0, 9, -30), "SKATE PARK", Color("f97316"), 300)
 	var ramp_mat := WorldKit.mat(Color("d6d3d1"), 0.7)

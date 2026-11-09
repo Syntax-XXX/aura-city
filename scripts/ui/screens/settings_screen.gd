@@ -27,6 +27,8 @@ func refresh() -> void:
 	_slider("Maus-Empfindlichkeit", "mouse_sensitivity", 0.1, 3.0, 0.05, false)
 	_toggle("Y-Achse invertieren", "invert_y")
 	UIKit.label("Anzeige", 20, UITheme.CYAN, _rows)
+	_choice("Grafikqualität", "graphics_quality", ["Niedrig", "Mittel", "Hoch"])
+	_choice("Effekte (Wolken, Funken)", "effects_quality", ["Sparsam", "Normal", "Voll"])
 	_slider("Sichtfeld (FOV)", "fov", 60.0, 100.0, 1.0, false)
 	_toggle("Vollbild", "fullscreen")
 	_toggle("FPS anzeigen", "show_fps")
@@ -66,6 +68,22 @@ func _fmt(v: float, percent: bool) -> String:
 func _on_slider(v: float, key: String, val: Label, fmt: Callable) -> void:
 	Settings.set(key, v)
 	val.text = fmt.call(v)
+	Settings.apply()
+
+
+func _choice(text: String, key: String, options: Array) -> void:
+	var h := UIKit.hbox(_rows, 12)
+	UIKit.label(text, 16, UITheme.TEXT, h).custom_minimum_size = Vector2(240, 0)
+	var o := OptionButton.new()
+	for opt in options:
+		o.add_item(opt)
+	o.selected = int(Settings.get(key))
+	o.item_selected.connect(_on_choice.bind(key))
+	h.add_child(o)
+
+
+func _on_choice(index: int, key: String) -> void:
+	Settings.set(key, index)
 	Settings.apply()
 
 

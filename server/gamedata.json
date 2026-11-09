@@ -124,6 +124,54 @@
 		}
 	],
 	"challenges": {
+		"Battle: Baron von Aura": {
+			"goal": 30000,
+			"kind": "score",
+			"reward": 28000,
+			"seconds": 60
+		},
+		"Battle: Kickflip Kai": {
+			"goal": 2500,
+			"kind": "score",
+			"reward": 2000,
+			"seconds": 45
+		},
+		"Battle: Käpt'n Krass": {
+			"goal": 9000,
+			"kind": "score",
+			"reward": 7500,
+			"seconds": 50
+		},
+		"Battle: Neon Nina": {
+			"goal": 6000,
+			"kind": "score",
+			"reward": 5000,
+			"seconds": 50
+		},
+		"Battle: Rivalin Rina": {
+			"goal": 800,
+			"kind": "score",
+			"reward": 600,
+			"seconds": 40
+		},
+		"Battle: Sigma Sigrid": {
+			"goal": 60000,
+			"kind": "score",
+			"reward": 60000,
+			"seconds": 70
+		},
+		"Battle: Spray King": {
+			"goal": 18000,
+			"kind": "score",
+			"reward": 15000,
+			"seconds": 55
+		},
+		"Battle: Wellen-Wanda": {
+			"goal": 12000,
+			"kind": "score",
+			"reward": 10000,
+			"seconds": 55
+		},
 		"Champagner-Combo": {
 			"goal": 10,
 			"kind": "combo",
@@ -541,6 +589,57 @@
 		"industrial",
 		"downtown"
 	],
+	"drinks": {
+		"cloud_shake": {
+			"aura": 1.6,
+			"name": "Cloud Shake",
+			"price": 15000,
+			"rank": 3,
+			"seconds": 240
+		},
+		"godlike_juice": {
+			"aura": 2,
+			"name": "Godlike Juice",
+			"price": 120000,
+			"rank": 5,
+			"seconds": 300
+		},
+		"mc_mate": {
+			"aura": 1.1,
+			"name": "Main-Character-Mate",
+			"price": 1500,
+			"rank": 1,
+			"seconds": 180
+		},
+		"neon_cola": {
+			"aura": 1.5,
+			"name": "Neon Cola",
+			"price": 5000,
+			"rank": 2,
+			"seconds": 180
+		},
+		"sigma_smoothie": {
+			"aura": 1.8,
+			"name": "Sigma Smoothie",
+			"price": 45000,
+			"rank": 4,
+			"seconds": 300
+		},
+		"sigma_sprudel": {
+			"aura": 1.25,
+			"name": "Sigma Sprudel",
+			"price": 600,
+			"rank": 0,
+			"seconds": 120
+		},
+		"void_elixir": {
+			"aura": 3,
+			"name": "Void Elixir",
+			"price": 400000,
+			"rank": 6,
+			"seconds": 300
+		}
+	},
 	"items": {
 		"acc_cap": {
 			"name": "Snapback",
@@ -640,6 +739,66 @@
 			"required_lifetime": 0,
 			"required_rank": 3,
 			"slot": "animation",
+			"starter": false
+		},
+		"board_aurora": {
+			"name": "Aurora Drift",
+			"price": 300000,
+			"rarity": 5,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 5,
+			"slot": "board",
+			"starter": false
+		},
+		"board_cloud": {
+			"name": "Cloud Surfer",
+			"price": 30000,
+			"rarity": 3,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 3,
+			"slot": "board",
+			"starter": false
+		},
+		"board_jet": {
+			"name": "Jet Board",
+			"price": 90000,
+			"rarity": 4,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 4,
+			"slot": "board",
+			"starter": false
+		},
+		"board_neon": {
+			"name": "Neon Glider",
+			"price": 9000,
+			"rarity": 2,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "board",
+			"starter": false
+		},
+		"board_street": {
+			"name": "Street Board",
+			"price": 0,
+			"rarity": 0,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "board",
+			"starter": true
+		},
+		"board_void": {
+			"name": "Void Rider",
+			"price": 0,
+			"rarity": 6,
+			"required_achievement": "secret_explorer",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "board",
 			"starter": false
 		},
 		"emote_dab": {
@@ -1249,7 +1408,8 @@
 		"particle",
 		"title",
 		"emote",
-		"animation"
+		"animation",
+		"board"
 	],
 	"starter_loadout": [
 		"basic_spin",

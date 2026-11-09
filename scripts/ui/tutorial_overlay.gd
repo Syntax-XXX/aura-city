@@ -20,8 +20,8 @@ var _count: Label
 
 func _ready() -> void:
 	add_theme_stylebox_override("panel", UITheme.box(Color(0.07, 0.05, 0.14, 0.92), 16, UITheme.CYAN, 2, 16))
-	set_anchors_and_offsets_preset(Control.PRESET_CENTER_LEFT, Control.PRESET_MODE_MINSIZE, 18)
 	custom_minimum_size = Vector2(360, 0)
+	UIKit.pin(self, Control.PRESET_CENTER_LEFT, 18)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var v := UIKit.vbox(self, 6)
 	_count = UIKit.label("", 12, UITheme.CYAN, v)

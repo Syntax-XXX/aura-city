@@ -29,6 +29,7 @@ var _quest_box: VBoxContainer
 var _prompt: Label
 var _challenge: Label
 var _event: Label
+var _boost: Label
 var _clock: Label
 var _district: Label
 var _fps: Label
@@ -39,7 +40,7 @@ const TIMING_W := 520.0
 
 
 func _ready() -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_build_top_left()
 	_build_top_right()
@@ -64,7 +65,7 @@ func _ready() -> void:
 
 func _panel_at(preset: int) -> PanelContainer:
 	var p := UIKit.panel(self, Color(0.06, 0.04, 0.12, 0.78), UITheme.LINE, 14)
-	p.set_anchors_and_offsets_preset(preset, Control.PRESET_MODE_MINSIZE, 18)
+	UIKit.pin(p, preset, 18)
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return p
 
@@ -82,6 +83,7 @@ func _build_top_left() -> void:
 	v.add_child(_rank_bar)
 	_rank_next = UIKit.label("", 12, UITheme.MUTED, v)
 	_apm_label = UIKit.label("", 13, UITheme.MUTED, v)
+	_boost = UIKit.label("", 14, UITheme.CYAN, v)
 	var qt := UIKit.label("Quests [J]", 13, UITheme.CYAN, v)
 	qt.add_theme_constant_override("line_spacing", 0)
 	_quest_box = UIKit.vbox(v, 2)
@@ -105,7 +107,7 @@ func _build_top_right() -> void:
 
 func _build_combo() -> void:
 	_combo_box = UIKit.vbox(self, 2)
-	_combo_box.set_anchors_and_offsets_preset(Control.PRESET_CENTER_RIGHT, Control.PRESET_MODE_MINSIZE, 40)
+	UIKit.pin(_combo_box, Control.PRESET_CENTER_RIGHT, 40)
 	_combo_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_combo_label = UIKit.label("", 46, UITheme.PINK, _combo_box)
 	_combo_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -120,10 +122,9 @@ func _build_combo() -> void:
 func _build_timing() -> void:
 	_timing = VBoxContainer.new()
 	_timing.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_timing.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	_timing.position = Vector2(-TIMING_W / 2.0, -230)
 	_timing.custom_minimum_size = Vector2(TIMING_W, 70)
 	add_child(_timing)
+	UIKit.pin(_timing, Control.PRESET_CENTER_BOTTOM, 120)
 	_timing_name = UIKit.label("", 20, Color.WHITE, _timing)
 	_timing_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_timing_bar = Panel.new()
@@ -147,7 +148,7 @@ func _build_timing() -> void:
 
 func _build_slots() -> void:
 	var row := UIKit.hbox(self, 10)
-	row.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM, Control.PRESET_MODE_MINSIZE, 22)
+	UIKit.pin(row, Control.PRESET_CENTER_BOTTOM, 22)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	for i in 4:
 		var p := UIKit.panel(row, Color(0.06, 0.04, 0.12, 0.85), UITheme.LINE, 12)
@@ -164,31 +165,30 @@ func _build_slots() -> void:
 	var dot := ColorRect.new()
 	dot.color = Color(1, 1, 1, 0.5)
 	dot.size = Vector2(4, 4)
-	dot.set_anchors_preset(Control.PRESET_CENTER)
-	dot.position = Vector2(-2, -2)
+	dot.custom_minimum_size = Vector2(4, 4)
 	dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(dot)
+	UIKit.pin(dot, Control.PRESET_CENTER)
 
 
 func _build_center_texts() -> void:
 	_prompt = UIKit.label("", 20, Color.WHITE, self)
-	_prompt.set_anchors_preset(Control.PRESET_CENTER)
-	_prompt.position = Vector2(-300, 80)
 	_prompt.custom_minimum_size = Vector2(600, 0)
+	UIKit.pin(_prompt, Control.PRESET_CENTER)
+	_prompt.offset_top += 90
+	_prompt.offset_bottom += 90
 	_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_prompt.add_theme_constant_override("outline_size", 6)
 	_prompt.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
 	_challenge = UIKit.label("", 18, UITheme.GOLD, self)
-	_challenge.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	_challenge.position = Vector2(-300, 100)
 	_challenge.custom_minimum_size = Vector2(600, 0)
+	UIKit.pin(_challenge, Control.PRESET_CENTER_TOP, 110)
 	_challenge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_challenge.add_theme_constant_override("outline_size", 6)
 	_challenge.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
 	_event = UIKit.label("", 24, UITheme.PINK, self)
-	_event.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	_event.position = Vector2(-300, 24)
 	_event.custom_minimum_size = Vector2(600, 0)
+	UIKit.pin(_event, Control.PRESET_CENTER_TOP, 24)
 	_event.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_event.add_theme_constant_override("outline_size", 8)
 	_event.add_theme_color_override("font_outline_color", Color(0.1, 0, 0.2, 0.9))
@@ -223,6 +223,12 @@ func _process(delta: float) -> void:
 		p.modulate.a = 0.55 if left > 0.0 else 1.0
 	# Event
 	var ev := Economy.event_seconds_left()
+	var bl := Economy.boost_seconds_left()
+	_boost.visible = bl > 0.0
+	if bl > 0.0:
+		var dr := Drinks.get_drink(Economy.boost_id)
+		_boost.text = "%s %s · %s" % [dr.get("glyph", ""), dr.get("name", ""), UIFormat.seconds(bl)]
+		_boost.add_theme_color_override("font_color", Color(dr.get("color", "ffffff")))
 	_event.text = "⚡ AURA RUSH ×%s · %ds" % [str(Economy.event_multiplier), ceili(ev)] if ev > 0.0 else ""
 	if world and world.day_night:
 		_clock.text = world.day_night.clock_text()

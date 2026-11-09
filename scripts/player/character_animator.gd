@@ -1,24 +1,58 @@
 class_name CharacterAnimator
 extends Node
-## Prozedurale Animations-State-Machine für CharacterVisual.
-## Zustände: idle, walk, run, jump, fall, land, trick, emote.
-## Jeder Zustand liefert eine Ziel-Pose (Gelenkwinkel); zwischen Posen wird weich überblendet.
+## Animations-State-Machine für CharacterVisual: echte (retargetete) Animationen mit Überblendung,
+## dazu prozedurale Drehungen/Sprünge/Salti für Tricks über den Pose-Knoten.
 
 enum State { IDLE, WALK, RUN, JUMP, FALL, LAND, TRICK, EMOTE }
+
+## Aktion: [Animation, Startanteil, Drehungen (Y), Höhe (m), Salti (X)]
+const ACTIONS := {
+	&"spin": ["ual/Dance", 0.25, 1.0, 0.15, 0.0],
+	&"flip": ["ual/Interact", 0.0, 0.0, 0.0, 0.0],
+	&"pose": ["CharacterArmature|Victory", 0.0, 0.0, 0.0, 0.0],
+	&"twist": ["ual/Punch_Cross", 0.0, 0.5, 0.0, 0.0],
+	&"double_spin": ["ual/Dance", 0.4, 2.0, 0.35, 0.0],
+	&"shadow": ["ual/Crouch_Fwd", 0.0, 0.0, 0.0, 0.0],
+	&"neon_flip": ["ual/Jump", 0.15, 0.0, 1.3, -1.0],
+	&"air_pose": ["CharacterArmature|Victory", 0.0, 0.0, 1.5, 0.0],
+	&"phantom": ["ual/Punch_Jab", 0.0, 1.0, 0.3, 0.0],
+	&"ultra_spin": ["ual/Spell_Simple_Idle", 0.0, 5.0, 0.9, 0.0],
+	&"cosmic": ["ual/Spell_Simple_Enter", 0.0, 0.5, 1.9, 0.0],
+	&"explosion": ["ual/Spell_Simple_Shoot", 0.0, 1.0, 1.2, 0.0],
+	# Emotes
+	&"wave": ["ual/Idle_Talking", 0.0, 0.0, 0.0, 0.0],
+	&"dance": ["ual/Dance", 0.0, 0.0, 0.0, 0.0],
+	&"flex": ["CharacterArmature|Victory", 0.0, 0.0, 0.0, 0.0],
+	&"dab": ["ual/Punch_Cross", 0.2, 0.0, 0.0, 0.0],
+	&"cheer": ["CharacterArmature|Victory", 0.0, 0.0, 0.0, 0.0],
+	&"sit": ["ual/Sitting_Idle", 0.0, 0.0, 0.0, 0.0],
+}
+const IDLES := {&"chill": "ual/Idle", &"bounce": "CharacterArmature|Idle", &"flex": "ual/Sword_Idle"}
+const LOOPING := ["Idle", "Walk", "Jog_Fwd", "Sprint", "Jump", "Crouch_Idle", "Crouch_Fwd", "Dance", "Idle_Talking",
+	"Sword_Idle", "Spell_Simple_Idle", "Sitting_Idle", "Swim_Fwd", "Swim_Idle", "Walk_Formal", "Pistol_Idle", "Driving"]
+
+static var _loops_set := false
 
 @export var visual: CharacterVisual
 var state: State = State.IDLE
 var idle_style: StringName = &"chill"
-var speed := 0.0 # horizontale Geschwindigkeit (m/s)
+var speed := 0.0
+## Auf dem Hoverboard: Surf-Haltung (seitlich, leicht in die Knie)
+var boarding := false
 
-var _time := 0.0
 var _state_time := 0.0
-var _phase := 0.0 # Schrittphase
-var _action: StringName = &"" # Trick- oder Emote-Animation
+var _action: StringName = &""
 var _action_duration := 1.0
-var _blend := 12.0
-var _root_offset := Vector3.ZERO
-var _root_rotation := Vector3.ZERO
+var _current := ""
+var _player: AnimationPlayer
+
+
+func _ready() -> void:
+	if not _loops_set:
+		_loops_set = true
+		for a in LOOPING:
+			if CharacterVisual.ANIMS.has_animation(a):
+				CharacterVisual.ANIMS.get_animation(a).loop_mode = Animation.LOOP_LINEAR
 
 
 func set_state(s: State) -> void:
@@ -28,12 +62,18 @@ func set_state(s: State) -> void:
 	_state_time = 0.0
 
 
-## Trick- bzw. Emote-Animation abspielen. Liefert nichts; Ende über is_busy().
 func play_action(animation_name: StringName, duration: float, is_emote := false) -> void:
 	_action = animation_name
 	_action_duration = maxf(0.2, duration)
-	set_state(State.EMOTE if is_emote else State.TRICK)
+	state = State.EMOTE if is_emote else State.TRICK
 	_state_time = 0.0
+	var spec: Array = ACTIONS.get(animation_name, ACTIONS[&"pose"])
+	_play(spec[0], 0.1)
+	if _player and _player.current_animation != "":
+		var length := _player.current_animation_length
+		_player.seek(length * float(spec[1]), true)
+		# Trick-Animation in die Trick-Dauer einpassen (Emotes laufen normal)
+		_player.speed_scale = 1.0 if is_emote else clampf(length * (1.0 - float(spec[1])) / _action_duration, 0.6, 2.5)
 
 
 func is_busy() -> bool:
@@ -49,213 +89,62 @@ func cancel_action() -> void:
 		set_state(State.IDLE)
 
 
-func _process(delta: float) -> void:
-	if visual == null:
+func _play(anim_name: String, blend := 0.18) -> void:
+	if _player == null or not _player.has_animation(anim_name):
 		return
-	_time += delta
+	if anim_name != _current:
+		_current = anim_name
+		_player.play(anim_name, blend)
+
+
+func _process(delta: float) -> void:
+	if visual == null or visual.anim == null:
+		return
+	if visual.anim != _player:
+		_player = visual.anim # Modell wurde gewechselt (Outfit)
+		_current = ""
 	_state_time += delta
-	if state == State.LAND and _state_time > 0.18:
+	if state == State.LAND and _state_time > 0.25:
 		set_state(State.IDLE)
 	if (state == State.TRICK or state == State.EMOTE) and _state_time >= _action_duration:
 		set_state(State.IDLE)
-	_phase += delta * clampf(speed, 0.0, 12.0) * 1.6
-	var pose := _pose()
-	var k := minf(1.0, delta * _blend)
-	# Gelenke ohne Angabe in der Pose gehen in die Grundstellung zurück
-	for joint in visual.pivots:
-		var p: Node3D = visual.pivots[joint]
-		p.rotation = p.rotation.lerp(pose.get(joint, Vector3.ZERO), k)
-	_root_offset = _root_offset.lerp(pose.get("root_pos", Vector3.ZERO), minf(1.0, delta * 18.0))
-	# Drehungen bei Tricks direkt setzen (keine Überblendung, sonst „schwimmt“ die Drehung)
-	var target_rot: Vector3 = pose.get("root_rot", Vector3.ZERO)
-	_root_rotation = target_rot if state == State.TRICK else _root_rotation.lerp(target_rot, minf(1.0, delta * 10.0))
-	visual.position = _root_offset
-	visual.rotation = _root_rotation
-
-
-## Ziel-Pose für den aktuellen Zustand.
-func _pose() -> Dictionary:
+	var p := visual.pose
 	match state:
-		State.WALK, State.RUN:
-			return _locomotion(state == State.RUN)
+		State.TRICK, State.EMOTE:
+			var spec: Array = ACTIONS.get(_action, ACTIONS[&"pose"])
+			var t := action_progress()
+			var e := t * t * (3.0 - 2.0 * t)
+			p.position = Vector3(0, float(spec[3]) * sin(t * PI), 0)
+			p.rotation = Vector3(float(spec[4]) * TAU * e, float(spec[2]) * TAU * e, 0)
+			return
+		State.IDLE, State.WALK, State.RUN when boarding:
+			_player.speed_scale = 1.0
+			_play("ual/Crouch_Idle")
+		State.IDLE:
+			_player.speed_scale = 1.0
+			_play(IDLES.get(idle_style, "ual/Idle"))
+		State.WALK:
+			_play("ual/Walk")
+			_player.speed_scale = clampf(speed / 1.7, 0.6, 2.2)
+		State.RUN:
+			if speed > 7.0:
+				_play("ual/Sprint")
+				_player.speed_scale = clampf(speed / 7.5, 0.8, 1.5)
+			else:
+				_play("ual/Jog_Fwd")
+				_player.speed_scale = clampf(speed / 4.2, 0.8, 1.6)
 		State.JUMP:
-			return _jump(false)
+			_player.speed_scale = 1.0
+			_play("ual/Jump_Start" if _state_time < 0.25 else "ual/Jump", 0.1)
 		State.FALL:
-			return _jump(true)
+			_player.speed_scale = 1.0
+			_play("ual/Jump", 0.15)
 		State.LAND:
-			return {"hips": Vector3(0, 0, 0), "torso": Vector3(-0.25, 0, 0), "knee_l": Vector3(0.7, 0, 0), "knee_r": Vector3(0.7, 0, 0), "leg_l": Vector3(-0.5, 0, 0), "leg_r": Vector3(-0.5, 0, 0), "root_pos": Vector3(0, -0.18, 0)}
-		State.TRICK:
-			return _trick(_action, action_progress())
-		State.EMOTE:
-			return _emote(_action, _state_time)
-		_:
-			return _idle()
-
-
-func _idle() -> Dictionary:
-	var breathe := sin(_time * 2.0) * 0.04
-	var p := {"torso": Vector3(breathe, 0, 0), "head": Vector3(0, sin(_time * 0.5) * 0.25, 0),
-		"arm_l": Vector3(0, 0, -0.08), "arm_r": Vector3(0, 0, 0.08), "elbow_l": Vector3(-0.15, 0, 0), "elbow_r": Vector3(-0.15, 0, 0),
-		"leg_l": Vector3.ZERO, "leg_r": Vector3.ZERO, "knee_l": Vector3.ZERO, "knee_r": Vector3.ZERO}
-	match idle_style:
-		&"bounce":
-			var b := absf(sin(_time * 4.0))
-			p["root_pos"] = Vector3(0, -b * 0.06, 0)
-			p["knee_l"] = Vector3(b * 0.3, 0, 0)
-			p["knee_r"] = Vector3(b * 0.3, 0, 0)
-			p["head"] = Vector3(b * 0.12, 0, 0)
-		&"flex":
-			p["arm_l"] = Vector3(0, 0, -1.5)
-			p["arm_r"] = Vector3(0, 0, 1.5)
-			p["elbow_l"] = Vector3(0, 0, -1.4 - sin(_time * 3.0) * 0.15)
-			p["elbow_r"] = Vector3(0, 0, 1.4 + sin(_time * 3.0) * 0.15)
-		_:
-			p["arm_r"] = Vector3(-0.35, 0, 0.1) # Gadget locker in der Hand
-			p["elbow_r"] = Vector3(-0.9, 0, 0)
-	return p
-
-
-func _locomotion(running: bool) -> Dictionary:
-	var amp := 0.9 if running else 0.55
-	var s := sin(_phase)
-	var c := cos(_phase)
-	return {
-		"torso": Vector3(-0.18 if running else -0.05, 0, 0),
-		"head": Vector3(0.1 if running else 0.0, 0, 0),
-		"leg_l": Vector3(s * amp, 0, 0), "leg_r": Vector3(-s * amp, 0, 0),
-		"knee_l": Vector3(maxf(0.0, -c) * amp * 1.3, 0, 0), "knee_r": Vector3(maxf(0.0, c) * amp * 1.3, 0, 0),
-		"arm_l": Vector3(-s * amp * 0.8, 0, -0.1), "arm_r": Vector3(s * amp * 0.8, 0, 0.1),
-		"elbow_l": Vector3(-0.4 - (0.6 if running else 0.0), 0, 0), "elbow_r": Vector3(-0.4 - (0.6 if running else 0.0), 0, 0),
-		"root_pos": Vector3(0, absf(sin(_phase)) * (0.08 if running else 0.04), 0),
-	}
-
-
-func _jump(falling: bool) -> Dictionary:
-	return {
-		"torso": Vector3(0.1 if falling else -0.15, 0, 0),
-		"leg_l": Vector3(-0.6, 0, 0), "leg_r": Vector3(0.2 if falling else -0.3, 0, 0),
-		"knee_l": Vector3(1.0, 0, 0), "knee_r": Vector3(0.6, 0, 0),
-		"arm_l": Vector3(0, 0, -1.0 if falling else -2.4), "arm_r": Vector3(0, 0, 1.0 if falling else 2.4),
-		"elbow_l": Vector3.ZERO, "elbow_r": Vector3.ZERO,
-	}
-
-
-## Trick-Animationen: t = Fortschritt 0..1
-func _trick(anim: StringName, t: float) -> Dictionary:
-	var e := t * t * (3.0 - 2.0 * t)
-	var hop := sin(t * PI)
-	var p := {"leg_l": Vector3.ZERO, "leg_r": Vector3.ZERO, "knee_l": Vector3.ZERO, "knee_r": Vector3.ZERO,
-		"arm_l": Vector3(0, 0, -0.3), "arm_r": Vector3(0, 0, 0.3), "elbow_l": Vector3.ZERO, "elbow_r": Vector3.ZERO,
-		"torso": Vector3.ZERO, "head": Vector3.ZERO}
-	match anim:
-		&"spin":
-			p["root_rot"] = Vector3(0, e * TAU, 0)
-			p["arm_l"] = Vector3(0, 0, -1.4)
-			p["arm_r"] = Vector3(0, 0, 1.4)
-		&"double_spin":
-			p["root_rot"] = Vector3(0, e * TAU * 2.0, 0)
-			p["root_pos"] = Vector3(0, hop * 0.6, 0)
-			p["arm_l"] = Vector3(0, 0, -2.6)
-			p["arm_r"] = Vector3(0, 0, 2.6)
-		&"ultra_spin":
-			p["root_rot"] = Vector3(0, e * TAU * 5.0, 0)
-			p["root_pos"] = Vector3(0, hop * 1.4, 0)
-			p["arm_l"] = Vector3(0, 0, -3.0)
-			p["arm_r"] = Vector3(0, 0, 3.0)
-			p["leg_l"] = Vector3(0, 0, -0.3)
-			p["leg_r"] = Vector3(0, 0, 0.3)
-		&"flip":
-			p["arm_r"] = Vector3(-1.6, 0, 0.2)
-			p["elbow_r"] = Vector3(-0.6 + sin(t * TAU * 3.0) * 0.6, 0, 0)
-			p["head"] = Vector3(0.3, -0.3, 0)
-		&"pose":
-			p["arm_l"] = Vector3(0, 0, -2.4 * hop)
-			p["arm_r"] = Vector3(-1.2 * hop, 0, 0.5)
-			p["elbow_r"] = Vector3(-1.5 * hop, 0, 0)
-			p["torso"] = Vector3(0, 0, 0.2 * hop)
-			p["leg_l"] = Vector3(0, 0, -0.35 * hop)
-			p["head"] = Vector3(-0.2 * hop, 0.4 * hop, 0)
-		&"twist":
-			var w := sin(t * TAU * 2.0)
-			p["hips"] = Vector3(0, w * 0.6, 0)
-			p["torso"] = Vector3(0, -w * 0.9, 0)
-			p["arm_l"] = Vector3(-w * 0.8, 0, -0.6)
-			p["arm_r"] = Vector3(w * 0.8, 0, 0.6)
-			p["knee_l"] = Vector3(0.4, 0, 0)
-			p["knee_r"] = Vector3(0.4, 0, 0)
-		&"shadow":
-			p["root_pos"] = Vector3(0, -0.7 * hop, 0)
-			p["root_rot"] = Vector3(0, e * PI, 0)
-			p["torso"] = Vector3(-0.8 * hop, 0, 0)
-			p["knee_l"] = Vector3(1.8 * hop, 0, 0)
-			p["knee_r"] = Vector3(1.8 * hop, 0, 0)
-			p["leg_l"] = Vector3(-1.2 * hop, 0, 0)
-			p["leg_r"] = Vector3(-1.2 * hop, 0, 0)
-		&"neon_flip":
-			p["root_rot"] = Vector3(-e * TAU, 0, 0)
-			p["root_pos"] = Vector3(0, hop * 1.3 + hop * 0.6, 0)
-			p["knee_l"] = Vector3(2.0 * hop, 0, 0)
-			p["knee_r"] = Vector3(2.0 * hop, 0, 0)
-			p["leg_l"] = Vector3(-1.6 * hop, 0, 0)
-			p["leg_r"] = Vector3(-1.6 * hop, 0, 0)
-		&"air_pose":
-			p["root_pos"] = Vector3(0, hop * 1.6, 0)
-			p["leg_l"] = Vector3(-1.4 * hop, 0, 0)
-			p["leg_r"] = Vector3(0.6 * hop, 0, 0)
-			p["arm_l"] = Vector3(0, 0, -2.8 * hop)
-			p["arm_r"] = Vector3(0, 0, 1.2 * hop)
-			p["head"] = Vector3(-0.4 * hop, 0, 0)
-		&"phantom":
-			var steps := floorf(t * 3.0)
-			p["root_rot"] = Vector3(0, steps * TAU / 3.0 + e * 0.5, 0)
-			p["root_pos"] = Vector3(sin(t * TAU * 1.5) * 0.4, hop * 0.4, 0)
-			p["arm_l"] = Vector3(-1.2, 0, -1.0)
-			p["arm_r"] = Vector3(-1.2, 0, 1.0)
-		&"cosmic":
-			p["root_pos"] = Vector3(0, hop * 2.2, 0)
-			p["root_rot"] = Vector3(0, e * TAU, 0)
-			p["arm_l"] = Vector3(0, 0, -2.0 * hop)
-			p["arm_r"] = Vector3(0, 0, 2.0 * hop)
-			p["leg_l"] = Vector3(0, 0, -0.5 * hop)
-			p["leg_r"] = Vector3(0, 0, 0.5 * hop)
-			p["head"] = Vector3(-0.6 * hop, 0, 0)
-		&"explosion":
-			var crouch := clampf(t / 0.4, 0.0, 1.0)
-			var burst := clampf((t - 0.4) / 0.25, 0.0, 1.0)
-			p["root_pos"] = Vector3(0, -0.35 * crouch * (1.0 - burst) + burst * 0.8 * (1.0 - t), 0)
-			p["knee_l"] = Vector3(1.4 * crouch * (1.0 - burst), 0, 0)
-			p["knee_r"] = Vector3(1.4 * crouch * (1.0 - burst), 0, 0)
-			p["leg_l"] = Vector3(-0.8 * crouch * (1.0 - burst), 0, -0.4 * burst)
-			p["leg_r"] = Vector3(-0.8 * crouch * (1.0 - burst), 0, 0.4 * burst)
-			p["arm_l"] = Vector3(0, 0, -0.4 - 2.6 * burst)
-			p["arm_r"] = Vector3(0, 0, 0.4 + 2.6 * burst)
-			p["torso"] = Vector3(-0.6 * crouch * (1.0 - burst), 0, 0)
-	return p
-
-
-func _emote(anim: StringName, time: float) -> Dictionary:
-	var p := _idle()
-	match anim:
-		&"wave":
-			p["arm_r"] = Vector3(0, 0, 2.6)
-			p["elbow_r"] = Vector3(0, 0, sin(time * 10.0) * 0.6)
-		&"dance":
-			var b := sin(time * 8.0)
-			p["root_pos"] = Vector3(b * 0.08, absf(b) * 0.1, 0)
-			p["hips"] = Vector3(0, b * 0.4, 0)
-			p["arm_l"] = Vector3(b * 1.2, 0, -1.0)
-			p["arm_r"] = Vector3(-b * 1.2, 0, 1.0)
-			p["knee_l"] = Vector3(maxf(0.0, b) * 0.8, 0, 0)
-			p["knee_r"] = Vector3(maxf(0.0, -b) * 0.8, 0, 0)
-		&"dab":
-			p["arm_l"] = Vector3(0, 0, -2.3)
-			p["arm_r"] = Vector3(-1.0, 0, -0.9)
-			p["elbow_r"] = Vector3(0, 0, -2.2)
-			p["head"] = Vector3(0.6, -0.4, 0.3)
-		&"flex":
-			p["arm_l"] = Vector3(0, 0, -1.5)
-			p["arm_r"] = Vector3(0, 0, 1.5)
-			p["elbow_l"] = Vector3(0, 0, -1.7)
-			p["elbow_r"] = Vector3(0, 0, 1.7)
-			p["torso"] = Vector3(-0.15, 0, 0)
-	return p
+			_player.speed_scale = 1.4
+			_play("ual/Jump_Land", 0.08)
+	# Trick-Transform weich zurücksetzen (bzw. in die Surf-Haltung auf dem Board)
+	var goal_pos := Vector3(0, 0.17, 0) if boarding else Vector3.ZERO
+	var goal_rot := Vector3(0, PI * 0.42, 0) if boarding else Vector3.ZERO
+	p.position = p.position.lerp(goal_pos, minf(1.0, delta * 12.0))
+	var r := Vector3(wrapf(p.rotation.x, -PI, PI), wrapf(p.rotation.y, -PI, PI), 0)
+	p.rotation = r.lerp(goal_rot, minf(1.0, delta * 12.0))

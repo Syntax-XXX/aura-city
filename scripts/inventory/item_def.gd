@@ -10,12 +10,12 @@ const RARITY_COLORS := [Color("9ca3af"), Color("4ade80"), Color("38bdf8"), Color
 const CATEGORY_SLOTS := {
 	&"gadget": &"gadget", &"skin": &"skin", &"outfit": &"outfit", &"trail": &"trail",
 	&"particle": &"particle", &"animation": &"animation", &"emote": &"emote", &"title": &"title",
-	&"accessory": &"accessory", &"hair": &"hair", &"shoes": &"shoes",
+	&"accessory": &"accessory", &"hair": &"hair", &"shoes": &"shoes", &"board": &"board",
 }
 const CATEGORY_NAMES := {
 	&"gadget": "Cosmetic Gadgets", &"skin": "Skins", &"outfit": "Outfits", &"trail": "Trails",
 	&"particle": "Particle Effects", &"animation": "Animations", &"emote": "Emotes", &"title": "Titles",
-	&"accessory": "Accessories", &"hair": "Hair", &"shoes": "Shoes",
+	&"accessory": "Accessories", &"hair": "Hair", &"shoes": "Shoes", &"board": "Hoverboards",
 }
 
 @export var id: StringName

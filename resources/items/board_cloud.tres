@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"board_cloud"
+display_name = "Cloud Surfer"
+description = "Gleitet wie auf Wolken. 17 m/s."
+price = 30000
+rarity = 3
+category = &"board"
+icon_glyph = "▭"
+color = Color(0.878, 0.949, 0.996, 1)
+accent_color = Color(0.220, 0.741, 0.973, 1)
+variant = &"cloud"
+required_rank = 3

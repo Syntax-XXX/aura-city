@@ -5,6 +5,19 @@ extends RefCounted
 static var _mat_cache := {}
 static var _building_cache := {} # gleiche Fassaden teilen sich Textur + Material (große Map!)
 static var _invisible := StandardMaterial3D.new()
+static var _surface_cache := {}
+static var _nature_cache := {}
+
+## PBR-Oberflächen (Poly Haven, CC0): Texturname, Kachelgröße in Metern
+const SURFACES := {
+	&"grass": ["leafy_grass", 5.0], &"asphalt": ["asphalt_02", 6.0], &"plaza": ["hexagonal_concrete_paving", 4.0],
+	&"sidewalk": ["pavement_03", 3.0], &"sand": ["coast_sand_01", 5.0], &"concrete": ["concrete_floor_02", 5.0],
+	&"tiles": ["large_floor_tiles_02", 4.0], &"wood": ["wood_planks", 3.0],
+}
+const TREES := ["CommonTree_1", "CommonTree_2", "CommonTree_3", "CommonTree_4", "CommonTree_5"]
+const PINES := ["Pine_1", "Pine_2", "Pine_3"]
+const BUSHES := ["Bush_Common", "Bush_Common_Flowers", "Flower_3_Group", "Flower_4_Group", "Fern_1", "Plant_1_Big"]
+const ROCKS := ["Rock_Medium_1", "Rock_Medium_2", "Rock_Medium_3"]
 
 
 static func mat(c: Color, rough := 0.85, metal := 0.0, glow := 0.0) -> StandardMaterial3D:
@@ -12,6 +25,44 @@ static func mat(c: Color, rough := 0.85, metal := 0.0, glow := 0.0) -> StandardM
 	if not _mat_cache.has(key):
 		_mat_cache[key] = CharacterVisual.make_material(c, rough, metal, glow)
 	return _mat_cache[key]
+
+
+## Texturierte PBR-Oberfläche mit Weltraum-Projektion (kachelt auf beliebig großen Flächen).
+## tint färbt ein (z. B. dunkler, nasser Neon-Asphalt), rough skaliert die Rauheit.
+static func surface(kind: StringName, tint := Color.WHITE, rough := 1.0) -> StandardMaterial3D:
+	var key := "%s|%s|%.2f" % [kind, tint.to_html(), rough]
+	if _surface_cache.has(key):
+		return _surface_cache[key]
+	var spec: Array = SURFACES[kind]
+	var base := "res://assets/textures/%s_" % spec[0]
+	var m := StandardMaterial3D.new()
+	m.albedo_texture = load(base + "diff.jpg")
+	m.albedo_color = tint
+	m.normal_enabled = true
+	m.normal_texture = load(base + "nor.jpg")
+	m.normal_scale = 0.8
+	m.roughness_texture = load(base + "rough.jpg")
+	m.roughness = rough
+	m.uv1_triplanar = true
+	m.uv1_world_triplanar = true
+	m.uv1_scale = Vector3.ONE / float(spec[1])
+	m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+	_surface_cache[key] = m
+	return m
+
+
+## Modell aus dem Stylized Nature MegaKit platzieren (optional mit Stamm-Kollision).
+static func nature(parent: Node3D, model_id: String, pos: Vector3, scale := 1.0, trunk_radius := 0.0) -> Node3D:
+	if not _nature_cache.has(model_id):
+		_nature_cache[model_id] = load("res://assets/nature/%s.gltf" % model_id)
+	var n: Node3D = (_nature_cache[model_id] as PackedScene).instantiate()
+	n.position = pos
+	n.rotation.y = randf() * TAU
+	n.scale = Vector3.ONE * scale
+	parent.add_child(n)
+	if trunk_radius > 0.0:
+		cylinder(parent, trunk_radius * scale, 3.0 * scale, pos + Vector3(0, 1.5 * scale, 0), _invisible).get_child(1).queue_free()
+	return n
 
 
 ## Box mit optionaler Kollision. rot = Euler-Winkel.
@@ -114,17 +165,18 @@ static func street_light(parent: Node3D, pos: Vector3, color := Color("fff1c4"))
 
 
 static func tree(parent: Node3D, pos: Vector3, scale := 1.0) -> void:
-	cylinder(parent, 0.25 * scale, 2.4 * scale, pos + Vector3(0, 1.2 * scale, 0), mat(Color("7c4a2d")))
-	var leaves := SphereMesh.new()
-	leaves.radius = 1.6 * scale
-	leaves.height = 2.8 * scale
-	leaves.radial_segments = 8
-	leaves.rings = 5
-	var mi := MeshInstance3D.new()
-	mi.mesh = leaves
-	mi.material_override = mat(Color.from_hsv(randf_range(0.25, 0.33), 0.55, 0.45))
-	mi.position = pos + Vector3(0, 3.4 * scale, 0)
-	parent.add_child(mi)
+	if randf() < 0.25:
+		nature(parent, PINES[randi() % PINES.size()], pos, scale * 1.1, 0.35)
+	else:
+		nature(parent, TREES[randi() % TREES.size()], pos, scale, 0.4)
+
+
+static func bush(parent: Node3D, pos: Vector3, scale := 1.0) -> void:
+	nature(parent, BUSHES[randi() % BUSHES.size()], pos, scale)
+
+
+static func rock(parent: Node3D, pos: Vector3, scale := 1.0) -> void:
+	nature(parent, ROCKS[randi() % ROCKS.size()], pos, scale, 0.8)
 
 
 static func bench(parent: Node3D, pos: Vector3, yaw: float) -> void:

@@ -4,12 +4,14 @@ extends UIScreen
 
 const SLOT_NAMES := {
 	&"skin": "Haut", &"hair": "Frisur", &"outfit": "Outfit", &"shoes": "Schuhe", &"accessory": "Accessoire",
-	&"gadget": "Gadget", &"trail": "Spur", &"particle": "Partikel", &"title": "Titel", &"emote": "Emote [G]", &"animation": "Idle-Stil",
+	&"gadget": "Gadget", &"trail": "Spur", &"particle": "Partikel", &"title": "Titel", &"emote": "Emote [G]", &"animation": "Idle-Stil", &"board": "Hoverboard [Q]",
 }
 
 var _list: VBoxContainer
 var _preview: PreviewViewport
 var _name_edit: LineEdit
+var _body_male: Button
+var _body_female: Button
 
 
 func _init() -> void:
@@ -25,6 +27,10 @@ func build_content() -> void:
 	_preview = PreviewViewport.new()
 	_preview.custom_minimum_size = Vector2(340, 470)
 	left.add_child(_preview)
+	var body_row := UIKit.hbox(left, 8)
+	UIKit.label("Figur", 13, UITheme.MUTED, body_row)
+	_body_male = UIKit.button("Männlich", _set_body.bind(0), body_row, Vector2(110, 36))
+	_body_female = UIKit.button("Weiblich", _set_body.bind(1), body_row, Vector2(110, 36))
 	UIKit.label("Spielername", 13, UITheme.MUTED, left)
 	_name_edit = LineEdit.new()
 	_name_edit.max_length = 16
@@ -33,6 +39,12 @@ func build_content() -> void:
 	left.add_child(_name_edit)
 	_list = UIKit.vbox(null, 8)
 	UIKit.scroll(body, _list)
+
+
+func _set_body(body: int) -> void:
+	Settings.avatar_body = body
+	Settings.apply()
+	refresh()
 
 
 func _save_name() -> void:
@@ -46,6 +58,8 @@ func _save_name() -> void:
 
 func refresh() -> void:
 	_name_edit.text = Identity.display_name
+	_body_male.disabled = Settings.avatar_body == 0
+	_body_female.disabled = Settings.avatar_body == 1
 	_preview.show_with(null)
 	for c in _list.get_children():
 		c.queue_free()

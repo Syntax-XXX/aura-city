@@ -185,3 +185,21 @@ test('Name wird bereinigt, Loadout nur mit freigeschalteten Tricks', () => {
   assert.ok(ev(20, { type: 'loadout', slot: 0, id: 'mini_pose' }).ok);
   assert.deepEqual(p.loadout, ['mini_pose', 'finger_flip', 'basic_spin', 'side_twist']);
 });
+
+test('Aura-Drink: Rang + Preis geprüft, Boost wirkt serverseitig', () => {
+  const { p, ev } = setup();
+  const [id, d] = Object.entries(data.drinks).find(([, x]) => x.rank === 0);
+  assert.equal(ev(0, { type: 'drink', id }).error, 'Nicht genug Aura');
+  const [hid] = Object.entries(data.drinks).find(([, x]) => x.rank >= 3);
+  p.aura = 1e7;
+  assert.match(ev(10, { type: 'drink', id: hid }).error, /Rang/);
+  p.aura = d.price;
+  assert.ok(ev(20, { type: 'drink', id }).ok);
+  assert.equal(p.aura, 0);
+  const t = data.tricks.basic_spin;
+  const r = ev(1000, { type: 'trick', id: 'basic_spin', quality: 'good' });
+  assert.equal(r.aura, Math.round(Math.round(t.base_aura * (1 + t.difficulty * 0.08)) * d.aura));
+  // nach Ablauf kein Boost mehr
+  const r2 = ev(d.seconds * 1000 + 5000, { type: 'trick', id: 'basic_spin', quality: 'good' });
+  assert.equal(r2.aura, Math.round(t.base_aura * (1 + t.difficulty * 0.08)));
+});

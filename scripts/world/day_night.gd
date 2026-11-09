@@ -1,46 +1,86 @@
 class_name DayNight
 extends Node
-## Tag-/Nachtzyklus: Sonne, Himmel, Umgebungslicht, Straßenlaternen. Ein Tag = DAY_LENGTH Sekunden.
+## Tag-/Nachtzyklus: Sonne, Himmels-Shader, Umgebungslicht, Nebel, Straßenlaternen.
+## Ein Tag = DAY_LENGTH Sekunden. Farbverläufe über Keyframes (Nacht → Morgen → Mittag → Abend).
 
 const DAY_LENGTH := 600.0
+## time_of_day: [Himmel oben, Horizont, Sonnenfarbe, Sonnenenergie, Umgebungslicht, Nebel]
+const KEYS := [
+	[0.0, Color("070814"), Color("1b1840"), Color("8ea2ff"), 0.08, Color("2a2f63"), Color("101233")],
+	[0.22, Color("0d1030"), Color("3b2a5a"), Color("ff9a6b"), 0.1, Color("3a3466"), Color("2a2244")],
+	[0.28, Color("4b6fb5"), Color("f4a582"), Color("ffb380"), 0.75, Color("8a7fa8"), Color("e3a98d")],
+	[0.36, Color("3d7fd9"), Color("b9d7f2"), Color("fff1dc"), 1.35, Color("9fb6d6"), Color("b9cde4")],
+	[0.5, Color("2f74d6"), Color("a9cdef"), Color("fff8ec"), 1.5, Color("a6bcdb"), Color("b3c9e2")],
+	[0.66, Color("3c76c9"), Color("c3d5ea"), Color("ffe9cc"), 1.3, Color("9fb0cf"), Color("c0cde0")],
+	[0.73, Color("35508f"), Color("ff9e6e"), Color("ff8f57"), 0.7, Color("98789a"), Color("e09a7f")],
+	[0.78, Color("161a45"), Color("5a2f5c"), Color("ff7a59"), 0.12, Color("40336a"), Color("3a2a52")],
+	[1.0, Color("070814"), Color("1b1840"), Color("8ea2ff"), 0.08, Color("2a2f63"), Color("101233")],
+]
 
 var sun: DirectionalLight3D
 var environment: Environment
-var sky_material: ProceduralSkyMaterial
+var sky_material: ShaderMaterial
 ## 0 = Mitternacht, 0.5 = Mittag
 var time_of_day := 0.35
 var _lights_on := false
+var _cloud := Vector2.ZERO
+
+
+var _apply_timer := 0.0
 
 
 func _process(delta: float) -> void:
 	if Settings.day_night_cycle:
 		time_of_day = fmod(time_of_day + delta / DAY_LENGTH, 1.0)
-	apply()
+	_cloud += Vector2(0.004, 0.0015) * delta
+	# Himmel/Licht nur 4× pro Sekunde aktualisieren (jede Himmels-Änderung kostet)
+	_apply_timer -= delta
+	if _apply_timer <= 0.0:
+		_apply_timer = 0.25
+		apply()
 
 
 func daylight() -> float:
-	# 0 nachts, 1 mittags (Sinus über den Tag)
 	return clampf(sin((time_of_day - 0.25) * TAU) * 0.5 + 0.5, 0.0, 1.0)
 
 
+func _sample() -> Array:
+	for i in KEYS.size() - 1:
+		var a: Array = KEYS[i]
+		var b: Array = KEYS[i + 1]
+		if time_of_day >= a[0] and time_of_day <= b[0]:
+			var t := (time_of_day - float(a[0])) / (float(b[0]) - float(a[0]))
+			var out := []
+			for k in range(1, a.size()):
+				out.append(lerp(a[k], b[k], t))
+			return out
+	return KEYS[0].slice(1)
+
+
 func apply() -> void:
+	var s := _sample()
 	var d := daylight()
 	var angle := (time_of_day - 0.25) * TAU
-	sun.rotation = Vector3(-maxf(0.15, sin(angle)) * 1.2 - 0.2, 0.6, 0)
-	sun.light_energy = lerpf(0.06, 0.95, d)
-	sun.light_color = Color("fca5a5").lerp(Color("fff7e6"), d)
-	sky_material.sky_top_color = Color("0b0a1f").lerp(Color("3b82f6"), d)
-	sky_material.sky_horizon_color = Color("312e81").lerp(Color("bfdbfe"), d)
-	sky_material.ground_horizon_color = sky_material.sky_horizon_color
-	sky_material.sky_energy_multiplier = lerpf(0.4, 1.0, d)
-	environment.ambient_light_color = Color("4c1d95").lerp(Color("a5b4fc"), d)
-	environment.ambient_light_energy = lerpf(0.55, 0.45, d)
-	environment.fog_light_color = Color("1e1b4b").lerp(Color("c7d2fe"), d)
+	# Sonne (nachts der Mond: flacher, bläulich)
+	var elev := sin(angle)
+	sun.rotation = Vector3(-absf(elev) * 1.1 - 0.12, 0.6 + time_of_day * 0.6, 0)
+	sun.light_color = s[2]
+	sun.light_energy = s[3]
+	var sunset := clampf(1.0 - absf(elev) * 3.0, 0.0, 1.0) * (1.0 if d > 0.15 else 0.4)
+	sky_material.set_shader_parameter("sky_top", s[0])
+	sky_material.set_shader_parameter("sky_horizon", s[1])
+	sky_material.set_shader_parameter("sun_color", s[2])
+	sky_material.set_shader_parameter("night", clampf(1.0 - d * 2.2, 0.0, 1.0))
+	sky_material.set_shader_parameter("sunset", sunset)
+	sky_material.set_shader_parameter("cloud_offset", _cloud)
+	environment.ambient_light_color = s[4]
+	environment.ambient_light_energy = lerpf(0.55, 0.7, d)
+	environment.fog_light_color = s[5]
 	var want_lights := d < 0.35
 	if want_lights != _lights_on:
 		_lights_on = want_lights
 		for l in get_tree().get_nodes_in_group(&"street_lights"):
-			(l as OmniLight3D).light_energy = 1.6 if want_lights else 0.0
+			(l as OmniLight3D).light_energy = 2.2 if want_lights else 0.0
 
 
 func clock_text() -> String:

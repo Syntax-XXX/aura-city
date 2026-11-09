@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"board_jet"
+display_name = "Jet Board"
+description = "Mit Düsen. 20 m/s."
+price = 90000
+rarity = 4
+category = &"board"
+icon_glyph = "▭"
+color = Color(0.122, 0.161, 0.216, 1)
+accent_color = Color(0.976, 0.451, 0.086, 1)
+variant = &"jet"
+required_rank = 4

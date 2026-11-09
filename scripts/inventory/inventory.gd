@@ -1,7 +1,7 @@
 extends Node
 ## Besitz und Ausrüstung kosmetischer Items. Käufe werden über Economy (und deren Authority) geprüft.
 
-const SLOTS: Array[StringName] = [&"skin", &"hair", &"outfit", &"shoes", &"accessory", &"gadget", &"trail", &"particle", &"title", &"emote", &"animation"]
+const SLOTS: Array[StringName] = [&"skin", &"hair", &"outfit", &"shoes", &"accessory", &"gadget", &"trail", &"particle", &"title", &"emote", &"animation", &"board"]
 
 var owned: Dictionary = {} # StringName -> true
 var equipped: Dictionary = {} # Slot -> StringName

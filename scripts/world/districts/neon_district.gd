@@ -7,7 +7,7 @@ const CENTER := Vector3(-120, 0, 0)
 
 static func build(root: Node3D) -> void:
 	var c := CENTER
-	WorldKit.box(root, Vector3(76, 0.04, 76), c + Vector3(0, 0.02, 0), WorldKit.mat(Color("18181b"), 0.4, 0.2), false)
+	WorldKit.box(root, Vector3(76, 0.04, 76), c + Vector3(0, 0.02, 0), WorldKit.surface(&"asphalt", Color(0.35, 0.33, 0.45), 0.35), false)
 	WorldKit.district_area(root, &"neon", c + Vector3(0, 5, 0), Vector3(80, 14, 80))
 	DistrictBuilder.gate(root, Vector3(-62, 0, 0), PI / 2, "Neon District", 1)
 	WorldKit.sign_text(root, c + Vector3(0, 12, -32), "NEON DISTRICT", Color("f472b6"), 320)

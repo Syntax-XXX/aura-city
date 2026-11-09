@@ -86,6 +86,13 @@ ITEMS = [
     ("acc_halo", "Halo", "accessory", "mythic", 1200000, "◒", "fef9c3", "ffffff", "halo", "Jenseits der Realität.", {"required_rank": 6}),
     ("acc_horns", "Void Horns", "accessory", "secret", 0, "◒", "312e81", "a855f7", "horns", "Ein Andenken aus der Leere.", {"hidden_until_unlocked": True, "required_achievement": '&"secret_explorer"'}),
     # Gadgets (fiktive Wolken-Gadgets, rein kosmetisch)
+    # Hoverboards (Fortbewegung auf der großen Map, jede Stufe schneller)
+    ("board_street", "Street Board", "board", "common", 0, "▭", "64748b", "22d3ee", "street", "Solides Brett. 12 m/s.", {"starter": True}),
+    ("board_neon", "Neon Glider", "board", "rare", 9000, "▭", "1e1b4b", "f472b6", "neon", "Leuchtende Kanten. 15 m/s.", {}),
+    ("board_cloud", "Cloud Surfer", "board", "epic", 30000, "▭", "e0f2fe", "38bdf8", "cloud", "Gleitet wie auf Wolken. 17 m/s.", {"required_rank": 3}),
+    ("board_jet", "Jet Board", "board", "legendary", 90000, "▭", "1f2937", "f97316", "jet", "Mit Düsen. 20 m/s.", {"required_rank": 4}),
+    ("board_aurora", "Aurora Drift", "board", "mythic", 300000, "▭", "4c1d95", "4ade80", "aurora", "Polarlicht unter den Füßen. 23 m/s.", {"required_rank": 5}),
+    ("board_void", "Void Rider", "board", "secret", 0, "▭", "0f0a1e", "a855f7", "void", "Aus der geheimen Dimension. 25 m/s.", {"hidden_until_unlocked": True, "required_achievement": '&"secret_explorer"'}),
     ("gadget_cloudpen", "Cloud Pen", "gadget", "common", 0, "✎", "8b5cf6", "22d3ee", "pen", "Fiktives Gadget, das bunte Wolken-Effekte zaubert.", {"starter": True}),
     ("gadget_cloudpen_pink", "Cloud Pen Bubblegum", "gadget", "uncommon", 1500, "✎", "f472b6", "fde047", "pen", "Pinke Effektwolken.", {}),
     ("gadget_mistbox", "Mist Box", "gadget", "rare", 9000, "▣", "1f2937", "ef4444", "box", "Kantig. Dicke Effektwolken.", {}),

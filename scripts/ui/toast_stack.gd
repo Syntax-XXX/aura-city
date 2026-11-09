@@ -3,9 +3,8 @@ extends VBoxContainer
 ## Kurze Meldungen oben mittig (max. 5 gleichzeitig, verschwinden nach 3 s).
 
 func _ready() -> void:
-	set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP, Control.PRESET_MODE_MINSIZE, 150)
 	custom_minimum_size = Vector2(520, 0)
-	position.x = -260
+	UIKit.pin(self, Control.PRESET_CENTER_TOP, 150)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	alignment = BoxContainer.ALIGNMENT_BEGIN
 	add_theme_constant_override("separation", 6)

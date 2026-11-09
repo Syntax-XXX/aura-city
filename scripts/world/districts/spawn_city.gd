@@ -6,8 +6,7 @@ const CENTER := Vector3.ZERO
 
 
 static func build(root: Node3D) -> void:
-	var stone := WorldKit.mat(Color("cbd5e1"), 0.9)
-	WorldKit.box(root, Vector3(84, 0.04, 84), Vector3(0, 0.02, 0), stone, false)
+	WorldKit.box(root, Vector3(84, 0.04, 84), Vector3(0, 0.02, 0), WorldKit.surface(&"plaza", Color(0.85, 0.85, 0.88)), false)
 	WorldKit.district_area(root, &"spawn", Vector3(0, 5, 0), Vector3(90, 14, 90))
 	# Brunnen mit Statue (dahinter versteckt: Portal in die geheime Dimension)
 	WorldKit.cylinder(root, 6.0, 0.8, Vector3(0, 0.4, 0), WorldKit.mat(Color("94a3b8"), 0.6))

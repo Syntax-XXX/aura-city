@@ -32,6 +32,10 @@ var _trail: CPUParticles3D
 var _aura_fx: CPUParticles3D
 var _nearest: Interactable
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
+## Hoverboard: Fortbewegung auf der großen Map, Tempo je nach Board-Stufe
+const BOARD_SPEEDS := {&"street": 12.0, &"neon": 15.0, &"cloud": 17.0, &"jet": 20.0, &"aurora": 23.0, &"void": 25.0}
+var boarding := false
+var _board: Node3D
 
 
 func _ready() -> void:
@@ -75,6 +79,7 @@ func _ready() -> void:
 	_aura_fx.emission_sphere_radius = 0.8
 	Events.item_equipped.connect(func(_s, _i): refresh_look())
 	Events.rank_changed.connect(func(_r): refresh_look())
+	Events.settings_changed.connect(_on_settings_changed)
 	refresh_look()
 
 
@@ -106,11 +111,17 @@ func _make_emitter(lifetime: float, amount: int) -> CPUParticles3D:
 	return p
 
 
+func _on_settings_changed() -> void:
+	if visual.body_type != Settings.avatar_body:
+		refresh_look()
+
+
 ## Ausrüstung + Rang auf die Figur übertragen.
 func refresh_look() -> void:
 	var look := {}
 	for slot in Inventory.SLOTS:
 		look[slot] = Inventory.equipped_item(slot)
+	visual.body_type = Settings.avatar_body
 	visual.apply_look(look)
 	var idle: ItemDef = look.get(&"animation")
 	animator.idle_style = idle.variant if idle else &"chill"
@@ -151,13 +162,18 @@ func _unhandled_input(event: InputEvent) -> void:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	elif event.is_action_pressed("interact") and _nearest:
 		_nearest.interact(self)
-	elif event.is_action_pressed("emote"):
+	elif event.is_action_pressed("hoverboard"):
+		toggle_board()
+	elif event.is_action_pressed("emote") and not boarding:
 		var emote: ItemDef = Inventory.equipped_item(&"emote")
 		if emote and not tricks.is_busy():
 			animator.play_action(emote.variant, 2.4, true)
 	else:
 		for i in 4:
 			if event.is_action_pressed("trick_%d" % (i + 1)):
+				if boarding:
+					Events.toast.emit("Auf dem Board keine Tricks – [%s] absteigen" % Controls.key_label("hoverboard"), Color("fca5a5"))
+					break
 				var err := tricks.start_slot(i)
 				if err != "":
 					Events.toast.emit(err, Color("fca5a5"))
@@ -182,9 +198,12 @@ func _physics_process(delta: float) -> void:
 		wish = wish.normalized()
 	var busy := animator.is_busy() and animator.state == CharacterAnimator.State.TRICK
 	var sprinting := input_enabled and Input.is_action_pressed("sprint") and wish.length() > 0.1 and not busy
-	var target_speed := (run_speed if sprinting else walk_speed) * (0.35 if busy else 1.0)
-	var target := wish * target_speed
+	var target_speed := (run_speed if sprinting else walk_speed) * (0.35 if busy else 1.0) * Economy.boost("speed")
 	var accel := (acceleration if wish.length() > 0.05 else deceleration) * (1.0 if on_floor else air_control)
+	if boarding:
+		target_speed = board_speed() * (1.25 if Input.is_action_pressed("sprint") else 1.0) * Economy.boost("speed")
+		accel = (11.0 if wish.length() > 0.05 else 4.0) * (1.0 if on_floor else 0.6)
+	var target := wish * target_speed
 	var horizontal := Vector3(velocity.x, 0, velocity.z).move_toward(target, accel * delta)
 	velocity.x = horizontal.x
 	velocity.z = horizontal.z
@@ -199,10 +218,10 @@ func _physics_process(delta: float) -> void:
 	if horizontal.length() > 0.3 and not busy:
 		var target_yaw := atan2(-horizontal.x, -horizontal.z)
 		rotation.y = lerp_angle(rotation.y, target_yaw, minf(1.0, delta * turn_speed))
-	camera_rig.set_sprint(sprinting)
+	camera_rig.set_sprint(sprinting or (boarding and horizontal.length() > 10.0))
 	_update_animation(on_floor, horizontal.length(), delta)
 	_was_on_floor = is_on_floor()
-	_trail.emitting = bool(_trail.get_meta("has_trail", false)) and horizontal.length() > 2.0
+	_trail.emitting = (bool(_trail.get_meta("has_trail", false)) or boarding) and horizontal.length() > 2.0
 	_update_interaction()
 	# Aus der Welt gefallen → zurück zum Spawn
 	if global_position.y < -60.0 and global_position.y > -150.0:
@@ -250,6 +269,63 @@ func _update_interaction() -> void:
 	if best != _nearest:
 		_nearest = best
 		Events.interaction_prompt.emit(best.prompt_text() if best else "")
+
+
+func board_speed() -> float:
+	var item: ItemDef = Inventory.equipped_item(&"board")
+	return BOARD_SPEEDS.get(item.variant if item else &"street", 12.0)
+
+
+## Auf- bzw. absteigen.
+func toggle_board() -> void:
+	if boarding:
+		boarding = false
+		animator.boarding = false
+		if _board:
+			_board.queue_free()
+			_board = null
+		Audio.play(&"close")
+		return
+	if tricks.is_busy() or not is_on_floor():
+		return
+	boarding = true
+	animator.boarding = true
+	_board = _make_board(Inventory.equipped_item(&"board"))
+	visual.add_child(_board)
+	Audio.play(&"teleport", 1.4)
+	FX.ring(get_parent(), global_position + Vector3.UP * 0.1, _board.get_meta(&"glow"), 1.5)
+
+
+func _make_board(item: ItemDef) -> Node3D:
+	var root := Node3D.new()
+	var base := item.color if item else Color("64748b")
+	var glow := item.accent_color if item else Color("22d3ee")
+	root.set_meta(&"glow", glow)
+	var deck := BoxMesh.new()
+	deck.size = Vector3(0.55, 0.07, 1.55)
+	var d := MeshInstance3D.new()
+	d.mesh = deck
+	d.material_override = CharacterVisual.make_material(base, 0.35, 0.4)
+	d.position = Vector3(0, 0.12, 0)
+	root.add_child(d)
+	for z: float in [-0.55, 0.55]:
+		var pad := CylinderMesh.new()
+		pad.top_radius = 0.16
+		pad.bottom_radius = 0.2
+		pad.height = 0.05
+		var mi := MeshInstance3D.new()
+		mi.mesh = pad
+		mi.material_override = CharacterVisual.make_material(glow, 0.2, 0.0, 3.0)
+		mi.position = Vector3(0, 0.06, z)
+		root.add_child(mi)
+	var rail := BoxMesh.new()
+	rail.size = Vector3(0.58, 0.02, 1.58)
+	var r := MeshInstance3D.new()
+	r.mesh = rail
+	r.material_override = CharacterVisual.make_material(glow, 0.3, 0.0, 1.6)
+	r.position = Vector3(0, 0.155, 0)
+	root.add_child(r)
+	return root
 
 
 func teleport(target_pos: Vector3) -> void:

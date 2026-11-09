@@ -92,7 +92,7 @@ func start_trick(id: StringName) -> String:
 	needle = _rng.randf_range(0.0, 0.25)
 	_needle_dir = 1.0
 	_timing_elapsed = 0.0
-	var window := trick.timing_window() * (1.0 + TrickDB.mastery_level(id) * 0.06)
+	var window := trick.timing_window() * (1.0 + TrickDB.mastery_level(id) * 0.06) * Economy.boost("timing")
 	timing_started.emit(trick, window, window * 0.3)
 	Events.trick_started.emit(id)
 	Audio.play(&"trick_start", trick.sound_pitch)
@@ -113,7 +113,7 @@ static func evaluate(needle_pos: float, window: float) -> StringName:
 func land() -> void:
 	if phase != Phase.TIMING:
 		return
-	var window := current.timing_window() * (1.0 + TrickDB.mastery_level(current.id) * 0.06)
+	var window := current.timing_window() * (1.0 + TrickDB.mastery_level(current.id) * 0.06) * Economy.boost("timing")
 	_finish(evaluate(needle, window))
 
 

@@ -72,6 +72,7 @@ func show_with(item: ItemDef) -> void:
 		look[slot] = Inventory.equipped_item(slot)
 	if item:
 		look[item.slot()] = item
+	_visual.body_type = Settings.avatar_body
 	_visual.apply_look(look)
 	var idle: ItemDef = look.get(&"animation")
 	_animator.idle_style = idle.variant if idle else &"chill"

@@ -8,7 +8,7 @@ signal quit_to_menu
 const HOTKEYS := {
 	"open_shop": &"shop", "open_inventory": &"inventory", "open_customize": &"customize",
 	"open_trickbook": &"trickbook", "open_quests": &"quests", "open_achievements": &"achievements",
-	"open_leaderboard": &"leaderboard",
+	"open_leaderboard": &"leaderboard", "open_drinks": &"drinks",
 }
 
 var player: PlayerController
@@ -19,6 +19,7 @@ var dialogue: DialogueBox
 var tutorial: TutorialOverlay
 var screens: Dictionary = {} # StringName -> UIScreen
 var current: UIScreen
+var photo: PhotoMode
 var _root: Control
 
 
@@ -26,7 +27,7 @@ func _ready() -> void:
 	layer = 1
 	_root = Control.new()
 	_root.theme = UITheme.get_theme()
-	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_root)
 	hud = HUD.new()
@@ -38,7 +39,7 @@ func _ready() -> void:
 		&"shop": ShopScreen.new(), &"inventory": InventoryScreen.new(), &"customize": CustomizeScreen.new(),
 		&"trickbook": TrickbookScreen.new(), &"quests": QuestScreen.new(), &"achievements": AchievementScreen.new(),
 		&"leaderboard": LeaderboardScreen.new(), &"settings": SettingsScreen.new(), &"daily": DailyScreen.new(),
-		&"pause": PauseScreen.new(),
+		&"pause": PauseScreen.new(), &"drinks": DrinksScreen.new(),
 	}
 	for key: StringName in screens:
 		_root.add_child(screens[key])
@@ -50,10 +51,15 @@ func _ready() -> void:
 	_root.add_child(confirm)
 	(screens[&"shop"] as ShopScreen).confirm = confirm
 	(screens[&"settings"] as SettingsScreen).confirm = confirm
+	(screens[&"drinks"] as DrinksScreen).confirm = confirm
 	var pause := screens[&"pause"] as PauseScreen
 	pause.navigate.connect(open)
 	pause.quit_to_menu.connect(_on_quit_to_menu)
 	pause.skip_tutorial.connect(_skip_tutorial)
+	photo = PhotoMode.new()
+	photo.ui_root = _root
+	add_child(photo)
+	photo.toggled.connect(func(_on): _update_mouse())
 	Events.open_screen.connect(open)
 	Events.shop_requested.connect(open_shop)
 	Events.dialogue_requested.connect(_on_dialogue)
@@ -124,13 +130,13 @@ func _on_quit_to_menu() -> void:
 
 
 func is_ui_open() -> bool:
-	return current != null or dialogue.visible or confirm.visible
+	return current != null or dialogue.visible or confirm.visible or (photo != null and photo.active)
 
 
 func _update_mouse() -> void:
 	var open_ui := is_ui_open()
 	player.input_enabled = not open_ui
-	if DisplayServer.get_name() == "headless":
+	if DisplayServer.get_name() == "headless" or (photo != null and photo.active):
 		return
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if open_ui else Input.MOUSE_MODE_CAPTURED
 
@@ -146,6 +152,12 @@ func _unhandled_input(event: InputEvent) -> void:
 				dialogue.advance()
 			_update_mouse()
 			get_viewport().set_input_as_handled()
+		return
+	if photo.active:
+		return
+	if event.is_action_pressed("photo_mode") and current == null:
+		photo.toggle()
+		get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("pause"):
 		if confirm.visible:

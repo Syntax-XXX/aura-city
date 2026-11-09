@@ -7,7 +7,7 @@ const CENTER := Vector3(0, 0, 300)
 
 static func build(root: Node3D) -> void:
 	var c := CENTER
-	WorldKit.box(root, Vector3(150, 0.04, 84), c + Vector3(0, 0.02, -10), WorldKit.mat(Color("6b7280"), 0.9), false)
+	WorldKit.box(root, Vector3(150, 0.04, 84), c + Vector3(0, 0.02, -10), WorldKit.surface(&"concrete", Color(0.8, 0.82, 0.85)), false)
 	WorldKit.district_area(root, &"harbor", c + Vector3(0, 8, -8), Vector3(150, 20, 90))
 	WorldKit.sign_text(root, c + Vector3(0, 13, -50), "HAFEN", Color("38bdf8"), 320)
 	# Wasser, Kaimauer und unsichtbare Kante

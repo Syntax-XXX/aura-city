@@ -11,12 +11,11 @@ var _index := 0
 
 
 func _ready() -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	var p := UIKit.panel(self, Color(0.07, 0.05, 0.14, 0.95), UITheme.PURPLE, 18)
-	p.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM, Control.PRESET_MODE_MINSIZE, 120)
 	p.custom_minimum_size = Vector2(900, 150)
-	p.position.x = -450
+	UIKit.pin(p, Control.PRESET_CENTER_BOTTOM, 120)
 	var v := UIKit.vbox(p, 8)
 	_speaker = UIKit.label("", 20, UITheme.CYAN, v)
 	_text = UIKit.label("", 18, UITheme.TEXT, v)

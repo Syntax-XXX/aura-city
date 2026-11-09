@@ -33,16 +33,16 @@ var _t := 0.0
 
 
 func _ready() -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var bg := ColorRect.new()
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var mat := ShaderMaterial.new()
 	mat.shader = Shader.new()
 	mat.shader.code = BG_SHADER
 	bg.material = mat
 	add_child(bg)
 	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(center)
 	var v := UIKit.vbox(center, 14)
 	v.custom_minimum_size = Vector2(520, 0)
@@ -79,7 +79,7 @@ func _ready() -> void:
 	_notice.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_notice.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var ver := UIKit.label("v%s · Satire: alle „Gadgets“ sind rein kosmetisch" % ProjectSettings.get_setting("application/config/version", "0.1.0"), 12, UITheme.MUTED, self)
-	ver.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT, Control.PRESET_MODE_MINSIZE, 14)
+	UIKit.pin(ver, Control.PRESET_BOTTOM_LEFT, 14)
 	confirm = UIConfirm.new()
 	_settings = SettingsScreen.new()
 	_leaderboard = LeaderboardScreen.new()
