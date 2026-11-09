@@ -189,6 +189,13 @@ func test_save_corruption() -> void:
 	check(Economy.aura == 0.0 and Inventory.owns(&"skin_warm"), "Standardprofil mit Startitems")
 
 
+func _all(node: Node) -> Array[Node]:
+	var out: Array[Node] = [node]
+	for c in node.get_children():
+		out.append_array(_all(c))
+	return out
+
+
 func test_scene(main: Node) -> void:
 	section("Szene")
 	var world := WorldRoot.new()
@@ -202,6 +209,34 @@ func test_scene(main: Node) -> void:
 	main.add_child(ui)
 	for i in 30:
 		await main.get_tree().physics_frame
+	# Große Map: jeder Splitter frei erreichbar (nicht in Kollisionen), jedes Teleportziel mit Boden
+	var space := world.get_world_3d().direct_space_state
+	var blocked: Array[String] = []
+	var shards := 0
+	for n in _all(world):
+		var col := n as Collectible
+		if col == null:
+			continue
+		shards += 1
+		var q := PhysicsPointQueryParameters3D.new()
+		q.position = col.global_position + Vector3(0, 0.6, 0)
+		if not space.intersect_point(q).is_empty():
+			blocked.append(String(col.collectible_id))
+	check(shards >= 50, "viele Splitter auf der großen Map (%d)" % shards)
+	check(blocked.is_empty(), "kein Splitter steckt in Geometrie %s" % [blocked])
+	var bad_targets: Array[String] = []
+	for n in _all(world):
+		var tp := n as Teleporter
+		if tp == null:
+			continue
+		var ray := PhysicsRayQueryParameters3D.create(tp.target + Vector3(0, 0.5, 0), tp.target + Vector3(0, -3, 0))
+		var hit := space.intersect_ray(ray)
+		var q2 := PhysicsPointQueryParameters3D.new()
+		q2.position = tp.target + Vector3(0, 0.9, 0)
+		if hit.is_empty() or not space.intersect_point(q2).is_empty():
+			bad_targets.append(tp.destination_name)
+	check(bad_targets.is_empty(), "alle Teleportziele haben freien Boden %s" % [bad_targets])
+	print("  Welt: %d Nodes" % _all(world).size())
 	check(player.is_on_floor(), "Spieler steht")
 	check(main.get_tree().get_nodes_in_group(&"interactables").size() > 30, "Interaktionen vorhanden")
 	for key: StringName in ui.screens:

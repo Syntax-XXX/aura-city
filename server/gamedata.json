@@ -55,9 +55,9 @@
 			"stat": "tricks"
 		},
 		"globetrotter": {
-			"goal": 5,
+			"goal": 9,
 			"name": "Globetrotter",
-			"reward": 3000,
+			"reward": 6000,
 			"stat": "districts"
 		},
 		"godlike_rank": {
@@ -130,6 +130,18 @@
 			"reward": 25000,
 			"seconds": 45
 		},
+		"Container-Combo": {
+			"goal": 7,
+			"kind": "combo",
+			"reward": 6000,
+			"seconds": 40
+		},
+		"Elite-Präzision": {
+			"goal": 12,
+			"kind": "perfects",
+			"reward": 65000,
+			"seconds": 70
+		},
 		"Elite-Score": {
 			"goal": 20000,
 			"kind": "score",
@@ -141,6 +153,18 @@
 			"kind": "perfects",
 			"reward": 300,
 			"seconds": 40
+		},
+		"Graffiti-Run": {
+			"goal": 12000,
+			"kind": "score",
+			"reward": 12000,
+			"seconds": 55
+		},
+		"Hafen-Highscore": {
+			"goal": 8000,
+			"kind": "score",
+			"reward": 7000,
+			"seconds": 50
 		},
 		"Highscore-Run": {
 			"goal": 1500,
@@ -160,6 +184,12 @@
 			"reward": 4000,
 			"seconds": 45
 		},
+		"Möwen-Präzision": {
+			"goal": 7,
+			"kind": "perfects",
+			"reward": 6500,
+			"seconds": 45
+		},
 		"Nachtschicht": {
 			"goal": 5000,
 			"kind": "score",
@@ -177,9 +207,151 @@
 			"kind": "perfects",
 			"reward": 1400,
 			"seconds": 40
+		},
+		"Schicht-Combo": {
+			"goal": 9,
+			"kind": "combo",
+			"reward": 11000,
+			"seconds": 45
+		},
+		"Skyline-Combo": {
+			"goal": 12,
+			"kind": "combo",
+			"reward": 60000,
+			"seconds": 60
+		},
+		"Stahl-Präzision": {
+			"goal": 9,
+			"kind": "perfects",
+			"reward": 12000,
+			"seconds": 55
+		},
+		"Strand-Perfekt": {
+			"goal": 8,
+			"kind": "perfects",
+			"reward": 8000,
+			"seconds": 50
+		},
+		"Sunset-Session": {
+			"goal": 8,
+			"kind": "combo",
+			"reward": 8000,
+			"seconds": 45
+		},
+		"Wellenreiter": {
+			"goal": 10000,
+			"kind": "score",
+			"reward": 9000,
+			"seconds": 55
+		},
+		"Wolkenkratzer-Score": {
+			"goal": 50000,
+			"kind": "score",
+			"reward": 70000,
+			"seconds": 70
 		}
 	},
 	"collectibles": {
+		"beach_0": {
+			"reward": 200,
+			"secret": false
+		},
+		"beach_1": {
+			"reward": 200,
+			"secret": false
+		},
+		"beach_2": {
+			"reward": 200,
+			"secret": false
+		},
+		"beach_3": {
+			"reward": 200,
+			"secret": false
+		},
+		"beach_4": {
+			"reward": 200,
+			"secret": false
+		},
+		"beach_5": {
+			"reward": 200,
+			"secret": false
+		},
+		"beach_6": {
+			"reward": 200,
+			"secret": false
+		},
+		"beach_7": {
+			"reward": 200,
+			"secret": false
+		},
+		"downtown_0": {
+			"reward": 800,
+			"secret": false
+		},
+		"downtown_1": {
+			"reward": 800,
+			"secret": false
+		},
+		"downtown_2": {
+			"reward": 800,
+			"secret": false
+		},
+		"downtown_3": {
+			"reward": 800,
+			"secret": false
+		},
+		"downtown_4": {
+			"reward": 800,
+			"secret": false
+		},
+		"downtown_5": {
+			"reward": 800,
+			"secret": false
+		},
+		"downtown_6": {
+			"reward": 800,
+			"secret": false
+		},
+		"downtown_7": {
+			"reward": 800,
+			"secret": false
+		},
+		"harbor_0": {
+			"reward": 150,
+			"secret": false
+		},
+		"harbor_1": {
+			"reward": 150,
+			"secret": false
+		},
+		"harbor_2": {
+			"reward": 150,
+			"secret": false
+		},
+		"harbor_3": {
+			"reward": 150,
+			"secret": false
+		},
+		"harbor_4": {
+			"reward": 150,
+			"secret": false
+		},
+		"harbor_5": {
+			"reward": 150,
+			"secret": false
+		},
+		"harbor_top_0": {
+			"reward": 300,
+			"secret": false
+		},
+		"harbor_top_1": {
+			"reward": 300,
+			"secret": false
+		},
+		"harbor_top_2": {
+			"reward": 300,
+			"secret": false
+		},
 		"luxury_0": {
 			"reward": 300,
 			"secret": false
@@ -224,7 +396,19 @@
 			"reward": 120,
 			"secret": false
 		},
+		"secret_beach_tower": {
+			"reward": 100,
+			"secret": true
+		},
+		"secret_harbor_tower": {
+			"reward": 100,
+			"secret": true
+		},
 		"secret_neon_alley": {
+			"reward": 100,
+			"secret": true
+		},
+		"secret_skyline_roof": {
 			"reward": 100,
 			"secret": true
 		},
@@ -237,6 +421,10 @@
 			"secret": true
 		},
 		"secret_void_3": {
+			"reward": 100,
+			"secret": true
+		},
+		"secret_yard_wall": {
 			"reward": 100,
 			"secret": true
 		},
@@ -287,6 +475,34 @@
 		"spawn_5": {
 			"reward": 40,
 			"secret": false
+		},
+		"yard_0": {
+			"reward": 400,
+			"secret": false
+		},
+		"yard_1": {
+			"reward": 400,
+			"secret": false
+		},
+		"yard_2": {
+			"reward": 400,
+			"secret": false
+		},
+		"yard_3": {
+			"reward": 400,
+			"secret": false
+		},
+		"yard_4": {
+			"reward": 400,
+			"secret": false
+		},
+		"yard_5": {
+			"reward": 400,
+			"secret": false
+		},
+		"yard_6": {
+			"reward": 400,
+			"secret": false
 		}
 	},
 	"constants": {
@@ -319,7 +535,11 @@
 		"skate",
 		"neon",
 		"luxury",
-		"secret"
+		"secret",
+		"harbor",
+		"beach",
+		"industrial",
+		"downtown"
 	],
 	"items": {
 		"acc_cap": {

@@ -2,7 +2,8 @@ class_name DistrictArea
 extends Area3D
 ## Meldet, wenn der Spieler einen Distrikt betritt.
 
-const NAMES := {&"spawn": "Spawn City", &"skate": "Skate Park", &"neon": "Neon District", &"luxury": "Luxury District", &"secret": "Secret Dimension"}
+const NAMES := {&"spawn": "Spawn City", &"skate": "Skate Park", &"neon": "Neon District", &"luxury": "Luxury District", &"secret": "Secret Dimension",
+	&"harbor": "Hafen", &"beach": "Sunset Beach", &"industrial": "Graffiti Yard", &"downtown": "Downtown Skyline"}
 
 @export var district_id: StringName = &"spawn"
 

@@ -158,7 +158,7 @@ ACHIEVEMENTS = [
     ("aura_100k", "Aura Tycoon", "Sammle 100.000 Lifetime-Aura.", "♛", "lifetime_aura", 100000, 10000, False),
     ("first_legendary", "First Legendary Item", "Besitze ein legendäres Item.", "♦", "legendary_items", 1, 5000, False),
     ("collector", "Collector", "Finde 25 Aura-Splitter.", "❖", "collectibles", 25, 2500, False),
-    ("globetrotter", "Globetrotter", "Besuche alle 5 Distrikte.", "⌂", "districts", 5, 3000, False),
+    ("globetrotter", "Globetrotter", "Besuche alle 9 Distrikte.", "⌂", "districts", 9, 6000, False),
     ("challenger", "Challenger", "Schaffe 10 Challenges.", "⚑", "challenges", 10, 2000, False),
     ("secret_explorer", "Secret Explorer", "Finde die geheime Dimension.", "◈", "secret_found", 1, 7777, True),
     ("godlike_rank", "Godlike Rank", "Erreiche den Rang Godlike.", "☀", "rank", 6, 50000, False),

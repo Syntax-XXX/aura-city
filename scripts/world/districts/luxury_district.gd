@@ -3,6 +3,8 @@ extends RefCounted
 ## LUXURY DISTRICT: Marmor, Gold, Türme, Exklusiv-Shop und High-End-Challenges.
 
 const CENTER := Vector3(0, 0, -130)
+## Ankunft per Teleporter: freie Fläche westlich des Brunnens (nicht in der Turmreihe bei z = ±27)
+const ARRIVAL := CENTER + Vector3(-30, 1, 4)
 
 
 static func build(root: Node3D) -> void:
@@ -31,4 +33,4 @@ static func build(root: Node3D) -> void:
 	for i in 4:
 		DistrictBuilder.npc(root, ["Lady Lux", "Mr. Money", "Gold Gigi", "Baron B."][i], c + Vector3(randf_range(-18, 18), 0, randf_range(-12, 12)), PackedStringArray(["Darling, ohne Legendary-Fit lass ich dich nicht rein.", "Maison Aura führt nur das Beste.", "Godlike? Davon träumen hier alle."]), 12.0)
 	DistrictBuilder.shards(root, "luxury", c, 5, 26.0, 300)
-	DistrictBuilder.teleporter(root, c + Vector3(0, 0, 30), "Spawn City", Vector3(0, 1, 26))
+	DistrictBuilder.teleporter(root, c + Vector3(-34, 0, 0), "Spawn City", Vector3(0, 1, 26))

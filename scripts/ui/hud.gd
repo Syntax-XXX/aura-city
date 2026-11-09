@@ -90,6 +90,9 @@ func _build_top_left() -> void:
 func _build_top_right() -> void:
 	var p := _panel_at(Control.PRESET_TOP_RIGHT)
 	var v := UIKit.vbox(p, 2)
+	var minimap := Minimap.new()
+	minimap.player = player
+	v.add_child(minimap)
 	_clock = UIKit.label("", 20, Color.WHITE, v)
 	_clock.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_district = UIKit.label("Spawn City", 14, UITheme.CYAN, v)

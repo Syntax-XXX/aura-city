@@ -3,7 +3,7 @@ extends RefCounted
 ## SECRET DIMENSION: schwebende Plattformen im Nichts, geheime Splitter, geheimer Shop.
 ## Nur über versteckte Portale erreichbar (hinter dem Brunnen, Gasse im Neon District).
 
-const CENTER := Vector3(0, 0, 420)
+const CENTER := Vector3(0, 0, 1400) # weit außerhalb der Stadt
 
 
 static func build(root: Node3D) -> void:

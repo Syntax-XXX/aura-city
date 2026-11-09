@@ -6,9 +6,9 @@
 script = ExtResource("1_s")
 id = &"globetrotter"
 display_name = "Globetrotter"
-description = "Besuche alle 5 Distrikte."
+description = "Besuche alle 9 Distrikte."
 icon_glyph = "⌂"
 stat = &"districts"
-goal = 5
-reward_aura = 3000
+goal = 9
+reward_aura = 6000
 secret = false

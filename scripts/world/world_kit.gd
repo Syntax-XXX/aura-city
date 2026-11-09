@@ -3,6 +3,8 @@ extends RefCounted
 ## Bausteine für die prozedurale Stadt: Boden, Kisten, Gebäude, Rampen, Laternen, Schilder, Bäume.
 
 static var _mat_cache := {}
+static var _building_cache := {} # gleiche Fassaden teilen sich Textur + Material (große Map!)
+static var _invisible := StandardMaterial3D.new()
 
 
 static func mat(c: Color, rough := 0.85, metal := 0.0, glow := 0.0) -> StandardMaterial3D:
@@ -75,16 +77,20 @@ static func _window_texture(base: Color, lit: Color, dark: Color) -> ImageTextur
 ## Gebäude mit Fensterraster und Dach. neon = leuchtende Fenster (Nacht-Distrikt).
 static func building(parent: Node3D, pos: Vector3, size: Vector3, base: Color, neon := Color.TRANSPARENT) -> void:
 	var lit := neon if neon.a > 0.0 else Color("fde68a")
-	var m := StandardMaterial3D.new()
-	m.albedo_texture = _window_texture(base, lit, base.darkened(0.5))
-	m.uv1_scale = Vector3(maxf(1.0, roundf(size.x / 4.0)), maxf(1.0, roundf(size.y / 8.0)), 1)
-	m.roughness = 0.8
-	if neon.a > 0.0:
-		m.emission_enabled = true
-		m.emission_texture = m.albedo_texture
-		m.emission = Color(0.6, 0.6, 0.6)
-		m.emission_energy_multiplier = 0.9
-	box(parent, size, pos + Vector3(0, size.y / 2, 0), m)
+	var uv := Vector3(maxf(1.0, roundf(size.x / 4.0)), maxf(1.0, roundf(size.y / 8.0)), 1)
+	var key := "%s|%s|%s|%d" % [base.to_html(), lit.to_html(), uv, randi() % 3]
+	if not _building_cache.has(key):
+		var m := StandardMaterial3D.new()
+		m.albedo_texture = _window_texture(base, lit, base.darkened(0.5))
+		m.uv1_scale = uv
+		m.roughness = 0.8
+		if neon.a > 0.0:
+			m.emission_enabled = true
+			m.emission_texture = m.albedo_texture
+			m.emission = Color(0.6, 0.6, 0.6)
+			m.emission_energy_multiplier = 0.9
+		_building_cache[key] = m
+	box(parent, size, pos + Vector3(0, size.y / 2, 0), _building_cache[key])
 	box(parent, Vector3(size.x + 0.4, 0.4, size.z + 0.4), pos + Vector3(0, size.y + 0.2, 0), mat(base.darkened(0.4)), false)
 	if neon.a > 0.0:
 		box(parent, Vector3(size.x + 0.1, 0.25, 0.25), pos + Vector3(0, size.y * 0.6, size.z / 2 + 0.15), mat(neon, 0.3, 0.0, 3.0), false)
@@ -100,6 +106,9 @@ static func street_light(parent: Node3D, pos: Vector3, color := Color("fff1c4"))
 	light.light_color = color
 	light.light_energy = 0.0
 	light.shadow_enabled = false
+	light.distance_fade_enabled = true # ferne Laternen kosten nichts
+	light.distance_fade_begin = 70.0
+	light.distance_fade_length = 20.0
 	light.add_to_group(&"street_lights")
 	parent.add_child(light)
 
@@ -162,3 +171,45 @@ static func district_area(parent: Node3D, district_id: StringName, center: Vecto
 	col.shape = shape
 	area.add_child(col)
 	parent.add_child(area)
+
+
+## Unsichtbare Wand (Kollision ohne Mesh).
+static func invisible_wall(parent: Node3D, size: Vector3, pos: Vector3) -> void:
+	box(parent, size, pos, _invisible, true).get_child(1).queue_free()
+
+
+## Wendeltreppe aus Blöcken um `center`; liefert die Oberkante der letzten Stufe.
+static func spiral_stairs(parent: Node3D, center: Vector3, steps: int, step_h: float, radius: float, material: Material, start_angle := 0.0) -> Vector3:
+	var top := center
+	for i in steps:
+		var a := start_angle + i * 0.62
+		var h := step_h * (i + 1)
+		var p := center + Vector3(cos(a) * radius, h / 2.0, sin(a) * radius)
+		box(parent, Vector3(2.4, h, 2.4), p, material)
+		top = Vector3(p.x, h, p.z)
+	return top
+
+
+## Palme: schräger Stamm + flache Blätter.
+static func palm(parent: Node3D, pos: Vector3, scale := 1.0) -> void:
+	var lean := randf_range(-0.18, 0.18)
+	box(parent, Vector3(0.45, 6.0, 0.45) * scale, pos + Vector3(0, 3.0 * scale, 0), mat(Color("8b5a2b")), true, Vector3(lean, 0, lean))
+	var top := pos + Vector3(lean * 3.0 * scale, 6.0 * scale, -lean * 3.0 * scale)
+	for i in 6:
+		var a := i * TAU / 6.0
+		box(parent, Vector3(3.2, 0.12, 0.8) * scale, top + Vector3(cos(a), -0.3, sin(a)) * 1.4 * scale, mat(Color("15803d")), false, Vector3(0, -a, 0.35))
+
+
+## Einfaches Haus mit Satteldach (Vororte zwischen den Distrikten).
+static func house(parent: Node3D, pos: Vector3, yaw: float) -> void:
+	var h := Node3D.new()
+	h.position = pos
+	h.rotation.y = yaw
+	parent.add_child(h)
+	var walls := [Color("f5f5f4"), Color("fde68a"), Color("bfdbfe"), Color("fecaca"), Color("d9f99d")]
+	var size := Vector3(randf_range(7, 10), 4.0, randf_range(6, 8))
+	box(h, size, Vector3(0, size.y / 2, 0), mat(walls[randi() % walls.size()]))
+	var roof := mat(Color("7f1d1d") if randf() < 0.5 else Color("334155"))
+	for side: float in [-1.0, 1.0]:
+		box(h, Vector3(size.x + 0.6, 0.3, size.z * 0.62), Vector3(0, size.y + 1.0, side * size.z * 0.25), roof, false, Vector3(-side * 0.6, 0, 0))
+	box(h, Vector3(1.2, 2.2, 0.1), Vector3(0, 1.1, size.z / 2 + 0.05), mat(Color("78350f")), false)
