@@ -49,6 +49,26 @@ func run(main: Node, url: String) -> int:
 	check(is_equal_approx(Economy.aura, preview["sum"]), "Client-Vorschau == Server (%s vs %s)" % [preview["sum"], Economy.aura])
 	check(Achievements.is_unlocked(&"first_trick"), "Erfolg vom Server übernommen")
 	check(TrickDB.mastery_hits.get(&"basic_spin", 0) == 1, "Meisterschaft vom Server")
+	# Aura-Drink: Server zieht ab und rechnet den Boost selbst ein
+	var before_drink := Economy.aura
+	check(Economy.drink("sigma_sprudel") == "", "Drink gekauft")
+	await Net.wait_flushed(5.0)
+	check(is_equal_approx(Economy.aura, before_drink - 600.0), "Server hat Drink-Preis abgezogen (%s)" % Economy.aura)
+	check(Economy.boost("aura") > 1.0, "Boost aktiv (Serverzeit)")
+	var p2 := {"sum": 0.0}
+	var on_reward2 := func(amount: float, _r: String, _p: Vector3) -> void: p2["sum"] += amount
+	Events.aura_rewarded.connect(on_reward2)
+	var base2 := Economy.aura
+	while ts.is_busy() or ts.cooldown_left(&"side_twist") > 0.0:
+		await tree.process_frame
+	ts.start_trick(&"side_twist")
+	ts.needle = 0.5
+	ts.land()
+	await tree.create_timer(1.0).timeout
+	ts.phase = TrickSystem.Phase.READY
+	await Net.wait_flushed(5.0)
+	Events.aura_rewarded.disconnect(on_reward2)
+	check(is_equal_approx(Economy.aura - base2, p2["sum"]), "Boost: Vorschau == Server (%s vs %s)" % [p2["sum"], Economy.aura - base2])
 	var real := Economy.aura
 	# „Cheat Engine“: Aura im Speicher hochsetzen und teuer einkaufen
 	Economy.aura = 99999999.0

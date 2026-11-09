@@ -8,6 +8,7 @@ const STEPS := [
 	["Dein erster Trick", "Drück 1 und dann F (oder Linksklick), wenn die Nadel im leuchtenden Bereich ist."],
 	["Combo!", "Lande zwei Tricks kurz hintereinander – das ergibt einen Aura-Multiplikator."],
 	["Shopping", "Öffne den Shop mit B. Neue Items gibt es auch in den Bezirks-Shops."],
+	["Hoverboard", "Drück Q: Mit dem Board bist du auf der riesigen Map viel schneller. Shift = Boost."],
 ]
 
 var player: PlayerController
@@ -55,6 +56,11 @@ func _on_trick(_id: StringName, _q: StringName, _a: float, _c: int) -> void:
 
 func _on_combo(combo: int, _m: float) -> void:
 	if _step == 3 and combo >= 2:
+		advance()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if _step == 5 and event.is_action_pressed("hoverboard"):
 		advance()
 
 

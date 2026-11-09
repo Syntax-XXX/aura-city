@@ -29,6 +29,9 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_time += delta
+	if secret and SaveSystem.found_secrets.has(collectible_id):
+		queue_free()
+		return
 	if _hidden_left > 0.0:
 		_hidden_left -= delta
 		_mesh.visible = _hidden_left <= 0.0

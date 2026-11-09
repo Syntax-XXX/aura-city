@@ -15,7 +15,8 @@ void fragment() {
 	vec2 g = fract(vec2(uv.x * 28.0, uv.y * 14.0 + TIME * 0.4));
 	float line = step(0.965, g.x) + step(0.94, g.y);
 	col += vec3(0.6, 0.3, 1.0) * line * 0.07 * uv.y;
-	COLOR = vec4(col, 1.0);
+	// über der echten Stadt: links dunkler (Lesbarkeit), rechts durchsichtig
+	COLOR = vec4(col, mix(0.85, 0.15, smoothstep(0.25, 0.8, uv.x)));
 }
 """
 
@@ -43,6 +44,7 @@ func _ready() -> void:
 	add_child(bg)
 	var center := CenterContainer.new()
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	center.anchor_right = 0.5 # Menü links, rechts sieht man die Stadt
 	add_child(center)
 	var v := UIKit.vbox(center, 14)
 	v.custom_minimum_size = Vector2(520, 0)

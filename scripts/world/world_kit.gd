@@ -7,6 +7,8 @@ static var _building_cache := {} # gleiche Fassaden teilen sich Textur + Materia
 static var _invisible := StandardMaterial3D.new()
 static var _surface_cache := {}
 static var _nature_cache := {}
+static var _prop_cache := {} # Modell -> [PackedScene, Maßstab, Bodenversatz]
+const CAR_TEXTURES := {"BasicCar": "CarTexture", "CopCar": "CopTexture", "Taxi": "TaxiTexture", "RaceCar": "RaceCarTexture", "SimpleCarShort": "CarTexture"}
 
 ## PBR-Oberflächen (Poly Haven, CC0): Texturname, Kachelgröße in Metern
 const SURFACES := {
@@ -65,6 +67,53 @@ static func nature(parent: Node3D, model_id: String, pos: Vector3, scale := 1.0,
 	return n
 
 
+## Begrenzungsbox aller Meshes relativ zur Modellwurzel.
+static func local_aabb(root: Node3D) -> AABB:
+	var out := AABB()
+	var first := true
+	for m in root.find_children("*", "MeshInstance3D", true, false):
+		var mi := m as MeshInstance3D
+		var t := Transform3D.IDENTITY
+		var n: Node = mi
+		while n != root:
+			t = (n as Node3D).transform * t
+			n = n.get_parent()
+		var a := t * mi.get_aabb()
+		out = a if first else out.merge(a)
+		first = false
+	return out
+
+
+## Quaternius-Prop (assets/props) auf Zielgröße (längste Seite in Metern) skaliert und auf den Boden gestellt.
+static func prop(parent: Node3D, model_id: String, pos: Vector3, yaw := 0.0, size := 1.0) -> Node3D:
+	if not _prop_cache.has(model_id):
+		var scene: PackedScene = load("res://assets/props/%s.fbx" % model_id)
+		var probe: Node3D = scene.instantiate()
+		var a := local_aabb(probe)
+		probe.free()
+		var longest := maxf(a.size.x, maxf(a.size.y, a.size.z))
+		if longest < 0.0001:
+			longest = 1.0 # Headless-Dummy-Renderer liefert leere Boxen
+		var mat: StandardMaterial3D = null
+		if CAR_TEXTURES.has(model_id):
+			mat = StandardMaterial3D.new()
+			mat.albedo_texture = load("res://assets/props/%s.png" % CAR_TEXTURES[model_id])
+			mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+			mat.roughness = 0.35
+			mat.metallic = 0.2
+		_prop_cache[model_id] = [scene, 1.0 / longest, -a.position.y / longest, mat]
+	var c: Array = _prop_cache[model_id]
+	var n: Node3D = (c[0] as PackedScene).instantiate()
+	n.scale = Vector3.ONE * float(c[1]) * size
+	n.position = pos + Vector3(0, float(c[2]) * size, 0)
+	n.rotation.y = yaw
+	if c[3]:
+		for m in n.find_children("*", "MeshInstance3D", true, false):
+			(m as MeshInstance3D).material_override = c[3]
+	parent.add_child(n)
+	return n
+
+
 ## Box mit optionaler Kollision. rot = Euler-Winkel.
 static func box(parent: Node3D, size: Vector3, pos: Vector3, material: Material, collide := true, rot := Vector3.ZERO) -> Node3D:
 	var mesh := BoxMesh.new()
@@ -116,11 +165,26 @@ static func cylinder(parent: Node3D, radius: float, height: float, pos: Vector3,
 
 
 static func _window_texture(base: Color, lit: Color, dark: Color) -> ImageTexture:
-	var img := Image.create(64, 128, false, Image.FORMAT_RGB8)
+	# Eine Kachel = ein Geschoss-Block (4 m breit, 8 m hoch → 2 Etagen), 128×256 px
+	var img := Image.create(128, 256, false, Image.FORMAT_RGB8)
 	img.fill(base)
-	for y in range(8, 120, 16):
-		for x in range(6, 58, 14):
-			img.fill_rect(Rect2i(x, y, 8, 10), lit if randf() < 0.4 else dark)
+	var band := base.darkened(0.18)
+	var frame := base.lightened(0.12)
+	for floor_i in 2:
+		var y0 := floor_i * 128
+		img.fill_rect(Rect2i(0, y0, 128, 10), band) # Geschossband
+		for wx in 2:
+			var x := 14 + wx * 58
+			var y := y0 + 30
+			var on := randf() < 0.42
+			var glass := lit.lerp(Color.WHITE, randf() * 0.2) if on else dark.lerp(Color("1e293b"), 0.4)
+			img.fill_rect(Rect2i(x - 3, y - 3, 46, 76), frame) # Rahmen
+			img.fill_rect(Rect2i(x, y, 40, 70), glass)
+			img.fill_rect(Rect2i(x + 19, y, 2, 70), frame) # Sprosse
+			img.fill_rect(Rect2i(x, y + 34, 40, 2), frame)
+			if on and randf() < 0.5:
+				img.fill_rect(Rect2i(x, y, 40, 18), glass.darkened(0.25)) # Jalousie
+			img.fill_rect(Rect2i(x - 5, y + 72, 50, 5), band.darkened(0.1)) # Fensterbank
 	img.generate_mipmaps()
 	return ImageTexture.create_from_image(img)
 
@@ -128,7 +192,7 @@ static func _window_texture(base: Color, lit: Color, dark: Color) -> ImageTextur
 ## Gebäude mit Fensterraster und Dach. neon = leuchtende Fenster (Nacht-Distrikt).
 static func building(parent: Node3D, pos: Vector3, size: Vector3, base: Color, neon := Color.TRANSPARENT) -> void:
 	var lit := neon if neon.a > 0.0 else Color("fde68a")
-	var uv := Vector3(maxf(1.0, roundf(size.x / 4.0)), maxf(1.0, roundf(size.y / 8.0)), 1)
+	var uv := Vector3(maxf(1.0, roundf(size.x / 6.0)), maxf(1.0, roundf(size.y / 8.0)), 1)
 	var key := "%s|%s|%s|%d" % [base.to_html(), lit.to_html(), uv, randi() % 3]
 	if not _building_cache.has(key):
 		var m := StandardMaterial3D.new()
@@ -143,17 +207,28 @@ static func building(parent: Node3D, pos: Vector3, size: Vector3, base: Color, n
 		_building_cache[key] = m
 	box(parent, size, pos + Vector3(0, size.y / 2, 0), _building_cache[key])
 	box(parent, Vector3(size.x + 0.4, 0.4, size.z + 0.4), pos + Vector3(0, size.y + 0.2, 0), mat(base.darkened(0.4)), false)
+	# Sockel (dunkler, wirkt wie Umgebungsverdeckung am Boden)
+	box(parent, Vector3(size.x + 0.15, 1.2, size.z + 0.15), pos + Vector3(0, 0.6, 0), mat(base.darkened(0.45), 0.9), false)
+	# Dachaufbauten: Klimageräte, Aufzugshaus, Antenne
+	var roof := pos + Vector3(0, size.y + 0.4, 0)
+	box(parent, Vector3(size.x * 0.3, 2.2, size.z * 0.3), roof + Vector3(size.x * 0.15, 1.1, -size.z * 0.12), mat(base.darkened(0.3)), false)
+	for i in 2:
+		box(parent, Vector3(1.4, 0.9, 1.0), roof + Vector3(-size.x * 0.25 + i * 1.8, 0.45, size.z * 0.2), mat(Color("94a3b8"), 0.5, 0.6), false)
+	if size.y > 30.0:
+		cylinder(parent, 0.08, 6.0, roof + Vector3(-size.x * 0.2, 3.0, -size.z * 0.2), mat(Color("cbd5e1"), 0.3, 0.8), false)
+		cylinder(parent, 0.18, 0.18, roof + Vector3(-size.x * 0.2, 6.0, -size.z * 0.2), mat(Color("ef4444"), 0.3, 0.0, 3.0), false)
 	if neon.a > 0.0:
 		box(parent, Vector3(size.x + 0.1, 0.25, 0.25), pos + Vector3(0, size.y * 0.6, size.z / 2 + 0.15), mat(neon, 0.3, 0.0, 3.0), false)
 
 
 static func street_light(parent: Node3D, pos: Vector3, color := Color("fff1c4")) -> void:
-	cylinder(parent, 0.09, 4.5, pos + Vector3(0, 2.25, 0), mat(Color("1f2937"), 0.4, 0.6))
-	var bulb := cylinder(parent, 0.3, 0.2, pos + Vector3(0, 4.55, 0), mat(color, 0.3, 0.0, 2.5), false)
+	prop(parent, "Streetlight_Single", pos, randf() * 0.0, 5.2)
+	invisible_wall(parent, Vector3(0.3, 4.0, 0.3), pos + Vector3(0, 2.0, 0))
+	var bulb := cylinder(parent, 0.22, 0.12, pos + Vector3(0, 5.0, 0), mat(color, 0.3, 0.0, 2.5), false)
 	bulb.add_to_group(&"street_light_bulbs")
 	var light := OmniLight3D.new()
-	light.position = pos + Vector3(0, 4.2, 0)
-	light.omni_range = 9.0
+	light.position = pos + Vector3(0, 4.6, 0)
+	light.omni_range = 11.0
 	light.light_color = color
 	light.light_energy = 0.0
 	light.shadow_enabled = false
@@ -162,6 +237,15 @@ static func street_light(parent: Node3D, pos: Vector3, color := Color("fff1c4"))
 	light.distance_fade_length = 20.0
 	light.add_to_group(&"street_lights")
 	parent.add_child(light)
+
+
+## Geparktes Auto (statisch, mit Kollision).
+static func parked_car(parent: Node3D, pos: Vector3, yaw: float) -> void:
+	var models := ["BasicCar", "Taxi", "SimpleCarShort", "BasicCar", "RaceCar", "CopCar"]
+	prop(parent, models[randi() % models.size()], pos, yaw, 4.3)
+	var body := box(parent, Vector3(1.9, 1.5, 4.1), pos + Vector3(0, 0.75, 0), _invisible, true)
+	body.rotation.y = yaw
+	body.get_child(1).queue_free()
 
 
 static func tree(parent: Node3D, pos: Vector3, scale := 1.0) -> void:

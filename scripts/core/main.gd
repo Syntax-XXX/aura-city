@@ -8,6 +8,8 @@ var player: PlayerController
 var ui: UIRoot
 var menu: MainMenu
 var loading: LoadingScreen
+var menu_camera: Camera3D
+var _orbit := 0.0
 
 
 func _ready() -> void:
@@ -42,6 +44,17 @@ func _ready() -> void:
 	menu.play_pressed.connect(start_game)
 	loading = LoadingScreen.new()
 	theme_root.add_child(loading)
+	# Stadt einmal bauen: Hintergrund des Hauptmenüs und Spielwelt zugleich
+	menu.visible = false
+	loading.visible = true
+	loading.set_progress(0.2, "Baue die Stadt …")
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_build_world()
+	loading.set_progress(1.0, "Fertig")
+	await get_tree().process_frame
+	loading.visible = false
+	menu.visible = true
 	var si := args.find("--shot")
 	if si >= 0:
 		await ShotTour.run(self, args[si + 1])
@@ -53,16 +66,30 @@ func _ready() -> void:
 		get_tree().quit()
 
 
+func _build_world() -> void:
+	world = WorldRoot.new()
+	add_child(world)
+	menu_camera = Camera3D.new()
+	menu_camera.far = 900.0
+	menu_camera.fov = 60.0
+	world.add_child(menu_camera)
+	menu_camera.current = true
+
+
+## Langsame Kamerafahrt über die Stadt hinter dem Hauptmenü.
+func _process(delta: float) -> void:
+	if menu_camera and menu_camera.current and is_instance_valid(menu_camera):
+		_orbit += delta * 0.05
+		menu_camera.position = Vector3(cos(_orbit) * 75.0, 28.0 + sin(_orbit * 0.7) * 6.0, sin(_orbit) * 75.0)
+		menu_camera.look_at(Vector3(0, 6, 0))
+
+
 func start_game() -> void:
 	menu.visible = false
 	loading.visible = true
-	loading.set_progress(0.1, "Lade Spielstand …")
+	loading.set_progress(0.3, "Lade Spielstand …")
 	await get_tree().process_frame
-	loading.set_progress(0.3, "Baue die Stadt …")
-	await get_tree().process_frame
-	world = WorldRoot.new()
-	add_child(world)
-	loading.set_progress(0.8, "Spawne Spieler …")
+	loading.set_progress(0.7, "Spawne Spieler …")
 	await get_tree().process_frame
 	player = PlayerController.new()
 	world.add_child(player)
@@ -97,10 +124,10 @@ func back_to_menu() -> void:
 		SaveSystem.load_game() # Menü zeigt wieder das lokale Profil
 	Audio.stop_world_audio()
 	ui.queue_free()
-	world.queue_free()
+	player.queue_free()
 	ui = null
-	world = null
 	player = null
+	menu_camera.current = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	menu.visible = true
 	menu.refresh()

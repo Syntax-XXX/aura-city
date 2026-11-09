@@ -185,7 +185,10 @@ func _build_suburbs() -> void:
 				continue
 			var roll := rng.randf()
 			if roll < 0.3:
-				WorldKit.house(self, p, rng.randi_range(0, 3) * PI / 2.0)
+				var house_yaw := rng.randi_range(0, 3) * PI / 2.0
+				WorldKit.house(self, p, house_yaw)
+				if rng.randf() < 0.35:
+					WorldKit.parked_car(self, p + Vector3(cos(house_yaw), 0, -sin(house_yaw)) * 7.5, house_yaw + PI / 2.0)
 				WorldKit.bush(self, p + Vector3(rng.randf_range(-7, 7), 0, 6.5), rng.randf_range(0.8, 1.3))
 			elif roll < 0.72:
 				WorldKit.tree(self, p, rng.randf_range(0.9, 1.4))
@@ -196,6 +199,13 @@ func _build_suburbs() -> void:
 				WorldKit.rock(self, p, rng.randf_range(0.8, 1.6))
 				WorldKit.bush(self, p + Vector3(2.5, 0, 1.0), 1.0)
 	_spawn_pedestrians()
+	# Verkehr auf der Ringstraße (zwei Fahrspuren, gegenläufig)
+	var traffic := Traffic.new()
+	add_child(traffic)
+	var inner := 197.8
+	var outer := 202.2
+	traffic.add_loop(PackedVector3Array([Vector3(-inner, 0, -inner), Vector3(inner, 0, -inner), Vector3(inner, 0, inner), Vector3(-inner, 0, inner)]), 7, 11.0)
+	traffic.add_loop(PackedVector3Array([Vector3(-outer, 0, outer), Vector3(outer, 0, outer), Vector3(outer, 0, -outer), Vector3(-outer, 0, -outer)]), 7, 11.0)
 	randomize()
 
 

@@ -48,6 +48,10 @@ func _ready() -> void:
 	_build_timing()
 	_build_slots()
 	_build_center_texts()
+	var legend := UIKit.label("[Q] Hoverboard   [N] Aura-Kiosk   [B] Shop   [K] Trickbuch   [P] Foto-Modus   [Esc] Menü", 12, Color(1, 1, 1, 0.55), self)
+	legend.add_theme_constant_override("outline_size", 4)
+	legend.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
+	UIKit.pin(legend, Control.PRESET_BOTTOM_LEFT, 12)
 	_shown_aura = Economy.aura
 	Events.combo_changed.connect(_on_combo)
 	Events.combo_ended.connect(_on_combo_end)
