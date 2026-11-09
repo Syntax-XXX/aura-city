@@ -195,7 +195,10 @@ test('Aura-Drink: Rang + Preis geprüft, Boost wirkt serverseitig', () => {
   assert.match(ev(10, { type: 'drink', id: hid }).error, /Rang/);
   p.aura = d.price;
   assert.ok(ev(20, { type: 'drink', id }).ok);
-  assert.equal(p.aura, 0);
+  // Preis abgezogen; Erfolg „Erfrischt“ (300) wird schon mit Boost gutgeschrieben
+  assert.equal(p.aura, Math.round(data.achievements.first_drink.reward * d.aura));
+  assert.ok(p.ach.unlocked.first_drink);
+  p.aura = 0;
   const t = data.tricks.basic_spin;
   const r = ev(1000, { type: 'trick', id: 'basic_spin', quality: 'good' });
   assert.equal(r.aura, Math.round(Math.round(t.base_aura * (1 + t.difficulty * 0.08)) * d.aura));
