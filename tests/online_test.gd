@@ -51,9 +51,14 @@ func run(main: Node, url: String) -> int:
 	check(TrickDB.mastery_hits.get(&"basic_spin", 0) == 1, "Meisterschaft vom Server")
 	# Aura-Drink: Server zieht ab und rechnet den Boost selbst ein
 	var before_drink := Economy.aura
+	var p1 := {"sum": 0.0}
+	var on_drink_reward := func(amount: float, _r: String, _p: Vector3) -> void: p1["sum"] += amount
+	Events.aura_rewarded.connect(on_drink_reward)
 	check(Economy.drink("sigma_sprudel") == "", "Drink gekauft")
 	await Net.wait_flushed(5.0)
-	check(is_equal_approx(Economy.aura, before_drink - 600.0), "Server hat Drink-Preis abgezogen (%s)" % Economy.aura)
+	Events.aura_rewarded.disconnect(on_drink_reward)
+	# Preis ab, Erfolg „Erfrischt“ (mit Boost) drauf – identisch zur Client-Vorschau
+	check(is_equal_approx(Economy.aura, before_drink - 600.0 + p1["sum"]), "Server: Drink-Preis ab + Erfolg (%s, Vorschau +%s)" % [Economy.aura, p1["sum"]])
 	check(Economy.boost("aura") > 1.0, "Boost aktiv (Serverzeit)")
 	var p2 := {"sum": 0.0}
 	var on_reward2 := func(amount: float, _r: String, _p: Vector3) -> void: p2["sum"] += amount
