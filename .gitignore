@@ -2,3 +2,5 @@
 *.import
 export/
 build/
+server/data/
+node_modules/
