@@ -73,6 +73,7 @@ func apply() -> void:
 	sky_material.set_shader_parameter("night", clampf(1.0 - d * 2.2, 0.0, 1.0))
 	sky_material.set_shader_parameter("sunset", sunset)
 	sky_material.set_shader_parameter("cloud_offset", _cloud)
+	sky_material.set_shader_parameter("sun_dir", sun.global_transform.basis.z if sun.is_inside_tree() else Vector3(0, 0.5, 0.8))
 	environment.ambient_light_color = s[4]
 	environment.ambient_light_energy = lerpf(0.55, 0.7, d)
 	environment.fog_light_color = s[5]
@@ -80,7 +81,7 @@ func apply() -> void:
 	if want_lights != _lights_on:
 		_lights_on = want_lights
 		for l in get_tree().get_nodes_in_group(&"street_lights"):
-			(l as OmniLight3D).light_energy = 2.2 if want_lights else 0.0
+			(l as OmniLight3D).visible = want_lights
 
 
 func clock_text() -> String:

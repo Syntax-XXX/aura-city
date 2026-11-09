@@ -6,6 +6,18 @@
 			"reward": 10000,
 			"stat": "lifetime_aura"
 		},
+		"battle_legend": {
+			"goal": 20,
+			"name": "Battle-Legende",
+			"reward": 15000,
+			"stat": "battles"
+		},
+		"battle_winner": {
+			"goal": 3,
+			"name": "Herausforderer",
+			"reward": 3000,
+			"stat": "battles"
+		},
 		"beyond_reality": {
 			"goal": 7,
 			"name": "Beyond Reality",
@@ -41,6 +53,12 @@
 			"name": "First 1,000 Aura",
 			"reward": 200,
 			"stat": "lifetime_aura"
+		},
+		"first_drink": {
+			"goal": 1,
+			"name": "Erfrischt",
+			"reward": 300,
+			"stat": "drinks"
 		},
 		"first_legendary": {
 			"goal": 1,

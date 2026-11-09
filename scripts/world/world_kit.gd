@@ -53,6 +53,17 @@ static func surface(kind: StringName, tint := Color.WHITE, rough := 1.0) -> Stan
 	return m
 
 
+static var _water: ShaderMaterial
+
+
+## Animiertes Wasser (Shader, nur Normalen → billig).
+static func water() -> ShaderMaterial:
+	if _water == null:
+		_water = ShaderMaterial.new()
+		_water.shader = preload("res://assets/shaders/water.gdshader")
+	return _water
+
+
 ## Modell aus dem Stylized Nature MegaKit platzieren (optional mit Stamm-Kollision).
 static func nature(parent: Node3D, model_id: String, pos: Vector3, scale := 1.0, trunk_radius := 0.0) -> Node3D:
 	if not _nature_cache.has(model_id):
@@ -230,7 +241,8 @@ static func street_light(parent: Node3D, pos: Vector3, color := Color("fff1c4"))
 	light.position = pos + Vector3(0, 4.6, 0)
 	light.omni_range = 11.0
 	light.light_color = color
-	light.light_energy = 0.0
+	light.light_energy = 2.2
+	light.visible = false # aus = unsichtbar (auch ausgeschaltete Lichter kosten sonst Render-Passes)
 	light.shadow_enabled = false
 	light.distance_fade_enabled = true # ferne Laternen kosten nichts
 	light.distance_fade_begin = 70.0

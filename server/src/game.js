@@ -311,6 +311,7 @@ const HANDLERS = {
     if (progress < def.goal) return this.violation(p, 'challenge_ziel', `${ev.id} ${progress}/${def.goal}`);
     this.grant(p, def.reward, ctx);
     this.inc(p, 'challenges', 1, ctx);
+    if (ev.id.startsWith('Battle:')) this.inc(p, 'battles', 1, ctx);
     this.questAdd(p, 'challenge', 1, -1, ctx);
     return { ok: true };
   },
@@ -348,6 +349,7 @@ const HANDLERS = {
     p.aura -= d.price;
     p.boost_id = ev.id;
     p.boost_until = ctx.ms + d.seconds * 1000;
+    this.inc(p, 'drinks', 1, ctx);
     return { ok: true };
   },
 

@@ -23,6 +23,15 @@ func _ready() -> void:
 		var failed_online: int = await OnlineTest.new().run(self, args[oi + 1])
 		get_tree().quit(1 if failed_online > 0 else 0)
 		return
+	var li := args.find("--lab")
+	if li >= 0:
+		await LabScene.run(self, args[li + 1])
+		get_tree().quit()
+		return
+	if "--count" in args:
+		await CountRun.run(self)
+		get_tree().quit()
+		return
 	if "--prof" in args:
 		await ProfileRun.run(self)
 		get_tree().quit()

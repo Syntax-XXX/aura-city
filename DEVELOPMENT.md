@@ -16,7 +16,10 @@ Stand: 2026-11-09 · Godot 4.3 (gl_compatibility) · GDScript · Server: Node �
 | Speichern (versioniert, atomar, Backup) | fertig |
 | Online: server-autoritative Aura, Profile, Bestenliste | fertig, End-to-End getestet |
 | Echtzeit-Multiplayer (andere Spieler sehen) | nicht umgesetzt |
-| Exporte (Windows/Linux/Android) | noch keine Presets und keine CI |
+| Figuren + Animationen (Quaternius CC0, Retarget UAL → Stadtfiguren) | fertig |
+| Grafik (PBR, Himmel, Wasser, Natur, Props, Verkehr) | fertig, nur Lab-Szene gerendert |
+| Hoverboards, Aura-Drinks, Aura-Battles, Foto-Modus, Distrikt-Musik | fertig |
+| Exporte Windows/Linux + Forgejo-CI | Presets + `.forgejo/workflows/build.yml` vorhanden |
 
 ## Architektur
 
@@ -86,8 +89,23 @@ Clients kennen ihn ohne Abstimmung, und Online gleicht der Client die Zeit mit d
   2. Dateien aus `server/` nach `/opt/stacks/aura-city-server/src` kopieren.
   3. `docker compose up -d --build`
 
+## Figuren & Animationen
+
+- Modelle: `assets/characters/models/*.fbx` (Ultimate Animated Character Pack, gleiches Skelett).
+- Animationen: `assets/characters/ual_anims.res` – erzeugt mit `godot --headless -s tools/retarget_ual.gd`
+  aus `assets/characters/source/UAL.glb`. Pro Frame wird das Welt-Rotationsdelta zur T-Pose übertragen,
+  Positionen per Vorwärtskinematik; die Füße (hängen im Quaternius-Rig am Root) werden an das Schienbein-Ende gesetzt.
+- `CharacterVisual`: Outfit → Basismodell (`BODIES`), Frisur → Spender-Haar (`HAIR_DONORS`) als Skin-Mesh am
+  eigenen Skelett, Accessoires/Schuhe/Gadget über `BoneAttachment3D` (Größen aus den Vertex-Gewichten berechnet).
+- `CharacterAnimator`: Zustände → Animationen mit Überblendung, Tricks = Animation + Drehung/Sprung/Salto.
+
 ## Performance
 
+- Effekte: feste Emitter-Pools (Wolken 6, Funken 6, Ringe 3), Partikel blenden nah an der Kamera aus
+  (kein Vollbild-Overdraw), Menge nach Effekt-Qualität. Shader-Warm-up im Ladebildschirm.
+- Ausgeschaltete Laternen sind unsichtbar (Kompatibilitäts-Renderer zahlt sonst pro Licht einen Pass).
+- NPCs/Verkehr außerhalb von 75 m bzw. 160 m pausieren Physik und Animation.
+- Himmel wird nur 4×/s aktualisiert, Radiance-Map minimal (32), keine Reflexionen.
 - Kleine Objekte werden nur bis 140 m gerendert, mittelgroße bis 320 m, Schilder bis 260 m. Der Nebel kaschiert den Übergang.
 - Laternenlichter blenden ab 70 m aus.
 - Gebäude teilen sich Fenstertexturen und Materialien über einen Cache.

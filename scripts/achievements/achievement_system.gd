@@ -18,7 +18,8 @@ func _ready() -> void:
 	Events.rank_changed.connect(func(r: int): _set_max(&"rank", r))
 	Events.item_unlocked.connect(func(_id): _set_max(&"legendary_items", Inventory.count_at_least(ItemDef.Rarity.LEGENDARY)))
 	Events.collectible_found.connect(_on_collectible)
-	Events.challenge_completed.connect(func(_n, _r): _inc(&"challenges"))
+	Events.challenge_completed.connect(_on_challenge)
+	Events.drink_used.connect(func(_id): _inc(&"drinks"))
 	Events.district_entered.connect(_on_district)
 	Events.secret_found.connect(func(_id): _set_max(&"secret_found", maxi(1, stat(&"secret_found"))))
 
@@ -27,6 +28,12 @@ func _on_trick(_id: StringName, quality: StringName, _aura: float, _combo: int) 
 	_inc(&"tricks")
 	if quality == &"perfect":
 		_inc(&"perfects")
+
+
+func _on_challenge(challenge_name: String, _reward: float) -> void:
+	_inc(&"challenges")
+	if challenge_name.begins_with("Battle:"):
+		_inc(&"battles")
 
 
 func _on_collectible(id: StringName) -> void:

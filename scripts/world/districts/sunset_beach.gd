@@ -12,7 +12,7 @@ static func build(root: Node3D) -> void:
 	DistrictBuilder.gate(root, Vector3(262, 0, 0), PI / 2, "Sunset Beach", 2)
 	WorldKit.sign_text(root, c + Vector3(-20, 12, -60), "SUNSET BEACH", Color("fb923c"), 320)
 	# Meer im Osten (nicht begehbar)
-	WorldKit.box(root, Vector3(60, 0.2, 440), c + Vector3(80, 0.07, 0), WorldKit.mat(Color("0ea5e9"), 0.05, 0.2, 0.2), false)
+	WorldKit.box(root, Vector3(60, 0.2, 440), c + Vector3(80, 0.07, 0), WorldKit.water(), false)
 	WorldKit.invisible_wall(root, Vector3(1, 12, 440), c + Vector3(51, 6, 0))
 	# Boardwalk aus Holz mit Geländer
 	var wood := WorldKit.surface(&"wood")

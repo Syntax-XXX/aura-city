@@ -17,13 +17,21 @@ const RUSH_LENGTH := 45.0
 const RUSH_MULTIPLIER := 2.0
 
 var day_night: DayNight
+var sky_dome: MeshInstance3D
 var sun: DirectionalLight3D
 var _env: Environment
 var _applied_view_quality := -1
 
 
+## Nur Umgebung + Boden (für die Lab-Szene in tests/lab_scene.gd)
+var lab_mode := false
+
+
 func _ready() -> void:
 	_build_environment()
+	if lab_mode:
+		WorldKit.ground(self, Vector2(200, 200), Vector3.ZERO, WorldKit.surface(&"grass", Color(0.85, 0.95, 0.8)), 2.0)
+		return
 	_build_base()
 	SpawnCity.build(self)
 	SkatePark.build(self)
@@ -67,15 +75,21 @@ func _on_aura_rewarded(amount: float, _reason: String, pos: Vector3) -> void:
 
 func _build_environment() -> void:
 	var sky_mat := ShaderMaterial.new()
-	sky_mat.shader = preload("res://assets/shaders/sky.gdshader")
-	var sky := Sky.new()
-	sky.sky_material = sky_mat
-	# Radiance wird nicht gebraucht (Umgebungslicht = Farbe, keine Reflexionen) → billigster Modus
-	sky.process_mode = Sky.PROCESS_MODE_QUALITY
-	sky.radiance_size = Sky.RADIANCE_SIZE_32
+	sky_mat.shader = preload("res://assets/shaders/sky_dome.gdshader")
+	var dome_mesh := SphereMesh.new()
+	dome_mesh.radius = 800.0
+	dome_mesh.height = 1600.0
+	dome_mesh.radial_segments = 32
+	dome_mesh.rings = 16
+	sky_dome = MeshInstance3D.new()
+	sky_dome.mesh = dome_mesh
+	sky_dome.material_override = sky_mat
+	sky_dome.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	sky_dome.extra_cull_margin = 16384.0
+	add_child(sky_dome)
 	var env := Environment.new()
-	env.background_mode = Environment.BG_SKY
-	env.sky = sky
+	env.background_mode = Environment.BG_COLOR
+	env.background_color = Color("0b0a1f")
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
@@ -237,12 +251,18 @@ static func _limit_view_distance(node: Node, mult := 1.0) -> void:
 	if gi and not gi is Label3D:
 		var aabb := gi.get_aabb()
 		var longest := maxf(aabb.size.x, maxf(aabb.size.y, aabb.size.z))
+		# Flaches/Kleines wirft keinen Schatten (Straßen, Linien, Deko) → spart Schatten-Draw-Calls
+		var height := aabb.size.y * (gi as Node3D).global_transform.basis.get_scale().y if gi.is_inside_tree() else aabb.size.y
+		if height < 1.2 or longest < 0.8:
+			gi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		if longest < 8.0:
 			gi.visibility_range_end = 150.0 * mult
 		elif longest < 40.0:
 			gi.visibility_range_end = 340.0 * mult
 	elif node is Label3D and not node.has_meta(&"keep_range"):
-		(node as Label3D).visibility_range_end = 260.0 * mult
+		var lbl := node as Label3D
+		lbl.visibility_range_end = (260.0 if lbl.font_size > 120 else 90.0) * mult
+		lbl.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	for c in node.get_children():
 		_limit_view_distance(c, mult)
 
@@ -259,6 +279,9 @@ func _wall(pos: Vector3, size: Vector3) -> void:
 
 
 func _process(_delta: float) -> void:
+	var cam := get_viewport().get_camera_3d()
+	if cam and sky_dome:
+		sky_dome.global_position = cam.global_position # Kuppel wandert mit
 	var left := rush_left(Net.now())
 	if left > 0.5 and Economy.event_seconds_left() <= 0.0:
 		Economy.start_event(RUSH_MULTIPLIER, left)

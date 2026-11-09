@@ -1,0 +1,123 @@
+# Aura City – CI/CD (Runner LXC 106, läuft nur wenn pve1 an ist)
+#  · jeder Push: Server-Tests, Godot-Tests, End-to-End-Test gegen echten Server,
+#                Prüfung dass server/gamedata.json zum Spiel passt, Builds Windows + Linux → NAS
+#  · Tag v*:     zusätzlich Forgejo-Release mit allen Dateien
+name: Aura City
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: "4.3"
+
+jobs:
+  tests:
+    name: Tests (Server · Spiel · End-to-End)
+    runs-on: docker
+    container:
+      image: node:22-bookworm
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Server-Tests (Regeln + Anti-Cheat)
+        run: cd server && node --test test/game.test.js
+
+      - name: Godot (headless) holen
+        run: |
+          command -v unzip >/dev/null || (apt-get update -qq && apt-get install -y -qq unzip >/dev/null)
+          base="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable"
+          file="Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          cd /tmp
+          curl -fsSL -o "$file" "$base/$file"
+          curl -fsSL -o SHA512-SUMS.txt "$base/SHA512-SUMS.txt"
+          grep " $file\$" SHA512-SUMS.txt | sha512sum -c -
+          unzip -q "$file" -d /tmp/godot
+          mv /tmp/godot/Godot_v*_linux.x86_64 /usr/local/bin/godot
+
+      - name: Import + Spiel-Tests
+        run: |
+          timeout 900 godot --headless --import >/dev/null 2>&1 || true
+          timeout 600 godot --headless -- --tests 2>&1 | grep -vE "mesh_get_surface|Parameter \"m\" is null|surface_get_arrays" | tee /tmp/tests.log
+          grep -q "0 fehlgeschlagen" /tmp/tests.log
+
+      - name: Server-Daten passen zum Spiel
+        run: |
+          timeout 300 godot --headless -- --export-data /tmp/gamedata.json >/dev/null 2>&1
+          python3 -c "import json,sys;a=json.load(open('/tmp/gamedata.json'));b=json.load(open('server/gamedata.json'));sys.exit(0 if a==b else 'server/gamedata.json ist veraltet – neu exportieren')"
+
+      - name: End-to-End gegen echten Server
+        run: |
+          (cd server && PORT=18090 DATA_DIR=/tmp/acs node server.js > /tmp/server.log 2>&1 &)
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:18090/api/health >/dev/null && break; sleep 1; done
+          timeout 400 godot --headless -- --online-test http://127.0.0.1:18090 2>&1 | grep -E "✓|✗|Ergebnis" | tee /tmp/e2e.log
+          grep -q "0 fehlgeschlagen" /tmp/e2e.log
+
+  builds:
+    name: Builds (Windows · Linux)
+    runs-on: docker
+    needs: tests
+    container:
+      image: barichello/godot-ci:4.3
+    timeout-minutes: 45
+    steps:
+      - name: Code holen
+        run: |
+          git config --global --add safe.directory '*'
+          git init -q .
+          git remote add origin "${GITHUB_SERVER_URL%/}/${GITHUB_REPOSITORY}.git"
+          git fetch -q --depth 1 origin "${GITHUB_SHA}"
+          git checkout -q FETCH_HEAD
+          git log -1 --oneline
+
+      - name: Exportieren
+        run: |
+          set -e
+          timeout 900 godot --headless --import >/dev/null 2>&1 || true
+          mkdir -p build/windows build/linux
+          for p in Windows Linux; do
+            timeout 900 godot --headless --export-release "$p" 2>&1 | grep -vE "mesh_get_surface|Parameter \"m\" is null|savepack: step" || true
+          done
+          test -s build/windows/AuraCity.exe
+          test -s build/linux/AuraCity.x86_64
+
+      - name: Pakete schnüren
+        run: |
+          set -e
+          VERSION="$(sed -n 's/^config\/version="\(.*\)"/\1/p' project.godot)"
+          mkdir -p dist
+          (cd build/windows && zip -q -9 "../../dist/AuraCity-${VERSION}-windows-x86_64.zip" AuraCity.exe)
+          (cd build/linux && chmod +x AuraCity.x86_64 && tar -czf "../../dist/AuraCity-${VERSION}-linux-x86_64.tar.gz" AuraCity.x86_64)
+          (cd dist && sha256sum * > SHA256SUMS)
+          ls -la dist
+
+      - name: Auf NAS ablegen
+        run: |
+          set -e
+          if [ ! -d /builds ]; then echo "/builds nicht gemountet – übersprungen"; exit 0; fi
+          case "$GITHUB_REF" in
+            refs/tags/*) stamp="$GITHUB_REF_NAME" ;;
+            *) stamp="$(date +%Y-%m-%d_%H-%M)_${GITHUB_SHA%"${GITHUB_SHA#???????}"}" ;;
+          esac
+          ziel="/builds/aura-city/$stamp"
+          mkdir -p "$ziel"
+          cp dist/* "$ziel/"
+          ln -sfn "$stamp" /builds/aura-city/latest
+          echo "Abgelegt in $ziel"
+
+      - name: Forgejo-Release (nur bei Tag v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          api="${GITHUB_SERVER_URL%/}/api/v1/repos/${GITHUB_REPOSITORY}"
+          body=$(printf '{"tag_name":"%s","name":"Aura City %s","body":"Automatisch gebaut von Forgejo Actions.\\n\\n- Windows: zip entpacken, AuraCity.exe starten\\n- Linux: tar.gz entpacken, ./AuraCity.x86_64"}' "$GITHUB_REF_NAME" "$GITHUB_REF_NAME")
+          id=$(wget -qO- --header "Authorization: token $TOKEN" --header "Content-Type: application/json" --post-data "$body" "$api/releases" | sed -n 's/^{"id":\([0-9]*\).*/\1/p')
+          if [ -z "$id" ]; then echo "Release konnte nicht angelegt werden"; exit 1; fi
+          for f in dist/*; do
+            wget -qO- --header "Authorization: token $TOKEN" --header "Content-Type: application/octet-stream" --post-file "$f" "$api/releases/$id/assets?name=$(basename "$f")" >/dev/null
+          done

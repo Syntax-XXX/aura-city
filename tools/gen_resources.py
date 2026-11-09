@@ -170,6 +170,9 @@ ACHIEVEMENTS = [
     ("secret_explorer", "Secret Explorer", "Finde die geheime Dimension.", "◈", "secret_found", 1, 7777, True),
     ("godlike_rank", "Godlike Rank", "Erreiche den Rang Godlike.", "☀", "rank", 6, 50000, False),
     ("beyond_reality", "Beyond Reality", "Erreiche den höchsten Rang.", "∞", "rank", 7, 0, True),
+    ("first_drink", "Erfrischt", "Trinke deinen ersten Aura-Drink.", "◍", "drinks", 1, 300, False),
+    ("battle_winner", "Herausforderer", "Gewinne 3 Aura-Battles gegen NPC-Rivalen.", "⚔", "battles", 3, 3000, False),
+    ("battle_legend", "Battle-Legende", "Gewinne 20 Aura-Battles.", "♜", "battles", 20, 15000, False),
 ]
 
 

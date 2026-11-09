@@ -317,17 +317,31 @@ func _build_hair(item: ItemDef) -> void:
 func _build_shoes(item: ItemDef) -> void:
 	var color := item.color if item else Color("1f2937")
 	var sole := item.accent_color if item else Color("e5e7eb")
+	var high := item != null and item.variant == &"hightop"
 	for side in ["Foot.L", "Foot.R"]:
 		var foot := _local_box(side)
 		var h := _holder(side)
-		var shoe := BoxMesh.new()
-		var high := item != null and item.variant == &"hightop"
-		shoe.size = Vector3(foot.size.x * 1.25, foot.size.y * (1.4 if high else 0.9), foot.size.z * 1.2)
 		var c := foot.get_center()
-		_add(h, shoe, _mat(color, 0.6), Vector3(c.x, foot.position.y + shoe.size.y * 0.5, c.z))
-		var sole_mesh := BoxMesh.new()
-		sole_mesh.size = Vector3(shoe.size.x * 1.04, 0.035, shoe.size.z * 1.04)
-		_add(h, sole_mesh, _mat(sole, 0.5), Vector3(c.x, foot.position.y + 0.017, c.z))
+		# abgerundeter Schuh, der den Fuß umschließt (statt Klotz darunter)
+		var shoe := CapsuleMesh.new()
+		shoe.radius = maxf(foot.size.x, foot.size.y) * 0.62
+		shoe.height = maxf(foot.size.z * 1.25, shoe.radius * 2.2)
+		shoe.radial_segments = 12
+		shoe.rings = 4
+		_add(h, shoe, _mat(color, 0.55), c + Vector3(0, foot.size.y * 0.05, foot.size.z * 0.06), Vector3(PI / 2, 0, 0))
+		var sole_mesh := CylinderMesh.new()
+		sole_mesh.top_radius = shoe.radius * 1.02
+		sole_mesh.bottom_radius = shoe.radius * 1.05
+		sole_mesh.height = shoe.height * 0.98
+		sole_mesh.radial_segments = 12
+		var sole_mi := _add(h, sole_mesh, _mat(sole, 0.5), Vector3(c.x, foot.position.y + 0.02, c.z + foot.size.z * 0.06), Vector3(PI / 2, 0, 0))
+		sole_mi.scale = Vector3(1.0, 1.0, 0.18) # flache Sohle
+		if high:
+			var cuff := CylinderMesh.new()
+			cuff.top_radius = shoe.radius * 0.85
+			cuff.bottom_radius = shoe.radius * 0.95
+			cuff.height = foot.size.y * 0.9
+			_add(h, cuff, _mat(color.darkened(0.15), 0.55), Vector3(c.x, foot.end.y + cuff.height * 0.3, c.z - foot.size.z * 0.15))
 
 
 func _build_accessory(item: ItemDef) -> void:

@@ -231,6 +231,7 @@ func drink(id: String) -> String:
 	boost_id = id
 	boost_until = Net.now() + float(d["seconds"])
 	Net.send({"type": "drink", "id": id})
+	Events.drink_used.emit(id)
 	Events.toast.emit("%s aktiv: %d s" % [d["name"], int(d["seconds"])], Color(d["color"]))
 	return ""
 

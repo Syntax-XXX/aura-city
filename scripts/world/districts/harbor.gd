@@ -11,7 +11,7 @@ static func build(root: Node3D) -> void:
 	WorldKit.district_area(root, &"harbor", c + Vector3(0, 8, -8), Vector3(150, 20, 90))
 	WorldKit.sign_text(root, c + Vector3(0, 13, -50), "HAFEN", Color("38bdf8"), 320)
 	# Wasser, Kaimauer und unsichtbare Kante
-	WorldKit.box(root, Vector3(440, 0.2, 120), c + Vector3(0, 0.06, 92), WorldKit.mat(Color("0e7490"), 0.08, 0.3, 0.15), false)
+	WorldKit.box(root, Vector3(440, 0.2, 120), c + Vector3(0, 0.06, 92), WorldKit.water(), false)
 	WorldKit.box(root, Vector3(150, 1.0, 1.2), c + Vector3(0, 0.5, 32), WorldKit.mat(Color("44403c")))
 	WorldKit.invisible_wall(root, Vector3(440, 12, 1), c + Vector3(0, 6, 33.2))
 	for i in 15:

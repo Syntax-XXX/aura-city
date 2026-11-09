@@ -32,7 +32,16 @@ static func run(main: Node) -> void:
 	cam.far = 900.0
 	w.add_child(cam)
 	cam.current = true
-	for i in 4:
-		await tree.process_frame
-		print("[prof] Frame ", i, ": ", Time.get_ticks_msec() - t, " ms")
-		t = Time.get_ticks_msec()
+	# Stufenweise teurer: keine Schatten → Schatten → Nacht (Laternen an)
+	w.sun.shadow_enabled = false
+	main.get_viewport().msaa_3d = Viewport.MSAA_DISABLED
+	for step in ["ohne Schatten", "mit Schatten", "Nacht (Laternen)"]:
+		if step == "mit Schatten":
+			w.sun.shadow_enabled = true
+		if step == "Nacht (Laternen)":
+			w.day_night.time_of_day = 0.9
+			w.day_night.apply()
+		for i in 3:
+			t = Time.get_ticks_msec()
+			await tree.process_frame
+			print("[prof] %s Frame %d: %d ms" % [step, i, Time.get_ticks_msec() - t])

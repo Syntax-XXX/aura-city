@@ -8,6 +8,20 @@ Timing, baue Combos und Ketten, farme Aura, steig im Rang auf und schalte Distri
 
 ## Features
 
+- **Echte Figuren:** Quaternius-Stadtfiguren (CC0) mit über 45 retargeteten Animationen
+  (Laufen, Sprinten, Springen, Tanzen, Rollen, Spells …). Outfit bestimmt den Körper (männlich/weiblich wählbar),
+  Frisuren werden von anderen Figuren übernommen, Accessoires/Schuhe/Gadget hängen an Knochen.
+- **Lebendige Stadt:** Passanten auf den Gehwegen, NPCs mit eigenen Wolken-Tricks und Reaktionen,
+  Verkehr auf der Ringstraße (Autos bremsen vor dir), geparkte Autos, Laternen, Parks.
+- **Grafik:** PBR-Texturen (Poly Haven), Bäume/Büsche/Steine (Quaternius), eigener Himmels-Shader
+  mit Sonne, Wolken, Abendrot und Sternen, animiertes Wasser, Tag/Nacht mit Farbverläufen,
+  Grafik- und Effekt-Qualitätsstufen.
+- **Hoverboards (Q)** in 6 Stufen (12–25 m/s) für die große Map.
+- **Aura-Kiosk (N):** 7 fiktive Drinks (Limo, Mate, Shakes …) mit zeitlichen Boosts – serverseitig geprüft.
+- **Aura-Battles:** 8 NPC-Rivalen fordern dich heraus.
+- **Foto-Modus (P):** Zeit anhalten, frei fliegen, Screenshots speichern.
+- **Distrikt-Musik:** eigene prozedurale Themes pro Distrikt mit Überblendung.
+
 - **Riesen-Map (900 × 900 m)** mit 9 Distrikten: Spawn City, Skate Park, Neon District, Luxury District,
   Hafen, Sunset Beach, Graffiti Yard, Downtown Skyline und eine geheime Dimension. Dazu Straßennetz mit Ring,
   Vororte, Teleporter-Hub am Spawn und eine Minimap.
@@ -22,7 +36,7 @@ Timing, baue Combos und Ketten, farme Aura, steig im Rang auf und schalte Distri
 - **Online-Modus mit server-autoritativer Aura (Anti-Cheat)** und Online-Bestenliste. Ein Offline-Modus mit lokalem Spielstand ist ebenfalls dabei.
 - Komplettes UI: Hauptmenü, HUD, Shop, Inventar, Garderobe, Trickbuch, Quests, Erfolge, Einstellungen,
   Bestenliste, Pause, Tagesbelohnung, Dialoge, Toasts, Tutorial, Ladebildschirm.
-- Prozedurale Grafik, Animation und Audio. Das Projekt braucht keine externen Assets.
+- Musik und Soundeffekte prozedural erzeugt; 3D-Assets und Texturen CC0 (siehe [assets/CREDITS.md](assets/CREDITS.md)).
 
 ## Steuerung
 
@@ -35,6 +49,9 @@ Timing, baue Combos und Ketten, farme Aura, steig im Rang auf und schalte Distri
 | F / Linksklick | Trick landen (im Timing-Fenster) |
 | E | Interagieren (Shops, NPCs, Schilder, Teleporter, Challenges) |
 | G | Emote |
+| Q | Hoverboard auf/ab (Shift = Boost) |
+| N | Aura-Kiosk (Drinks) |
+| P | Foto-Modus (Enter = Foto) |
 | B / I / C / K / J / O / L | Shop / Inventar / Garderobe / Trickbuch / Quests / Erfolge / Bestenliste |
 | Esc | Pause / Menü schließen |
 
@@ -64,8 +81,9 @@ docker compose up -d --build                # oder als Container
 ## Tests
 
 ```bash
-godot --headless -- --tests                         # 80 Godot-Tests (Wirtschaft, Shop, Speichern, Tricks, Szene, Map)
-cd server && node --test test/game.test.js          # 15 Server-Tests (Regeln + Anti-Cheat)
+godot --headless -- --tests                         # 82 Godot-Tests (Wirtschaft, Shop, Speichern, Tricks, Szene, Map)
+cd server && node --test test/game.test.js          # 16 Server-Tests (Regeln + Anti-Cheat)
 godot --headless -- --online-test http://127.0.0.1:3710   # End-to-End gegen laufenden Server
 godot --headless -- --smoke                         # startet das echte Spiel und öffnet jedes Menü
+xvfb-run godot -- --lab <ordner>                    # Vorzeige-Szene rendern (Screenshots)
 ```
