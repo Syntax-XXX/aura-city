@@ -1,12 +1,15 @@
 class_name WorldRoot
 extends Node3D
 ## Baut die komplette Stadt: Umgebung, Licht, Boden, Straßen, Grenzen, alle Distrikte,
-## Tag/Nacht und den „Director“ für zufällige Aura-Rush-Events.
+## Tag/Nacht und den Aura Rush. Der Rush folgt einem festen Zeitplan (Unix-Zeit), damit
+## Server und alle Clients ohne Abstimmung dieselben Rush-Fenster kennen.
 
 const SPAWN_POINT := Vector3(0, 1, 12)
+const RUSH_PERIOD := 300.0
+const RUSH_LENGTH := 45.0
+const RUSH_MULTIPLIER := 2.0
 
 var day_night: DayNight
-var _event_timer := 0.0
 
 
 func _ready() -> void:
@@ -17,7 +20,18 @@ func _ready() -> void:
 	NeonDistrict.build(self)
 	LuxuryDistrict.build(self)
 	SecretDimension.build(self)
-	_event_timer = randf_range(180.0, 300.0)
+	Events.aura_rewarded.connect(_on_aura_rewarded)
+
+
+## Sekunden, die der Rush zur Unix-Zeit `unix` noch läuft (0 = kein Rush).
+static func rush_left(unix: float) -> float:
+	var p := fmod(unix, RUSH_PERIOD)
+	return RUSH_LENGTH - p if p < RUSH_LENGTH else 0.0
+
+
+func _on_aura_rewarded(amount: float, _reason: String, pos: Vector3) -> void:
+	if pos != Vector3.ZERO and amount > 0.0:
+		FX.floating_text(self, pos, "+%s ✦" % UIFormat.number(amount), Color("facc15"))
 
 
 func _build_environment() -> void:
@@ -86,10 +100,9 @@ func _wall(pos: Vector3, size: Vector3) -> void:
 	add_child(body)
 
 
-func _process(delta: float) -> void:
-	_event_timer -= delta
-	if _event_timer <= 0.0:
-		_event_timer = randf_range(240.0, 420.0)
-		Economy.start_event(2.0, 45.0)
-		Events.toast.emit("AURA RUSH! 45 Sekunden doppelte Aura!", Color("facc15"))
+func _process(_delta: float) -> void:
+	var left := rush_left(Net.now())
+	if left > 0.5 and Economy.event_seconds_left() <= 0.0:
+		Economy.start_event(RUSH_MULTIPLIER, left)
+		Events.toast.emit("AURA RUSH! %d Sekunden doppelte Aura!" % ceili(left), Color("facc15"))
 		Audio.play(&"rank_up")

@@ -24,6 +24,7 @@ Inventory="*res://scripts/inventory/inventory.gd"
 Quests="*res://scripts/quests/quest_system.gd"
 Achievements="*res://scripts/achievements/achievement_system.gd"
 SaveSystem="*res://scripts/save/save_system.gd"
+Net="*res://scripts/net/net_client.gd"
 
 [display]
 

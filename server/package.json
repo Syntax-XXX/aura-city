@@ -1,0 +1,9 @@
+{
+  "name": "aura-city-server",
+  "version": "1.0.0",
+  "description": "Server-autoritative Aura-Wirtschaft für Aura City (Profile, Anti-Cheat, Bestenliste)",
+  "main": "server.js",
+  "scripts": { "start": "node server.js", "test": "node --test test/game.test.js" },
+  "license": "MIT",
+  "engines": { "node": ">=20" }
+}

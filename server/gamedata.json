@@ -1,0 +1,1151 @@
+{
+	"achievements": {
+		"aura_100k": {
+			"goal": 100000,
+			"name": "Aura Tycoon",
+			"reward": 10000,
+			"stat": "lifetime_aura"
+		},
+		"beyond_reality": {
+			"goal": 7,
+			"name": "Beyond Reality",
+			"reward": 0,
+			"stat": "rank"
+		},
+		"challenger": {
+			"goal": 10,
+			"name": "Challenger",
+			"reward": 2000,
+			"stat": "challenges"
+		},
+		"collector": {
+			"goal": 25,
+			"name": "Collector",
+			"reward": 2500,
+			"stat": "collectibles"
+		},
+		"combo_master": {
+			"goal": 10,
+			"name": "Combo Master",
+			"reward": 2500,
+			"stat": "best_combo"
+		},
+		"combo_starter": {
+			"goal": 5,
+			"name": "Combo Starter",
+			"reward": 500,
+			"stat": "best_combo"
+		},
+		"first_1000": {
+			"goal": 1000,
+			"name": "First 1,000 Aura",
+			"reward": 200,
+			"stat": "lifetime_aura"
+		},
+		"first_legendary": {
+			"goal": 1,
+			"name": "First Legendary Item",
+			"reward": 5000,
+			"stat": "legendary_items"
+		},
+		"first_trick": {
+			"goal": 1,
+			"name": "First Trick",
+			"reward": 100,
+			"stat": "tricks"
+		},
+		"globetrotter": {
+			"goal": 5,
+			"name": "Globetrotter",
+			"reward": 3000,
+			"stat": "districts"
+		},
+		"godlike_rank": {
+			"goal": 6,
+			"name": "Godlike Rank",
+			"reward": 50000,
+			"stat": "rank"
+		},
+		"perfectionist": {
+			"goal": 50,
+			"name": "Perfectionist",
+			"reward": 3000,
+			"stat": "perfects"
+		},
+		"secret_explorer": {
+			"goal": 1,
+			"name": "Secret Explorer",
+			"reward": 7777,
+			"stat": "secret_found"
+		},
+		"trick_100": {
+			"goal": 100,
+			"name": "Trick Machine",
+			"reward": 2000,
+			"stat": "tricks"
+		}
+	},
+	"chains": [
+		{
+			"bonus": 1500,
+			"name": "Spin Cycle",
+			"sequence": [
+				"basic_spin",
+				"double_spin",
+				"ultra_spin"
+			]
+		},
+		{
+			"bonus": 2000,
+			"name": "Model Walk",
+			"sequence": [
+				"mini_pose",
+				"air_pose",
+				"cosmic_pose"
+			]
+		},
+		{
+			"bonus": 250,
+			"name": "Street Starter",
+			"sequence": [
+				"finger_flip",
+				"side_twist",
+				"basic_spin"
+			]
+		},
+		{
+			"bonus": 3000,
+			"name": "Night Shift",
+			"sequence": [
+				"shadow_move",
+				"neon_flip",
+				"phantom_combo"
+			]
+		}
+	],
+	"challenges": {
+		"Champagner-Combo": {
+			"goal": 10,
+			"kind": "combo",
+			"reward": 25000,
+			"seconds": 45
+		},
+		"Elite-Score": {
+			"goal": 20000,
+			"kind": "score",
+			"reward": 30000,
+			"seconds": 60
+		},
+		"Erste Schritte": {
+			"goal": 2,
+			"kind": "perfects",
+			"reward": 300,
+			"seconds": 40
+		},
+		"Highscore-Run": {
+			"goal": 1500,
+			"kind": "score",
+			"reward": 1200,
+			"seconds": 45
+		},
+		"Kickflip-Kette": {
+			"goal": 4,
+			"kind": "combo",
+			"reward": 900,
+			"seconds": 30
+		},
+		"Lichtgeschwindigkeit": {
+			"goal": 6,
+			"kind": "perfects",
+			"reward": 4000,
+			"seconds": 45
+		},
+		"Nachtschicht": {
+			"goal": 5000,
+			"kind": "score",
+			"reward": 4500,
+			"seconds": 50
+		},
+		"Neon-Rausch": {
+			"goal": 6,
+			"kind": "combo",
+			"reward": 3500,
+			"seconds": 35
+		},
+		"Präzision": {
+			"goal": 4,
+			"kind": "perfects",
+			"reward": 1400,
+			"seconds": 40
+		}
+	},
+	"collectibles": {
+		"luxury_0": {
+			"reward": 300,
+			"secret": false
+		},
+		"luxury_1": {
+			"reward": 300,
+			"secret": false
+		},
+		"luxury_2": {
+			"reward": 300,
+			"secret": false
+		},
+		"luxury_3": {
+			"reward": 300,
+			"secret": false
+		},
+		"luxury_4": {
+			"reward": 300,
+			"secret": false
+		},
+		"neon_0": {
+			"reward": 120,
+			"secret": false
+		},
+		"neon_1": {
+			"reward": 120,
+			"secret": false
+		},
+		"neon_2": {
+			"reward": 120,
+			"secret": false
+		},
+		"neon_3": {
+			"reward": 120,
+			"secret": false
+		},
+		"neon_4": {
+			"reward": 120,
+			"secret": false
+		},
+		"neon_5": {
+			"reward": 120,
+			"secret": false
+		},
+		"secret_neon_alley": {
+			"reward": 100,
+			"secret": true
+		},
+		"secret_void_1": {
+			"reward": 100,
+			"secret": true
+		},
+		"secret_void_2": {
+			"reward": 100,
+			"secret": true
+		},
+		"secret_void_3": {
+			"reward": 100,
+			"secret": true
+		},
+		"skate_0": {
+			"reward": 60,
+			"secret": false
+		},
+		"skate_1": {
+			"reward": 60,
+			"secret": false
+		},
+		"skate_2": {
+			"reward": 60,
+			"secret": false
+		},
+		"skate_3": {
+			"reward": 60,
+			"secret": false
+		},
+		"skate_4": {
+			"reward": 60,
+			"secret": false
+		},
+		"skate_5": {
+			"reward": 60,
+			"secret": false
+		},
+		"spawn_0": {
+			"reward": 40,
+			"secret": false
+		},
+		"spawn_1": {
+			"reward": 40,
+			"secret": false
+		},
+		"spawn_2": {
+			"reward": 40,
+			"secret": false
+		},
+		"spawn_3": {
+			"reward": 40,
+			"secret": false
+		},
+		"spawn_4": {
+			"reward": 40,
+			"secret": false
+		},
+		"spawn_5": {
+			"reward": 40,
+			"secret": false
+		}
+	},
+	"constants": {
+		"challenge_mult": 1.5,
+		"collectible_respawn": 180,
+		"combo_cap": 6,
+		"combo_window": 3.2,
+		"daily_base": 250,
+		"mastery_steps": [
+			5,
+			15,
+			40,
+			100,
+			250
+		],
+		"quality_mult": {
+			"good": 1,
+			"perfect": 1.5
+		},
+		"rush": {
+			"length": 45,
+			"multiplier": 2,
+			"period": 300
+		},
+		"secret_multiplier": 10,
+		"timing_timeout": 2.4
+	},
+	"districts": [
+		"spawn",
+		"skate",
+		"neon",
+		"luxury",
+		"secret"
+	],
+	"items": {
+		"acc_cap": {
+			"name": "Snapback",
+			"price": 800,
+			"rarity": 0,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "accessory",
+			"starter": false
+		},
+		"acc_chain": {
+			"name": "Aura Chain",
+			"price": 28000,
+			"rarity": 3,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 2,
+			"slot": "accessory",
+			"starter": false
+		},
+		"acc_crown": {
+			"name": "Crown",
+			"price": 250000,
+			"rarity": 4,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 5,
+			"slot": "accessory",
+			"starter": false
+		},
+		"acc_halo": {
+			"name": "Halo",
+			"price": 1200000,
+			"rarity": 5,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 6,
+			"slot": "accessory",
+			"starter": false
+		},
+		"acc_headphones": {
+			"name": "Bass Cans",
+			"price": 8000,
+			"rarity": 2,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "accessory",
+			"starter": false
+		},
+		"acc_horns": {
+			"name": "Void Horns",
+			"price": 0,
+			"rarity": 6,
+			"required_achievement": "secret_explorer",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "accessory",
+			"starter": false
+		},
+		"acc_shades": {
+			"name": "Shades",
+			"price": 2500,
+			"rarity": 1,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "accessory",
+			"starter": false
+		},
+		"anim_bounce": {
+			"name": "Bounce Idle",
+			"price": 2500,
+			"rarity": 1,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "animation",
+			"starter": false
+		},
+		"anim_chill": {
+			"name": "Chill Idle",
+			"price": 0,
+			"rarity": 0,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "animation",
+			"starter": true
+		},
+		"anim_flex": {
+			"name": "Flex Idle",
+			"price": 30000,
+			"rarity": 3,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 3,
+			"slot": "animation",
+			"starter": false
+		},
+		"emote_dab": {
+			"name": "Dab",
+			"price": 9000,
+			"rarity": 2,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "emote",
+			"starter": false
+		},
+		"emote_dance": {
+			"name": "Dance",
+			"price": 3500,
+			"rarity": 1,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "emote",
+			"starter": false
+		},
+		"emote_flex": {
+			"name": "Big Flex",
+			"price": 25000,
+			"rarity": 3,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 2,
+			"slot": "emote",
+			"starter": false
+		},
+		"emote_wave": {
+			"name": "Wave",
+			"price": 0,
+			"rarity": 0,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "emote",
+			"starter": true
+		},
+		"fx_hearts": {
+			"name": "Hearts",
+			"price": 10000,
+			"rarity": 2,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "particle",
+			"starter": false
+		},
+		"fx_money": {
+			"name": "Money Rain",
+			"price": 280000,
+			"rarity": 4,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 5,
+			"slot": "particle",
+			"starter": false
+		},
+		"fx_sparkles": {
+			"name": "Sparkles",
+			"price": 10000,
+			"rarity": 2,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "particle",
+			"starter": false
+		},
+		"fx_stars": {
+			"name": "Star Aura",
+			"price": 45000,
+			"rarity": 3,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 3,
+			"slot": "particle",
+			"starter": false
+		},
+		"fx_void": {
+			"name": "Void Particles",
+			"price": 0,
+			"rarity": 6,
+			"required_achievement": "secret_explorer",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "particle",
+			"starter": false
+		},
+		"gadget_cloudpen": {
+			"name": "Cloud Pen",
+			"price": 0,
+			"rarity": 0,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "gadget",
+			"starter": true
+		},
+		"gadget_cloudpen_pink": {
+			"name": "Cloud Pen Bubblegum",
+			"price": 1500,
+			"rarity": 1,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "gadget",
+			"starter": false
+		},
+		"gadget_cosmic": {
+			"name": "Skyscraper 9000",
+			"price": 1000000,
+			"rarity": 5,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 5,
+			"slot": "gadget",
+			"starter": false
+		},
+		"gadget_mistbox": {
+			"name": "Mist Box",
+			"price": 9000,
+			"rarity": 2,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "gadget",
+			"starter": false
+		},
+		"gadget_orb": {
+			"name": "Nebula Orb",
+			"price": 35000,
+			"rarity": 3,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 2,
+			"slot": "gadget",
+			"starter": false
+		},
+		"gadget_wand": {
+			"name": "Aura Wand",
+			"price": 220000,
+			"rarity": 4,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 4,
+			"slot": "gadget",
+			"starter": false
+		},
+		"hair_afro": {
+			"name": "Cloud Afro",
+			"price": 6000,
+			"rarity": 2,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "hair",
+			"starter": false
+		},
+		"hair_flame": {
+			"name": "Flame Hair",
+			"price": 150000,
+			"rarity": 4,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 4,
+			"slot": "hair",
+			"starter": false
+		},
+		"hair_long": {
+			"name": "Long Flow",
+			"price": 1800,
+			"rarity": 1,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "hair",
+			"starter": false
+		},
+		"hair_mohawk": {
+			"name": "Neon Mohawk",
+			"price": 24000,
+			"rarity": 3,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 2,
+			"slot": "hair",
+			"starter": false
+		},
+		"hair_short": {
+			"name": "Short Cut",
+			"price": 0,
+			"rarity": 0,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "hair",
+			"starter": true
+		},
+		"hair_spiky": {
+			"name": "Spiky",
+			"price": 600,
+			"rarity": 0,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "hair",
+			"starter": false
+		},
+		"outfit_cosmic": {
+			"name": "Cosmic Robe",
+			"price": 950000,
+			"rarity": 5,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 5,
+			"slot": "outfit",
+			"starter": false
+		},
+		"outfit_hoodie": {
+			"name": "Gray Hoodie",
+			"price": 0,
+			"rarity": 0,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "outfit",
+			"starter": true
+		},
+		"outfit_neon": {
+			"name": "Neon Runner",
+			"price": 32000,
+			"rarity": 3,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 2,
+			"slot": "outfit",
+			"starter": false
+		},
+		"outfit_suit": {
+			"name": "Midnight Suit",
+			"price": 200000,
+			"rarity": 4,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 4,
+			"slot": "outfit",
+			"starter": false
+		},
+		"outfit_tee_white": {
+			"name": "White Tee",
+			"price": 400,
+			"rarity": 0,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "outfit",
+			"starter": false
+		},
+		"outfit_track": {
+			"name": "Tracksuit",
+			"price": 2200,
+			"rarity": 1,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "outfit",
+			"starter": false
+		},
+		"outfit_varsity": {
+			"name": "Varsity Jacket",
+			"price": 7500,
+			"rarity": 2,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "outfit",
+			"starter": false
+		},
+		"shoes_black": {
+			"name": "Black Kicks",
+			"price": 500,
+			"rarity": 0,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "shoes",
+			"starter": false
+		},
+		"shoes_gold": {
+			"name": "Gold Steppers",
+			"price": 120000,
+			"rarity": 4,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 3,
+			"slot": "shoes",
+			"starter": false
+		},
+		"shoes_hightop": {
+			"name": "Red High-Tops",
+			"price": 2000,
+			"rarity": 1,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "shoes",
+			"starter": false
+		},
+		"shoes_neon": {
+			"name": "Neon Steps",
+			"price": 22000,
+			"rarity": 3,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 2,
+			"slot": "shoes",
+			"starter": false
+		},
+		"shoes_white": {
+			"name": "White Kicks",
+			"price": 0,
+			"rarity": 0,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "shoes",
+			"starter": true
+		},
+		"skin_deep": {
+			"name": "Deep Tone",
+			"price": 0,
+			"rarity": 0,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "skin",
+			"starter": true
+		},
+		"skin_gold": {
+			"name": "Pure Gold",
+			"price": 180000,
+			"rarity": 4,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 4,
+			"slot": "skin",
+			"starter": false
+		},
+		"skin_holo": {
+			"name": "Hologram",
+			"price": 800000,
+			"rarity": 5,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 5,
+			"slot": "skin",
+			"starter": false
+		},
+		"skin_light": {
+			"name": "Light Tone",
+			"price": 0,
+			"rarity": 0,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "skin",
+			"starter": true
+		},
+		"skin_neon": {
+			"name": "Neon Glow",
+			"price": 30000,
+			"rarity": 3,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 2,
+			"slot": "skin",
+			"starter": false
+		},
+		"skin_void": {
+			"name": "Void Walker",
+			"price": 0,
+			"rarity": 6,
+			"required_achievement": "secret_explorer",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "skin",
+			"starter": false
+		},
+		"skin_warm": {
+			"name": "Warm Tone",
+			"price": 0,
+			"rarity": 0,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "skin",
+			"starter": true
+		},
+		"title_beyond": {
+			"name": "Beyond Reality",
+			"price": 1500000,
+			"rarity": 5,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 7,
+			"slot": "title",
+			"starter": false
+		},
+		"title_godlike": {
+			"name": "Godlike",
+			"price": 400000,
+			"rarity": 4,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 6,
+			"slot": "title",
+			"starter": false
+		},
+		"title_legend": {
+			"name": "Street Legend",
+			"price": 15000,
+			"rarity": 2,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 3,
+			"slot": "title",
+			"starter": false
+		},
+		"title_main": {
+			"name": "Main Character",
+			"price": 4000,
+			"rarity": 1,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 2,
+			"slot": "title",
+			"starter": false
+		},
+		"title_newbie": {
+			"name": "Fresh Spawn",
+			"price": 0,
+			"rarity": 0,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "title",
+			"starter": true
+		},
+		"title_sigma": {
+			"name": "Certified Sigma",
+			"price": 60000,
+			"rarity": 3,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 5,
+			"slot": "title",
+			"starter": false
+		},
+		"title_void": {
+			"name": "Void Touched",
+			"price": 0,
+			"rarity": 6,
+			"required_achievement": "secret_explorer",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "title",
+			"starter": false
+		},
+		"trail_cyan": {
+			"name": "Cyan Trail",
+			"price": 3000,
+			"rarity": 1,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "trail",
+			"starter": false
+		},
+		"trail_fire": {
+			"name": "Fire Trail",
+			"price": 40000,
+			"rarity": 3,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 3,
+			"slot": "trail",
+			"starter": false
+		},
+		"trail_pink": {
+			"name": "Pink Trail",
+			"price": 3000,
+			"rarity": 1,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "trail",
+			"starter": false
+		},
+		"trail_rainbow": {
+			"name": "Rainbow Trail",
+			"price": 300000,
+			"rarity": 4,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 5,
+			"slot": "trail",
+			"starter": false
+		}
+	},
+	"quests": {
+		"daily_collectibles": {
+			"goal": 5,
+			"name": "Sammler",
+			"period": 0,
+			"reward": 500,
+			"stat": "collectible"
+		},
+		"daily_combos": {
+			"goal": 3,
+			"name": "Combo-Zeit",
+			"period": 0,
+			"reward": 450,
+			"stat": "combo"
+		},
+		"daily_districts": {
+			"goal": 2,
+			"name": "Stadtbummel",
+			"period": 0,
+			"reward": 250,
+			"stat": "district"
+		},
+		"daily_tricks": {
+			"goal": 10,
+			"name": "Trick-Routine",
+			"period": 0,
+			"reward": 300,
+			"stat": "trick"
+		},
+		"weekly_aura": {
+			"goal": 10000,
+			"name": "Aura-Woche",
+			"period": 1,
+			"reward": 3000,
+			"stat": "aura"
+		},
+		"weekly_challenges": {
+			"goal": 20,
+			"name": "Challenge-Marathon",
+			"period": 1,
+			"reward": 4500,
+			"stat": "challenge"
+		},
+		"weekly_unlocks": {
+			"goal": 5,
+			"name": "Shopping-Tour",
+			"period": 1,
+			"reward": 3000,
+			"stat": "unlock"
+		}
+	},
+	"ranks": [
+		{
+			"min": 0,
+			"name": "NPC"
+		},
+		{
+			"min": 500,
+			"name": "Beginner"
+		},
+		{
+			"min": 2500,
+			"name": "Main Character"
+		},
+		{
+			"min": 10000,
+			"name": "Street Legend"
+		},
+		{
+			"min": 40000,
+			"name": "Aura Master"
+		},
+		{
+			"min": 120000,
+			"name": "Sigma"
+		},
+		{
+			"min": 400000,
+			"name": "Godlike"
+		},
+		{
+			"min": 1500000,
+			"name": "Beyond Reality"
+		}
+	],
+	"slots": [
+		"skin",
+		"hair",
+		"outfit",
+		"shoes",
+		"accessory",
+		"gadget",
+		"trail",
+		"particle",
+		"title",
+		"emote",
+		"animation"
+	],
+	"starter_loadout": [
+		"basic_spin",
+		"finger_flip",
+		"mini_pose",
+		"side_twist"
+	],
+	"tricks": {
+		"air_pose": {
+			"base_aura": 200,
+			"combo_bonus": 0.4,
+			"cooldown": 2,
+			"difficulty": 6,
+			"duration": 1.1,
+			"name": "Air Pose",
+			"unlock": 15000
+		},
+		"aura_explosion": {
+			"base_aura": 800,
+			"combo_bonus": 0.6,
+			"cooldown": 4,
+			"difficulty": 10,
+			"duration": 1.6,
+			"name": "Aura Explosion",
+			"unlock": 300000
+		},
+		"basic_spin": {
+			"base_aura": 40,
+			"combo_bonus": 0.25,
+			"cooldown": 0.8,
+			"difficulty": 1,
+			"duration": 0.7,
+			"name": "Basic Spin",
+			"unlock": 0
+		},
+		"cosmic_pose": {
+			"base_aura": 520,
+			"combo_bonus": 0.55,
+			"cooldown": 3,
+			"difficulty": 9,
+			"duration": 1.4,
+			"name": "Cosmic Pose",
+			"unlock": 150000
+		},
+		"double_spin": {
+			"base_aura": 110,
+			"combo_bonus": 0.35,
+			"cooldown": 1.4,
+			"difficulty": 4,
+			"duration": 0.9,
+			"name": "Double Spin",
+			"unlock": 1500
+		},
+		"finger_flip": {
+			"base_aura": 50,
+			"combo_bonus": 0.25,
+			"cooldown": 0.8,
+			"difficulty": 2,
+			"duration": 0.6,
+			"name": "Finger Flip",
+			"unlock": 0
+		},
+		"mini_pose": {
+			"base_aura": 55,
+			"combo_bonus": 0.25,
+			"cooldown": 1,
+			"difficulty": 2,
+			"duration": 0.8,
+			"name": "Mini Pose",
+			"unlock": 0
+		},
+		"neon_flip": {
+			"base_aura": 180,
+			"combo_bonus": 0.4,
+			"cooldown": 1.8,
+			"difficulty": 6,
+			"duration": 1,
+			"name": "Neon Flip",
+			"unlock": 8000
+		},
+		"phantom_combo": {
+			"base_aura": 380,
+			"combo_bonus": 0.5,
+			"cooldown": 2.6,
+			"difficulty": 8,
+			"duration": 1.3,
+			"name": "Phantom Combo",
+			"unlock": 40000
+		},
+		"shadow_move": {
+			"base_aura": 140,
+			"combo_bonus": 0.35,
+			"cooldown": 1.6,
+			"difficulty": 5,
+			"duration": 0.9,
+			"name": "Shadow Move",
+			"unlock": 4000
+		},
+		"side_twist": {
+			"base_aura": 65,
+			"combo_bonus": 0.3,
+			"cooldown": 1,
+			"difficulty": 3,
+			"duration": 0.7,
+			"name": "Side Twist",
+			"unlock": 0
+		},
+		"ultra_spin": {
+			"base_aura": 420,
+			"combo_bonus": 0.5,
+			"cooldown": 2.6,
+			"difficulty": 8,
+			"duration": 1.2,
+			"name": "Ultra Spin",
+			"unlock": 80000
+		}
+	},
+	"version": 1
+}

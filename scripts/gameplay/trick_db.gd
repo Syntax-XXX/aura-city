@@ -93,6 +93,7 @@ func set_loadout_slot(slot_index: int, id: StringName) -> bool:
 	if existing >= 0:
 		loadout[existing] = loadout[slot_index]
 	loadout[slot_index] = id
+	Net.send({"type": "loadout", "slot": slot_index, "id": String(id)})
 	return true
 
 

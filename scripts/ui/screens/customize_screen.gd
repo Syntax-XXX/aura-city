@@ -39,6 +39,7 @@ func _save_name() -> void:
 	var n := _name_edit.text.strip_edges().substr(0, 16)
 	if n != "" and n != Identity.display_name:
 		Identity.display_name = n
+		Net.send({"type": "name", "name": n})
 		SaveSystem.save_game()
 		Events.toast.emit("Name gespeichert: " + n, UITheme.CYAN)
 

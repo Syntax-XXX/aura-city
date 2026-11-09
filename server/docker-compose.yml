@@ -1,0 +1,12 @@
+services:
+  aura-city-server:
+    build: .
+    container_name: aura-city-server
+    restart: unless-stopped
+    ports:
+      - "3710:3710"
+    environment:
+      - ADMIN_KEY=${ADMIN_KEY:-}
+      - TZ_GAME=Europe/Berlin
+    volumes:
+      - ./data:/data

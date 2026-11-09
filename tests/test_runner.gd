@@ -23,6 +23,7 @@ func section(name: String) -> void:
 
 func run(main: Node) -> int:
 	SaveSystem.autosave_enabled = false
+	Settings.path = "user://test_settings.json"
 	SaveSystem.save_path = "user://test_save.json"
 	SaveSystem.reset_all()
 	test_data()
@@ -35,6 +36,7 @@ func run(main: Node) -> int:
 	await test_scene(main)
 	for suffix in ["", ".bak", ".tmp"]:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveSystem.save_path + suffix))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(Settings.path))
 	print("\nErgebnis: %d bestanden, %d fehlgeschlagen" % [_passed, _failed])
 	return _failed
 

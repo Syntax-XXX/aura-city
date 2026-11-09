@@ -51,6 +51,11 @@ func reset() -> void:
 func earn(amount: float, reason: String, world_position := Vector3.ZERO) -> float:
 	if amount <= 0.0:
 		return 0.0
+	if Net.online:
+		# Online rechnet allein der Server (Net meldet das Ereignis); hier nur die Vorschau für Effekte.
+		var preview := roundf(amount * event_multiplier)
+		Events.aura_rewarded.emit(preview, reason, world_position)
+		return preview
 	var granted := roundf(authority.grant(amount * event_multiplier, reason))
 	if granted <= 0.0:
 		return 0.0
@@ -181,6 +186,7 @@ func claim_daily() -> int:
 	daily_last_claim = today()
 	var amount := DAILY_REWARD_BASE * mini(daily_streak, 7)
 	earn(amount, "Tagesbelohnung")
+	Net.send({"type": "daily"})
 	return amount
 
 
@@ -194,6 +200,22 @@ func _claimed_yesterday() -> bool:
 # ── Speichern ────────────────────────────────────────────
 func to_dict() -> Dictionary:
 	return {"aura": aura, "lifetime": lifetime, "daily_last_claim": daily_last_claim, "daily_streak": daily_streak}
+
+
+## Stand vom Server übernehmen (Online-Modus): einzige Quelle für Aura und Lifetime.
+func apply_server(d: Dictionary) -> void:
+	var old := aura
+	aura = maxf(0.0, float(d.get("aura", aura)))
+	lifetime = maxf(aura, float(d.get("lifetime", lifetime)))
+	daily_last_claim = str(d.get("daily_last_claim", daily_last_claim))
+	daily_streak = maxi(0, int(d.get("daily_streak", daily_streak)))
+	var delta := aura - old
+	if delta != 0.0:
+		if delta > 0.0:
+			_history.append([_clock, delta])
+		Events.aura_changed.emit(aura, delta)
+	_update_rank()
+	TrickDB.check_unlocks(lifetime)
 
 
 func from_dict(d: Dictionary) -> void:

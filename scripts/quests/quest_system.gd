@@ -16,7 +16,7 @@ func _ready() -> void:
 		if q and q.id != &"":
 			defs[q.id] = q
 	Events.trick_landed.connect(func(_id, _q, _a, _c): add(&"trick", 1))
-	Events.combo_ended.connect(_on_combo_ended)
+	Events.combo_changed.connect(_on_combo_changed)
 	Events.district_entered.connect(_on_district)
 	Events.collectible_found.connect(func(_id): add(&"collectible", 1))
 	Events.aura_changed.connect(_on_aura_changed)
@@ -25,8 +25,8 @@ func _ready() -> void:
 	check_reset()
 
 
-func _on_combo_ended(final_combo: int) -> void:
-	if final_combo >= 3:
+func _on_combo_changed(combo: int, _multiplier: float) -> void:
+	if combo == 3:
 		add(&"combo", 1)
 
 

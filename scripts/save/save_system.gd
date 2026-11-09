@@ -9,7 +9,13 @@ const SAVE_VERSION := 1
 const AUTOSAVE_SECONDS := 30.0
 
 var save_path := "user://aura_city_save.json"
-var tutorial_done := false
+## Tutorial-Status gehört zum Gerät (Settings), nicht zum Profil.
+var tutorial_done: bool:
+	get:
+		return Settings.tutorial_done
+	set(v):
+		Settings.tutorial_done = v
+		Settings.save()
 ## Einmalige Geheimnisse (geheime Splitter), die nie wieder erscheinen
 var found_secrets: Dictionary = {}
 var last_load_status := "" # "ok", "backup", "new", "corrupt"
@@ -19,7 +25,9 @@ var autosave_enabled := true
 
 func _ready() -> void:
 	get_tree().auto_accept_quit = false
+	Settings.load_file()
 	load_game()
+	Settings.apply()
 	# Wichtige Momente sofort sichern
 	Events.item_purchased.connect(func(_id): save_game())
 	Events.achievement_unlocked.connect(func(_id): save_game())
@@ -51,13 +59,13 @@ func snapshot() -> Dictionary:
 		"tricks": TrickDB.to_dict(),
 		"quests": Quests.to_dict(),
 		"achievements": Achievements.to_dict(),
-		"settings": Settings.to_dict(),
-		"tutorial_done": tutorial_done,
 		"found_secrets": found_secrets.keys().map(func(k): return String(k)),
 	}
 
 
 func save_game() -> bool:
+	if Net.online:
+		return true # Online liegt der Fortschritt ausschließlich auf dem Server
 	var text := JSON.stringify(snapshot(), "\t")
 	var tmp := save_path + ".tmp"
 	var f := FileAccess.open(tmp, FileAccess.WRITE)
@@ -110,8 +118,10 @@ func apply(data: Dictionary) -> void:
 	Inventory.from_dict(_section(data, "inventory"))
 	Quests.from_dict(_section(data, "quests"))
 	Achievements.from_dict(_section(data, "achievements"))
-	Settings.from_dict(_section(data, "settings"))
-	tutorial_done = bool(data.get("tutorial_done", false))
+	# Ältere Spielstände enthielten noch die Einstellungen
+	if data.has("settings") and not Settings.has_file():
+		Settings.from_dict(_section(data, "settings"), false)
+		Settings.tutorial_done = bool(data.get("tutorial_done", false))
 	found_secrets.clear()
 	var fs = data.get("found_secrets", [])
 	if fs is Array:

@@ -12,6 +12,15 @@ var loading: LoadingScreen
 
 func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
+	var ei := args.find("--export-data")
+	if ei >= 0:
+		get_tree().quit(0 if DataExport.run(self, args[ei + 1]) else 1)
+		return
+	var oi := args.find("--online-test")
+	if oi >= 0:
+		var failed_online: int = await OnlineTest.new().run(self, args[oi + 1])
+		get_tree().quit(1 if failed_online > 0 else 0)
+		return
 	if "--tests" in args:
 		var failed: int = await TestRunner.new().run(self)
 		get_tree().quit(1 if failed > 0 else 0)
@@ -64,6 +73,10 @@ func start_game() -> void:
 
 func back_to_menu() -> void:
 	SaveSystem.save_game()
+	if Net.online:
+		await Net.wait_flushed()
+		Net.disconnect_profile()
+		SaveSystem.load_game() # Menü zeigt wieder das lokale Profil
 	Audio.stop_world_audio()
 	ui.queue_free()
 	world.queue_free()

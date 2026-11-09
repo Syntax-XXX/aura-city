@@ -32,6 +32,7 @@ var _event: Label
 var _clock: Label
 var _district: Label
 var _fps: Label
+var _net: Label
 var _quest_refresh := 0.0
 
 const TIMING_W := 520.0
@@ -93,6 +94,8 @@ func _build_top_right() -> void:
 	_clock.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_district = UIKit.label("Spawn City", 14, UITheme.CYAN, v)
 	_district.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_net = UIKit.label("", 12, UITheme.MUTED, v)
+	_net.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_fps = UIKit.label("", 12, UITheme.MUTED, v)
 	_fps.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
@@ -220,6 +223,11 @@ func _process(delta: float) -> void:
 	_event.text = "⚡ AURA RUSH ×%s · %ds" % [str(Economy.event_multiplier), ceili(ev)] if ev > 0.0 else ""
 	if world and world.day_night:
 		_clock.text = world.day_night.clock_text()
+	if Net.online:
+		_net.text = "⚠ Profil wird geprüft" if Net.flagged else "● " + Net.status_text
+		_net.add_theme_color_override("font_color", UITheme.RED if Net.flagged or Net.status_text != "Online" else UITheme.GREEN)
+	else:
+		_net.text = "● Offline-Profil"
 	_fps.visible = Settings.show_fps
 	if _fps.visible:
 		_fps.text = "%d FPS" % Engine.get_frames_per_second()

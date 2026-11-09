@@ -38,4 +38,5 @@ func _save() -> void:
 
 func _quit() -> void:
 	SaveSystem.save_game()
+	await Net.wait_flushed()
 	get_tree().quit()

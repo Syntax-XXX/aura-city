@@ -60,6 +60,7 @@ func purchase(id: StringName) -> String:
 		Events.purchase_failed.emit(id, err)
 		return err
 	owned[id] = true
+	Net.send({"type": "buy", "id": String(id)})
 	Events.item_purchased.emit(id)
 	Events.item_unlocked.emit(id)
 	return ""
@@ -77,6 +78,7 @@ func equip(id: StringName) -> bool:
 	if item == null or not owns(id):
 		return false
 	equipped[item.slot()] = id
+	Net.send({"type": "equip", "slot": String(item.slot()), "id": String(id)})
 	Events.item_equipped.emit(item.slot(), id)
 	return true
 
@@ -85,6 +87,7 @@ func unequip(slot: StringName) -> void:
 	if slot == &"skin":
 		return # Haut kann nicht leer sein
 	equipped.erase(slot)
+	Net.send({"type": "equip", "slot": String(slot), "id": ""})
 	Events.item_equipped.emit(slot, &"")
 
 

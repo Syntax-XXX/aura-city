@@ -24,6 +24,8 @@ var _title: Label
 var _profile: Label
 var _name_edit: LineEdit
 var _play: Button
+var _offline: Button
+var _server_edit: LineEdit
 var _notice: Label
 var _settings: SettingsScreen
 var _leaderboard: LeaderboardScreen
@@ -59,9 +61,14 @@ func _ready() -> void:
 	_name_edit.max_length = 16
 	_name_edit.placeholder_text = "Dein Name"
 	cv.add_child(_name_edit)
-	_play = UIKit.primary("Spielen", _on_play, cv)
+	UIKit.label("Server (Online-Profil, Aura wird vom Server geprüft)", 13, UITheme.MUTED, cv)
+	_server_edit = LineEdit.new()
+	_server_edit.placeholder_text = Net.DEFAULT_URL
+	cv.add_child(_server_edit)
+	_play = UIKit.primary("Online spielen", _on_play_online, cv)
 	_play.custom_minimum_size = Vector2(0, 58)
 	_play.add_theme_font_size_override("font_size", 22)
+	_offline = UIKit.button("Offline spielen (lokal, ohne Bestenliste)", _on_play_offline, cv)
 	var row := UIKit.hbox(cv, 10)
 	var b1 := UIKit.button("Einstellungen", _open_settings, row)
 	b1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -85,9 +92,8 @@ func _ready() -> void:
 
 func refresh() -> void:
 	_name_edit.text = Identity.display_name
-	var has_progress := Economy.lifetime > 0.0
-	_play.text = "Weiterspielen" if has_progress else "Neues Spiel"
-	_profile.text = "%s · ✦ %s · Lifetime ✦ %s · %d Items" % [Economy.rank_name(), UIFormat.number(Economy.aura), UIFormat.number(Economy.lifetime), Inventory.owned.size()]
+	_server_edit.text = Net.server_url
+	_profile.text = "Offline-Profil: %s · ✦ %s · Lifetime ✦ %s · %d Items" % [Economy.rank_name(), UIFormat.number(Economy.aura), UIFormat.number(Economy.lifetime), Inventory.owned.size()]
 	_profile.add_theme_color_override("font_color", Economy.rank_color())
 	match SaveSystem.last_load_status:
 		"backup": _notice.text = "Hinweis: Der Spielstand war beschädigt – das automatische Backup wurde geladen."
@@ -100,10 +106,29 @@ func _process(delta: float) -> void:
 	_title.add_theme_color_override("font_color", Color.from_hsv(0.75 + sin(_t * 0.6) * 0.08, 0.35, 1.0))
 
 
-func _on_play() -> void:
+func _entered_name() -> String:
 	var n := _name_edit.text.strip_edges().substr(0, 16)
-	if n != "":
-		Identity.display_name = n
+	return n if n != "" else Identity.display_name
+
+
+func _on_play_online() -> void:
+	_play.disabled = true
+	_offline.disabled = true
+	_notice.text = "Verbinde mit %s …" % (_server_edit.text if _server_edit.text != "" else Net.DEFAULT_URL)
+	var err := await Net.connect_profile(_server_edit.text if _server_edit.text.strip_edges() != "" else Net.DEFAULT_URL, _entered_name())
+	_play.disabled = false
+	_offline.disabled = false
+	if err != "":
+		_notice.text = "Online nicht möglich: %s\nDu kannst offline spielen – dieser Fortschritt bleibt lokal." % err
+		return
+	_notice.text = ""
+	play_pressed.emit()
+
+
+func _on_play_offline() -> void:
+	Net.disconnect_profile()
+	SaveSystem.load_game()
+	Identity.display_name = _entered_name()
 	SaveSystem.save_game()
 	play_pressed.emit()
 
