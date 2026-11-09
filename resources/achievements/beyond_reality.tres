@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AchievementDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/achievements/achievement_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"beyond_reality"
+display_name = "Beyond Reality"
+description = "Erreiche den höchsten Rang."
+icon_glyph = "∞"
+stat = &"rank"
+goal = 7
+reward_aura = 0
+secret = true

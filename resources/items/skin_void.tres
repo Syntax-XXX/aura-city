@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"skin_void"
+display_name = "Void Walker"
+description = "Nur wer die geheime Dimension fand, trägt das."
+price = 0
+rarity = 6
+category = &"skin"
+icon_glyph = "◑"
+color = Color(0.118, 0.106, 0.294, 1)
+accent_color = Color(0.486, 0.227, 0.929, 1)
+variant = &"glow"
+hidden_until_unlocked = true
+required_achievement = &"secret_explorer"

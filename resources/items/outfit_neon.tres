@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"outfit_neon"
+display_name = "Neon Runner"
+description = "Leuchtet bei Nacht."
+price = 32000
+rarity = 3
+category = &"outfit"
+icon_glyph = "♜"
+color = Color(0.059, 0.090, 0.165, 1)
+accent_color = Color(0.133, 0.827, 0.933, 1)
+variant = &"jacket"
+required_rank = 2

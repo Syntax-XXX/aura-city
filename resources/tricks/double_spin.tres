@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="TrickDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/trick_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"double_spin"
+display_name = "Double Spin"
+description = "Zwei volle Drehungen."
+tier = 1
+difficulty = 4
+base_aura = 110
+duration = 0.9
+cooldown = 1.4
+combo_bonus = 0.35
+animation = &"double_spin"
+effect_color = Color(0.659, 0.333, 0.969, 1)
+sound_pitch = 0.95
+unlock_lifetime_aura = 1500

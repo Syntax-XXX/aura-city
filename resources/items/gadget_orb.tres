@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"gadget_orb"
+display_name = "Nebula Orb"
+description = "Eine schwebende Mini-Galaxie."
+price = 35000
+rarity = 3
+category = &"gadget"
+icon_glyph = "●"
+color = Color(0.192, 0.180, 0.506, 1)
+accent_color = Color(0.941, 0.671, 0.988, 1)
+variant = &"orb"
+required_rank = 2

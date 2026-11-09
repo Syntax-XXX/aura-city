@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/quest_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"weekly_unlocks"
+display_name = "Shopping-Tour"
+description = "Schalte 5 Kosmetik-Items frei"
+period = 1
+stat = &"unlock"
+goal = 5
+reward_aura = 3000

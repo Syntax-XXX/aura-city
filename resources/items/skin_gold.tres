@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"skin_gold"
+display_name = "Pure Gold"
+description = "Für alle, die es geschafft haben."
+price = 180000
+rarity = 4
+category = &"skin"
+icon_glyph = "◑"
+color = Color(0.984, 0.749, 0.141, 1)
+accent_color = Color(0.992, 0.902, 0.541, 1)
+variant = &"metal"
+required_rank = 4

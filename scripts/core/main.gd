@@ -1,0 +1,75 @@
+extends Node
+## Spielablauf: Hauptmenü → Ladebildschirm → Welt + Spieler + UI → zurück ins Menü.
+## Startargumente (nach „--“): --tests  führt die Testsuite aus,
+##                             --smoke  startet das Spiel automatisch und beendet nach einer Probe.
+
+var world: WorldRoot
+var player: PlayerController
+var ui: UIRoot
+var menu: MainMenu
+var loading: LoadingScreen
+
+
+func _ready() -> void:
+	var args := OS.get_cmdline_user_args()
+	if "--tests" in args:
+		var failed: int = await TestRunner.new().run(self)
+		get_tree().quit(1 if failed > 0 else 0)
+		return
+	var layer := CanvasLayer.new()
+	layer.layer = 10
+	add_child(layer)
+	var theme_root := Control.new()
+	theme_root.theme = UITheme.get_theme()
+	theme_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	theme_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(theme_root)
+	menu = MainMenu.new()
+	theme_root.add_child(menu)
+	menu.play_pressed.connect(start_game)
+	loading = LoadingScreen.new()
+	theme_root.add_child(loading)
+	if "--smoke" in args:
+		await start_game()
+		await SmokeTest.run(self)
+		get_tree().quit()
+
+
+func start_game() -> void:
+	menu.visible = false
+	loading.visible = true
+	loading.set_progress(0.1, "Lade Spielstand …")
+	await get_tree().process_frame
+	loading.set_progress(0.3, "Baue die Stadt …")
+	await get_tree().process_frame
+	world = WorldRoot.new()
+	add_child(world)
+	loading.set_progress(0.8, "Spawne Spieler …")
+	await get_tree().process_frame
+	player = PlayerController.new()
+	world.add_child(player)
+	player.teleport(WorldRoot.SPAWN_POINT)
+	ui = UIRoot.new()
+	ui.player = player
+	ui.world = world
+	add_child(ui)
+	ui.quit_to_menu.connect(back_to_menu)
+	loading.set_progress(1.0, "Los geht's!")
+	await get_tree().process_frame
+	loading.visible = false
+	Audio.start_world_audio()
+	if not SaveSystem.tutorial_done:
+		ui.start_tutorial()
+
+
+func back_to_menu() -> void:
+	SaveSystem.save_game()
+	Audio.stop_world_audio()
+	ui.queue_free()
+	world.queue_free()
+	ui = null
+	world = null
+	player = null
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	menu.visible = true
+	menu.refresh()

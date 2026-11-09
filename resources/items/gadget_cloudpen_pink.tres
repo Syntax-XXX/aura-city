@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"gadget_cloudpen_pink"
+display_name = "Cloud Pen Bubblegum"
+description = "Pinke Effektwolken."
+price = 1500
+rarity = 1
+category = &"gadget"
+icon_glyph = "✎"
+color = Color(0.957, 0.447, 0.714, 1)
+accent_color = Color(0.992, 0.878, 0.278, 1)
+variant = &"pen"

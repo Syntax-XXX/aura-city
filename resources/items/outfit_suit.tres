@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"outfit_suit"
+display_name = "Midnight Suit"
+description = "Luxus-Distrikt-Pflicht."
+price = 200000
+rarity = 4
+category = &"outfit"
+icon_glyph = "♜"
+color = Color(0.067, 0.094, 0.153, 1)
+accent_color = Color(0.984, 0.749, 0.141, 1)
+variant = &"suit"
+required_rank = 4

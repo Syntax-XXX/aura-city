@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"outfit_track"
+display_name = "Tracksuit"
+description = "Drei Streifen Energie."
+price = 2200
+rarity = 1
+category = &"outfit"
+icon_glyph = "♜"
+color = Color(0.114, 0.306, 0.847, 1)
+accent_color = Color(0.973, 0.980, 0.988, 1)
+variant = &"tracksuit"

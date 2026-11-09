@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AchievementDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/achievements/achievement_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"trick_100"
+display_name = "Trick Machine"
+description = "Lande 100 Tricks."
+icon_glyph = "⚙"
+stat = &"tricks"
+goal = 100
+reward_aura = 2000
+secret = false

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"hair_afro"
+display_name = "Cloud Afro"
+description = "Groß, rund, legendär fluffig."
+price = 6000
+rarity = 2
+category = &"hair"
+icon_glyph = "♒"
+color = Color(0.122, 0.071, 0.031, 1)
+accent_color = Color(0.000, 0.000, 0.000, 1)
+variant = &"afro"

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AchievementDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/achievements/achievement_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"godlike_rank"
+display_name = "Godlike Rank"
+description = "Erreiche den Rang Godlike."
+icon_glyph = "☀"
+stat = &"rank"
+goal = 6
+reward_aura = 50000
+secret = false

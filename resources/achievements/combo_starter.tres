@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AchievementDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/achievements/achievement_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"combo_starter"
+display_name = "Combo Starter"
+description = "Erreiche eine 5er-Combo."
+icon_glyph = "✚"
+stat = &"best_combo"
+goal = 5
+reward_aura = 500
+secret = false

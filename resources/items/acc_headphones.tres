@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"acc_headphones"
+display_name = "Bass Cans"
+description = "Eigener Soundtrack."
+price = 8000
+rarity = 2
+category = &"accessory"
+icon_glyph = "◒"
+color = Color(0.659, 0.333, 0.969, 1)
+accent_color = Color(0.133, 0.827, 0.933, 1)
+variant = &"headphones"

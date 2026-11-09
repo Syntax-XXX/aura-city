@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/quest_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"daily_collectibles"
+display_name = "Sammler"
+description = "Finde 5 Aura-Splitter"
+period = 0
+stat = &"collectible"
+goal = 5
+reward_aura = 500

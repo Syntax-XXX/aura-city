@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AchievementDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/achievements/achievement_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"challenger"
+display_name = "Challenger"
+description = "Schaffe 10 Challenges."
+icon_glyph = "⚑"
+stat = &"challenges"
+goal = 10
+reward_aura = 2000
+secret = false

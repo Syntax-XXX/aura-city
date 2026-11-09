@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"acc_cap"
+display_name = "Snapback"
+description = "Schirm nach hinten."
+price = 800
+rarity = 0
+category = &"accessory"
+icon_glyph = "◒"
+color = Color(0.122, 0.161, 0.216, 1)
+accent_color = Color(0.957, 0.447, 0.714, 1)
+variant = &"cap"

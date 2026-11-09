@@ -1,0 +1,44 @@
+; AURA CITY – Godot 4.3 Projekt
+config_version=5
+
+[application]
+
+config/name="AURA CITY"
+config/version="0.1.0"
+config/description="Open-World-Hangout: Tricks, Aura, Kosmetik, Quests."
+run/main_scene="res://scenes/main/main.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+config/icon="res://icon.svg"
+
+[autoload]
+
+Controls="*res://scripts/core/controls.gd"
+Events="*res://scripts/core/events.gd"
+Settings="*res://scripts/core/settings.gd"
+Audio="*res://scripts/core/audio_manager.gd"
+ItemDB="*res://scripts/inventory/item_db.gd"
+TrickDB="*res://scripts/gameplay/trick_db.gd"
+Identity="*res://scripts/net/player_identity.gd"
+Economy="*res://scripts/economy/economy.gd"
+Inventory="*res://scripts/inventory/inventory.gd"
+Quests="*res://scripts/quests/quest_system.gd"
+Achievements="*res://scripts/achievements/achievement_system.gd"
+SaveSystem="*res://scripts/save/save_system.gd"
+
+[display]
+
+window/size/viewport_width=1600
+window/size/viewport_height=900
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[physics]
+
+common/physics_ticks_per_second=60
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+anti_aliasing/quality/msaa_3d=2
+lights_and_shadows/directional_shadow/size=2048

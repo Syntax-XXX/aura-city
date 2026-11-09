@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/quest_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"weekly_challenges"
+display_name = "Challenge-Marathon"
+description = "Schaffe 20 Challenges"
+period = 1
+stat = &"challenge"
+goal = 20
+reward_aura = 4500

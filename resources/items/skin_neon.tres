@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"skin_neon"
+display_name = "Neon Glow"
+description = "Haut, die im Dunkeln leuchtet."
+price = 30000
+rarity = 3
+category = &"skin"
+icon_glyph = "◑"
+color = Color(0.133, 0.827, 0.933, 1)
+accent_color = Color(0.659, 0.333, 0.969, 1)
+variant = &"glow"
+required_rank = 2

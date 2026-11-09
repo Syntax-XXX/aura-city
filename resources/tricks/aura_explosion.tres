@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="TrickDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/trick_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"aura_explosion"
+display_name = "Aura Explosion"
+description = "Die ganze Straße spürt deine Aura."
+tier = 2
+difficulty = 10
+base_aura = 800
+duration = 1.6
+cooldown = 4.0
+combo_bonus = 0.6
+animation = &"explosion"
+effect_color = Color(0.957, 0.247, 0.369, 1)
+sound_pitch = 0.7
+unlock_lifetime_aura = 300000

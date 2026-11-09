@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"hair_mohawk"
+display_name = "Neon Mohawk"
+description = "Punk-Energie in Neon."
+price = 24000
+rarity = 3
+category = &"hair"
+icon_glyph = "♒"
+color = Color(0.957, 0.447, 0.714, 1)
+accent_color = Color(0.133, 0.827, 0.933, 1)
+variant = &"mohawk"
+required_rank = 2

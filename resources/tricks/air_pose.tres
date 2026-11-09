@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="TrickDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/trick_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"air_pose"
+display_name = "Air Pose"
+description = "Pose mitten in der Luft."
+tier = 1
+difficulty = 6
+base_aura = 200
+duration = 1.1
+cooldown = 2.0
+combo_bonus = 0.4
+animation = &"air_pose"
+effect_color = Color(0.976, 0.659, 0.831, 1)
+sound_pitch = 1.1
+unlock_lifetime_aura = 15000

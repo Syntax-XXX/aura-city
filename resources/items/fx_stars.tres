@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"fx_stars"
+display_name = "Star Aura"
+description = "Sterne umkreisen dich."
+price = 45000
+rarity = 3
+category = &"particle"
+icon_glyph = "★"
+color = Color(0.980, 0.800, 0.082, 1)
+accent_color = Color(1.000, 1.000, 1.000, 1)
+variant = &""
+required_rank = 3

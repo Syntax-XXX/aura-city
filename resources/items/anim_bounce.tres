@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"anim_bounce"
+display_name = "Bounce Idle"
+description = "Immer im Takt."
+price = 2500
+rarity = 1
+category = &"animation"
+icon_glyph = "☺"
+color = Color(0.220, 0.741, 0.973, 1)
+accent_color = Color(1.000, 1.000, 1.000, 1)
+variant = &"bounce"

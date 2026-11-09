@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"outfit_hoodie"
+display_name = "Gray Hoodie"
+description = "Der Klassiker."
+price = 0
+rarity = 0
+category = &"outfit"
+icon_glyph = "♜"
+color = Color(0.420, 0.447, 0.502, 1)
+accent_color = Color(0.216, 0.255, 0.318, 1)
+variant = &"hoodie"
+starter = true

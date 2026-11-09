@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"acc_chain"
+display_name = "Aura Chain"
+description = "Glänzt bei jedem Trick."
+price = 28000
+rarity = 3
+category = &"accessory"
+icon_glyph = "◒"
+color = Color(0.984, 0.749, 0.141, 1)
+accent_color = Color(0.992, 0.902, 0.541, 1)
+variant = &"chain"
+required_rank = 2

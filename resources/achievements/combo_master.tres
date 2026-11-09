@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AchievementDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/achievements/achievement_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"combo_master"
+display_name = "Combo Master"
+description = "Erreiche eine 10er-Combo."
+icon_glyph = "✪"
+stat = &"best_combo"
+goal = 10
+reward_aura = 2500
+secret = false

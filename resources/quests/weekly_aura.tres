@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/quest_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"weekly_aura"
+display_name = "Aura-Woche"
+description = "Verdiene 10.000 Aura"
+period = 1
+stat = &"aura"
+goal = 10000
+reward_aura = 3000

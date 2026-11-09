@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"hair_spiky"
+display_name = "Spiky"
+description = "Spitz nach oben."
+price = 600
+rarity = 0
+category = &"hair"
+icon_glyph = "♒"
+color = Color(0.067, 0.067, 0.067, 1)
+accent_color = Color(0.000, 0.000, 0.000, 1)
+variant = &"spiky"

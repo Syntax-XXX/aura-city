@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="TrickDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/trick_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"basic_spin"
+display_name = "Basic Spin"
+description = "Eine saubere 360°-Drehung."
+tier = 0
+difficulty = 1
+base_aura = 40
+duration = 0.7
+cooldown = 0.8
+combo_bonus = 0.25
+animation = &"spin"
+effect_color = Color(0.753, 0.518, 0.988, 1)
+sound_pitch = 1.0
+unlock_lifetime_aura = 0

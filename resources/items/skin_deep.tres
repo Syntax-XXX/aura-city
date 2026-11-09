@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"skin_deep"
+display_name = "Deep Tone"
+description = "Dunkler Hautton."
+price = 0
+rarity = 0
+category = &"skin"
+icon_glyph = "◐"
+color = Color(0.553, 0.333, 0.141, 1)
+accent_color = Color(0.420, 0.243, 0.114, 1)
+variant = &""
+starter = true

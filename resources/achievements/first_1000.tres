@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AchievementDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/achievements/achievement_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"first_1000"
+display_name = "First 1,000 Aura"
+description = "Sammle 1.000 Aura."
+icon_glyph = "✧"
+stat = &"lifetime_aura"
+goal = 1000
+reward_aura = 200
+secret = false

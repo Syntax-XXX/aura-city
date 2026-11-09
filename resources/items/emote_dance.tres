@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"emote_dance"
+display_name = "Dance"
+description = "Einfach tanzen."
+price = 3500
+rarity = 1
+category = &"emote"
+icon_glyph = "♫"
+color = Color(0.957, 0.447, 0.714, 1)
+accent_color = Color(1.000, 1.000, 1.000, 1)
+variant = &"dance"

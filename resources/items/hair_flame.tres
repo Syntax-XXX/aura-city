@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"hair_flame"
+display_name = "Flame Hair"
+description = "Brennt. Metaphorisch."
+price = 150000
+rarity = 4
+category = &"hair"
+icon_glyph = "♒"
+color = Color(0.976, 0.451, 0.086, 1)
+accent_color = Color(0.992, 0.878, 0.278, 1)
+variant = &"spiky"
+required_rank = 4

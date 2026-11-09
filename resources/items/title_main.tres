@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"title_main"
+display_name = "Main Character"
+description = "Die Story dreht sich um dich."
+price = 4000
+rarity = 1
+category = &"title"
+icon_glyph = "❝"
+color = Color(0.220, 0.741, 0.973, 1)
+accent_color = Color(1.000, 1.000, 1.000, 1)
+variant = &""
+required_rank = 2

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"acc_halo"
+display_name = "Halo"
+description = "Jenseits der Realität."
+price = 1200000
+rarity = 5
+category = &"accessory"
+icon_glyph = "◒"
+color = Color(0.996, 0.976, 0.765, 1)
+accent_color = Color(1.000, 1.000, 1.000, 1)
+variant = &"halo"
+required_rank = 6
