@@ -24,6 +24,8 @@ var sky_material: ShaderMaterial
 var time_of_day := 0.35
 var _lights_on := false
 var _cloud := Vector2.ZERO
+## Regen-Intensität 0..1 (Weather)
+var weather := 0.0
 
 
 var _apply_timer := 0.0
@@ -65,7 +67,7 @@ func apply() -> void:
 	var elev := sin(angle)
 	sun.rotation = Vector3(-absf(elev) * 1.1 - 0.12, 0.6 + time_of_day * 0.6, 0)
 	sun.light_color = s[2]
-	sun.light_energy = s[3]
+	sun.light_energy = s[3] * lerpf(1.0, 0.45, weather)
 	var sunset := clampf(1.0 - absf(elev) * 3.0, 0.0, 1.0) * (1.0 if d > 0.15 else 0.4)
 	sky_material.set_shader_parameter("sky_top", s[0])
 	sky_material.set_shader_parameter("sky_horizon", s[1])
@@ -73,6 +75,10 @@ func apply() -> void:
 	sky_material.set_shader_parameter("night", clampf(1.0 - d * 2.2, 0.0, 1.0))
 	sky_material.set_shader_parameter("sunset", sunset)
 	sky_material.set_shader_parameter("cloud_offset", _cloud)
+	sky_material.set_shader_parameter("cloud_cover", lerpf(0.45, 0.9, weather))
+	if weather > 0.0:
+		sky_material.set_shader_parameter("sky_top", (s[0] as Color).lerp(Color("4b5563"), weather * 0.7))
+		sky_material.set_shader_parameter("sky_horizon", (s[1] as Color).lerp(Color("9ca3af"), weather * 0.6))
 	sky_material.set_shader_parameter("sun_dir", sun.global_transform.basis.z if sun.is_inside_tree() else Vector3(0, 0.5, 0.8))
 	environment.ambient_light_color = s[4]
 	environment.ambient_light_energy = lerpf(0.55, 0.7, d)

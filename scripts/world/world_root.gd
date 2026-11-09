@@ -18,6 +18,7 @@ const RUSH_MULTIPLIER := 2.0
 
 var day_night: DayNight
 var sky_dome: MeshInstance3D
+var weather: Weather
 var sun: DirectionalLight3D
 var _env: Environment
 var _applied_view_quality := -1
@@ -124,6 +125,10 @@ func _build_environment() -> void:
 	day_night.sky_material = sky_mat
 	add_child(day_night)
 	day_night.apply()
+	if not lab_mode:
+		weather = Weather.new()
+		weather.day_night = day_night
+		add_child(weather)
 	Events.settings_changed.connect(apply_quality)
 
 

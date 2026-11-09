@@ -171,9 +171,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	else:
 		for i in 4:
 			if event.is_action_pressed("trick_%d" % (i + 1)):
-				if boarding:
-					Events.toast.emit("Auf dem Board keine Tricks – [%s] absteigen" % Controls.key_label("hoverboard"), Color("fca5a5"))
-					break
 				var err := tricks.start_slot(i)
 				if err != "":
 					Events.toast.emit(err, Color("fca5a5"))
@@ -291,7 +288,10 @@ func toggle_board() -> void:
 	boarding = true
 	animator.boarding = true
 	_board = _make_board(Inventory.equipped_item(&"board"))
-	visual.add_child(_board)
+	# Board hängt am Pose-Knoten → dreht sich bei Board-Tricks mit; Gegendrehung zur Surf-Haltung
+	visual.pose.add_child(_board)
+	_board.rotation.y = -CharacterAnimator.SURF_YAW
+	_board.position.y = -CharacterAnimator.SURF_LIFT
 	Audio.play(&"teleport", 1.4)
 	FX.ring(get_parent(), global_position + Vector3.UP * 0.1, _board.get_meta(&"glow"), 1.5)
 

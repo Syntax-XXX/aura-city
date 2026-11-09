@@ -29,4 +29,26 @@ static func run(main: Node) -> void:
 	ui.dialogue.advance()
 	print("[smoke] Dialog zu=", not ui.dialogue.visible, " Eingabe frei=", player.input_enabled)
 	print("[smoke] Interaktionen: ", tree.get_nodes_in_group(&"interactables").size())
+	# Hoverboard + Board-Trick
+	for i in 40:
+		await tree.physics_frame
+	player.toggle_board()
+	print("[smoke] Hoverboard aktiv=", player.boarding, " Tempo=", player.board_speed())
+	var before_board := Economy.aura
+	for i in 10:
+		await tree.physics_frame
+	player.tricks._cooldowns.clear()
+	print("[smoke] Board-Trick-Start: '", player.tricks.start_slot(1), "'")
+	player.tricks.needle = 0.5
+	player.tricks.land()
+	print("[smoke] Board-Trick Aura +", Economy.aura - before_board)
+	for i in 60:
+		await tree.process_frame
+	player.toggle_board()
+	print("[smoke] Hoverboard aus=", not player.boarding)
+	# Foto-Modus an/aus
+	ui.photo.toggle()
+	print("[smoke] Foto-Modus=", ui.photo.active, " Zeit=", Engine.time_scale, " UI versteckt=", not ui._root.visible)
+	ui.photo.toggle()
+	print("[smoke] Foto-Modus aus=", not ui.photo.active, " Zeit=", Engine.time_scale)
 	print("[smoke] OK")

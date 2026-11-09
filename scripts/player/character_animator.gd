@@ -27,6 +27,10 @@ const ACTIONS := {
 	&"cheer": ["CharacterArmature|Victory", 0.0, 0.0, 0.0, 0.0],
 	&"sit": ["ual/Sitting_Idle", 0.0, 0.0, 0.0, 0.0],
 }
+## Surf-Haltung auf dem Hoverboard (seitlich gedreht, auf dem Board stehend)
+const SURF_YAW := PI * 0.42
+const SURF_LIFT := 0.17
+
 const IDLES := {&"chill": "ual/Idle", &"bounce": "CharacterArmature|Idle", &"flex": "ual/Sword_Idle"}
 const LOOPING := ["Idle", "Walk", "Jog_Fwd", "Sprint", "Jump", "Crouch_Idle", "Crouch_Fwd", "Dance", "Idle_Talking",
 	"Sword_Idle", "Spell_Simple_Idle", "Sitting_Idle", "Swim_Fwd", "Swim_Idle", "Walk_Formal", "Pistol_Idle", "Driving"]
@@ -68,7 +72,8 @@ func play_action(animation_name: StringName, duration: float, is_emote := false)
 	state = State.EMOTE if is_emote else State.TRICK
 	_state_time = 0.0
 	var spec: Array = ACTIONS.get(animation_name, ACTIONS[&"pose"])
-	_play(spec[0], 0.1)
+	# Auf dem Board: Haltung bleiben, der Trick ist Sprung + Drehung (Board dreht mit)
+	_play("ual/Crouch_Idle" if boarding else spec[0], 0.1)
 	if _player and _player.current_animation != "":
 		var length := _player.current_animation_length
 		_player.seek(length * float(spec[1]), true)
@@ -114,8 +119,18 @@ func _process(delta: float) -> void:
 			var spec: Array = ACTIONS.get(_action, ACTIONS[&"pose"])
 			var t := action_progress()
 			var e := t * t * (3.0 - 2.0 * t)
-			p.position = Vector3(0, float(spec[3]) * sin(t * PI), 0)
-			p.rotation = Vector3(float(spec[4]) * TAU * e, float(spec[2]) * TAU * e, 0)
+			var lift := float(spec[3])
+			var spin := float(spec[2])
+			var flip := float(spec[4])
+			if boarding:
+				lift = maxf(lift, 0.8) # Ollie
+				if spin == 0.0 and flip == 0.0:
+					spin = 1.0
+				p.position = Vector3(0, SURF_LIFT + lift * sin(t * PI), 0)
+				p.rotation = Vector3(0, SURF_YAW + spin * TAU * e, flip * TAU * e)
+				return
+			p.position = Vector3(0, lift * sin(t * PI), 0)
+			p.rotation = Vector3(flip * TAU * e, spin * TAU * e, 0)
 			return
 		State.IDLE, State.WALK, State.RUN when boarding:
 			_player.speed_scale = 1.0
@@ -143,8 +158,8 @@ func _process(delta: float) -> void:
 			_player.speed_scale = 1.4
 			_play("ual/Jump_Land", 0.08)
 	# Trick-Transform weich zurücksetzen (bzw. in die Surf-Haltung auf dem Board)
-	var goal_pos := Vector3(0, 0.17, 0) if boarding else Vector3.ZERO
-	var goal_rot := Vector3(0, PI * 0.42, 0) if boarding else Vector3.ZERO
+	var goal_pos := Vector3(0, SURF_LIFT, 0) if boarding else Vector3.ZERO
+	var goal_rot := Vector3(0, SURF_YAW, 0) if boarding else Vector3.ZERO
 	p.position = p.position.lerp(goal_pos, minf(1.0, delta * 12.0))
-	var r := Vector3(wrapf(p.rotation.x, -PI, PI), wrapf(p.rotation.y, -PI, PI), 0)
+	var r := Vector3(wrapf(p.rotation.x, -PI, PI), wrapf(p.rotation.y, -PI, PI), wrapf(p.rotation.z, -PI, PI))
 	p.rotation = r.lerp(goal_rot, minf(1.0, delta * 12.0))

@@ -8,7 +8,7 @@ const STEPS := [
 	["Dein erster Trick", "Drück 1 und dann F (oder Linksklick), wenn die Nadel im leuchtenden Bereich ist."],
 	["Combo!", "Lande zwei Tricks kurz hintereinander – das ergibt einen Aura-Multiplikator."],
 	["Shopping", "Öffne den Shop mit B. Neue Items gibt es auch in den Bezirks-Shops."],
-	["Hoverboard", "Drück Q: Mit dem Board bist du auf der riesigen Map viel schneller. Shift = Boost."],
+	["Hoverboard", "Drück Q: Mit dem Board bist du auf der riesigen Map viel schneller. Shift = Boost, 1–4 = Board-Tricks."],
 ]
 
 var player: PlayerController
