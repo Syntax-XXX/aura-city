@@ -30,6 +30,7 @@ var _server_edit: LineEdit
 var _notice: Label
 var _settings: SettingsScreen
 var _leaderboard: LeaderboardScreen
+var _credits: CreditsScreen
 var _t := 0.0
 
 
@@ -76,7 +77,11 @@ func _ready() -> void:
 	b1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var b2 := UIKit.button("Bestenliste", _open_leaderboard, row)
 	b2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	UIKit.button("Beenden", get_tree().quit, cv)
+	var row2 := UIKit.hbox(cv, 10)
+	var b3 := UIKit.button("Credits", func(): _credits.open(), row2)
+	b3.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var b4 := UIKit.button("Beenden", get_tree().quit, row2)
+	b4.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_notice = UIKit.label("", 13, UITheme.GOLD, v)
 	_notice.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_notice.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -87,6 +92,8 @@ func _ready() -> void:
 	_leaderboard = LeaderboardScreen.new()
 	add_child(_settings)
 	add_child(_leaderboard)
+	_credits = CreditsScreen.new()
+	add_child(_credits)
 	add_child(confirm)
 	_settings.confirm = confirm
 	refresh()

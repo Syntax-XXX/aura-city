@@ -51,7 +51,7 @@ static func build(root: Node3D) -> void:
 	DistrictBuilder.challenge(root, c + Vector3(16, 0, 12), "Hafen-Highscore", "score", 8000, 50.0, 7000, Color("38bdf8"))
 	DistrictBuilder.challenge(root, c + Vector3(32, 0, 12), "Möwen-Präzision", "perfects", 7, 45.0, 6500, Color("f8fafc"))
 	for i in 4:
-		DistrictBuilder.npc(root, ["Kapitän Kai", "Docker Dana", "Fischer Fritz", "Möwen-Mia"][i], c + Vector3(-30 + i * 18, 0, 0), PackedStringArray(["Oben auf den Containern liegt mehr als Rost.", "Der Turm am Kran? Nur für Schwindelfreie.", "Bei Dock Deals gibt's solide Fits für wenig Aura."]), 14.0)
+		DistrictBuilder.npc(root, ["Kapitän Kai", "Docker Dana", "Fischer Fritz", "Möwen-Mia"][i], c + Vector3(-30 + i * 18, 0, 0), PackedStringArray(["Oben auf den Containern liegt mehr als Rost.", "Der Turm am Kran? Nur für Schwindelfreie.", "Bei Dock Deals gibt's solide Fits für wenig Aura."]), 14.0, &"harbor")
 	DistrictBuilder.shards(root, "harbor", c + Vector3(0, 0, 8), 6, 22.0, 150)
 	# Splitter auf drei Containerstapeln, jeweils mit Kistentreppe daneben (Belohnung fürs Klettern)
 	var crate := WorldKit.mat(Color("a16207"), 0.9)

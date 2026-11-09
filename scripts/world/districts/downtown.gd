@@ -44,7 +44,7 @@ static func build(root: Node3D) -> void:
 	DistrictBuilder.challenge(root, c + Vector3(-12, 0, -12), "Wolkenkratzer-Score", "score", 50000, 70.0, 70000, Color("fbbf24"))
 	DistrictBuilder.challenge(root, c + Vector3(12, 0, -12), "Elite-Präzision", "perfects", 12, 70.0, 65000, Color("e879f9"))
 	for i in 5:
-		DistrictBuilder.npc(root, ["Broker Ben", "CEO Cleo", "Influencer Ivy", "Max Mogul", "Skyler"][i], c + Vector3(randf_range(-10, 10), 0, randf_range(-10, 10)), PackedStringArray(["Hier oben zählt nur Sigma-Aura.", "Vom Treppenturm sieht man die ganze Stadt.", "Das Skyline Atelier führt Legendary und Mythic."]), 10.0)
+		DistrictBuilder.npc(root, ["Broker Ben", "CEO Cleo", "Influencer Ivy", "Max Mogul", "Skyler"][i], c + Vector3(randf_range(-10, 10), 0, randf_range(-10, 10)), PackedStringArray(["Hier oben zählt nur Sigma-Aura.", "Vom Treppenturm sieht man die ganze Stadt.", "Das Skyline Atelier führt Legendary und Mythic."]), 10.0, &"business")
 	# Splitter auf den Straßen zwischen den Hochhäusern (nicht in Gebäuden)
 	for i in 8:
 		var shard := Collectible.new()

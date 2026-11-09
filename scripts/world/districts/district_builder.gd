@@ -9,8 +9,9 @@ static func place(parent: Node3D, node: Node3D, pos: Vector3) -> Node3D:
 	return node
 
 
-static func npc(parent: Node3D, npc_name: String, pos: Vector3, lines: PackedStringArray, radius := 10.0) -> Npc:
+static func npc(parent: Node3D, npc_name: String, pos: Vector3, lines: PackedStringArray, radius := 10.0, style: StringName = &"default") -> Npc:
 	var n := Npc.new()
+	n.style = style
 	n.npc_name = npc_name
 	n.lines = lines
 	n.wander_center = pos
@@ -43,8 +44,7 @@ static func rival(parent: Node3D, rival_name: String, pos: Vector3, score: int, 
 		"Du willst Aura? Dann zeig's mir.",
 		"Schaffst du %s Aura in %d Sekunden? Ich schon." % [UIFormat.number(score), int(seconds)],
 		"Tritt in den Ring neben mir, wenn du bereit bist.",
-	]), 1.5)
-	n.style = style
+	]), 1.5, style)
 	challenge(parent, pos + Vector3(3.2, 0, 0), "Battle: " + rival_name, "score", score, seconds, reward, color)
 
 

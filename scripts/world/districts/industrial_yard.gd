@@ -61,6 +61,6 @@ static func build(root: Node3D) -> void:
 	DistrictBuilder.challenge(root, c + Vector3(28, 0, 4), "Schicht-Combo", "combo", 9, 45.0, 11000, Color("f472b6"))
 	DistrictBuilder.challenge(root, c + Vector3(46, 0, 4), "Stahl-Präzision", "perfects", 9, 55.0, 12000, Color("22d3ee"))
 	for i in 4:
-		DistrictBuilder.npc(root, ["Spray Sam", "Rusty", "Bolt", "Neon Nico"][i], c + Vector3(randf_range(-30, 30), 0, randf_range(-6, 18)), PackedStringArray(["Die Mauern werden immer höher – ganz oben liegt was.", "Yard Supply verkauft Epic bis Mythic.", "Hier zählt nur Präzision."]), 14.0)
+		DistrictBuilder.npc(root, ["Spray Sam", "Rusty", "Bolt", "Neon Nico"][i], c + Vector3(randf_range(-30, 30), 0, randf_range(-6, 18)), PackedStringArray(["Die Mauern werden immer höher – ganz oben liegt was.", "Yard Supply verkauft Epic bis Mythic.", "Hier zählt nur Präzision."]), 14.0, &"work")
 	DistrictBuilder.shards(root, "yard", c + Vector3(0, 0, 8), 7, 24.0, 400)
 	DistrictBuilder.teleporter(root, c + Vector3(55, 0, 14), "Spawn City", Vector3(0, 1, 26))

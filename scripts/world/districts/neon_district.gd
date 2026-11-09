@@ -34,7 +34,7 @@ static func build(root: Node3D) -> void:
 	DistrictBuilder.challenge(root, c + Vector3(0, 0, 8), "Lichtgeschwindigkeit", "perfects", 6, 45.0, 4000, Color("22d3ee"))
 	DistrictBuilder.challenge(root, c + Vector3(18, 0, 8), "Nachtschicht", "score", 5000, 50.0, 4500, Color("a855f7"))
 	for i in 5:
-		DistrictBuilder.npc(root, ["DJ Volt", "Nova", "Pixel", "Glitch", "Synth"][i], c + Vector3(randf_range(-20, 20), 0, randf_range(-18, 18)), PackedStringArray(["Nachts ist hier am meisten los.", "Die Boutique hat Epic- und Legendary-Fits.", "In der Gasse hinten soll's was Seltenes geben …"]), 15.0)
+		DistrictBuilder.npc(root, ["DJ Volt", "Nova", "Pixel", "Glitch", "Synth"][i], c + Vector3(randf_range(-20, 20), 0, randf_range(-18, 18)), PackedStringArray(["Nachts ist hier am meisten los.", "Die Boutique hat Epic- und Legendary-Fits.", "In der Gasse hinten soll's was Seltenes geben …"]), 15.0, &"street")
 	DistrictBuilder.shards(root, "neon", c, 6, 28.0, 120)
 	# Versteckte Gasse: geheimer Splitter + zweites Portal
 	WorldKit.box(root, Vector3(4, 6, 0.4), c + Vector3(-34, 3, 18), WorldKit.mat(Color("27272a")))

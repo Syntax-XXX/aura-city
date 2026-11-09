@@ -31,6 +31,6 @@ static func build(root: Node3D) -> void:
 	DistrictBuilder.challenge(root, c + Vector3(12, 0, -8), "Champagner-Combo", "combo", 10, 45.0, 25000, Color("fbbf24"))
 	DistrictBuilder.challenge(root, c + Vector3(12, 0, 8), "Elite-Score", "score", 20000, 60.0, 30000, Color("fde68a"))
 	for i in 4:
-		DistrictBuilder.npc(root, ["Lady Lux", "Mr. Money", "Gold Gigi", "Baron B."][i], c + Vector3(randf_range(-18, 18), 0, randf_range(-12, 12)), PackedStringArray(["Darling, ohne Legendary-Fit lass ich dich nicht rein.", "Maison Aura führt nur das Beste.", "Godlike? Davon träumen hier alle."]), 12.0)
+		DistrictBuilder.npc(root, ["Lady Lux", "Mr. Money", "Gold Gigi", "Baron B."][i], c + Vector3(randf_range(-18, 18), 0, randf_range(-12, 12)), PackedStringArray(["Darling, ohne Legendary-Fit lass ich dich nicht rein.", "Maison Aura führt nur das Beste.", "Godlike? Davon träumen hier alle."]), 12.0, &"business")
 	DistrictBuilder.shards(root, "luxury", c, 5, 26.0, 300)
 	DistrictBuilder.teleporter(root, c + Vector3(-34, 0, 0), "Spawn City", Vector3(0, 1, 26))
