@@ -230,6 +230,7 @@ static func building(parent: Node3D, pos: Vector3, size: Vector3, base: Color, n
 		m.emission_enabled = true
 		m.emission_texture = tex[1]
 		m.emission = Color.WHITE
+		m.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY # nur die hellen Fenster, nicht die ganze Fassade
 		m.emission_energy_multiplier = 0.0
 		if neon.a > 0.0:
 			m.set_meta(&"neon", true)
