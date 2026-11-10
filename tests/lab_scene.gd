@@ -55,7 +55,10 @@ static func run(main: Node, dir: String) -> void:
 	cam.position = Vector3(1, 2.4, 9)
 	cam.look_at(Vector3(1, 1.4, 0))
 	cam.current = true
-	for t in [[0.42, "lab_day"], [0.72, "lab_sunset"], [0.92, "lab_night"]]:
+	var times := [[0.42, "lab_day"], [0.72, "lab_sunset"], [0.92, "lab_night"]]
+	if OS.get_environment("LAB_ONLY") != "":
+		times = times.filter(func(t): return OS.get_environment("LAB_ONLY").contains(t[1]))
+	for t in times:
 		w.day_night.time_of_day = t[0]
 		w.day_night.apply()
 		for i in 4:

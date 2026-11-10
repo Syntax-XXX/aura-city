@@ -175,10 +175,13 @@ static func cylinder(parent: Node3D, radius: float, height: float, pos: Vector3,
 	return body
 
 
-static func _window_texture(base: Color, lit: Color, dark: Color) -> ImageTexture:
-	# Eine Kachel = ein Geschoss-Block (4 m breit, 8 m hoch → 2 Etagen), 128×256 px
+## Fassaden-Textur + passende Leucht-Textur (nur die beleuchteten Fenster) als [Albedo, Emission].
+static func _window_textures(base: Color, lit: Color, dark: Color) -> Array[ImageTexture]:
+	# Eine Kachel = 2 Etagen (6 m breit, 8 m hoch), 128×256 px
 	var img := Image.create(128, 256, false, Image.FORMAT_RGB8)
+	var glow := Image.create(128, 256, false, Image.FORMAT_RGB8)
 	img.fill(base)
+	glow.fill(Color.BLACK)
 	var band := base.darkened(0.18)
 	var frame := base.lightened(0.12)
 	for floor_i in 2:
@@ -191,13 +194,25 @@ static func _window_texture(base: Color, lit: Color, dark: Color) -> ImageTextur
 			var glass := lit.lerp(Color.WHITE, randf() * 0.2) if on else dark.lerp(Color("1e293b"), 0.4)
 			img.fill_rect(Rect2i(x - 3, y - 3, 46, 76), frame) # Rahmen
 			img.fill_rect(Rect2i(x, y, 40, 70), glass)
+			if on:
+				glow.fill_rect(Rect2i(x, y, 40, 70), glass)
 			img.fill_rect(Rect2i(x + 19, y, 2, 70), frame) # Sprosse
 			img.fill_rect(Rect2i(x, y + 34, 40, 2), frame)
+			glow.fill_rect(Rect2i(x + 19, y, 2, 70), Color.BLACK)
 			if on and randf() < 0.5:
 				img.fill_rect(Rect2i(x, y, 40, 18), glass.darkened(0.25)) # Jalousie
+				glow.fill_rect(Rect2i(x, y, 40, 18), glass.darkened(0.6))
 			img.fill_rect(Rect2i(x - 5, y + 72, 50, 5), band.darkened(0.1)) # Fensterbank
 	img.generate_mipmaps()
-	return ImageTexture.create_from_image(img)
+	glow.generate_mipmaps()
+	return [ImageTexture.create_from_image(img), ImageTexture.create_from_image(glow)]
+
+
+## Leuchtstärke aller Fenster (Tag/Nacht steuert das, siehe DayNight).
+static func set_window_glow(energy: float) -> void:
+	for m in _building_cache.values():
+		var mat := m as StandardMaterial3D
+		mat.emission_energy_multiplier = maxf(energy, 0.5 if mat.has_meta(&"neon") else 0.0)
 
 
 ## Gebäude mit Fensterraster und Dach. neon = leuchtende Fenster (Nacht-Distrikt).
@@ -207,14 +222,17 @@ static func building(parent: Node3D, pos: Vector3, size: Vector3, base: Color, n
 	var key := "%s|%s|%s|%d" % [base.to_html(), lit.to_html(), uv, randi() % 3]
 	if not _building_cache.has(key):
 		var m := StandardMaterial3D.new()
-		m.albedo_texture = _window_texture(base, lit, base.darkened(0.5))
+		var tex := _window_textures(base, lit, base.darkened(0.5))
+		m.albedo_texture = tex[0]
 		m.uv1_scale = uv
 		m.roughness = 0.8
+		# Beleuchtete Fenster leuchten (Stärke je nach Tageszeit, Neon-Fassaden immer etwas)
+		m.emission_enabled = true
+		m.emission_texture = tex[1]
+		m.emission = Color.WHITE
+		m.emission_energy_multiplier = 0.0
 		if neon.a > 0.0:
-			m.emission_enabled = true
-			m.emission_texture = m.albedo_texture
-			m.emission = Color(0.6, 0.6, 0.6)
-			m.emission_energy_multiplier = 0.9
+			m.set_meta(&"neon", true)
 		_building_cache[key] = m
 	box(parent, size, pos + Vector3(0, size.y / 2, 0), _building_cache[key])
 	box(parent, Vector3(size.x + 0.4, 0.4, size.z + 0.4), pos + Vector3(0, size.y + 0.2, 0), mat(base.darkened(0.4)), false)

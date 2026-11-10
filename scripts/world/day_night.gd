@@ -26,6 +26,7 @@ var _lights_on := false
 var _cloud := Vector2.ZERO
 ## Regen-Intensität 0..1 (Weather)
 var weather := 0.0
+var _window_glow := -1.0
 
 
 var _apply_timer := 0.0
@@ -81,7 +82,12 @@ func apply() -> void:
 		sky_material.set_shader_parameter("sky_horizon", (s[1] as Color).lerp(Color("9ca3af"), weather * 0.6))
 	sky_material.set_shader_parameter("sun_dir", sun.global_transform.basis.z if sun.is_inside_tree() else Vector3(0, 0.5, 0.8))
 	environment.ambient_light_color = s[4]
-	environment.ambient_light_energy = lerpf(0.55, 0.7, d)
+	environment.ambient_light_energy = lerpf(0.32, 0.7, d)
+	# Fenster leuchten ab der Dämmerung
+	var glow := clampf((0.45 - d) / 0.35, 0.0, 1.0) * 1.6
+	if absf(glow - _window_glow) > 0.02:
+		_window_glow = glow
+		WorldKit.set_window_glow(glow)
 	environment.fog_light_color = s[5]
 	var want_lights := d < 0.35
 	if want_lights != _lights_on:
