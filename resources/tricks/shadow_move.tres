@@ -19,3 +19,5 @@ sound_pitch = 0.85
 unlock_lifetime_aura = 4000
 cloud_shape = &"dragon"
 cloud_count = 1
+keys = "LRLR"
+min_charge = 55

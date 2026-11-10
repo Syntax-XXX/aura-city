@@ -10,9 +10,7 @@ static func run(main: Node) -> void:
 		await tree.physics_frame
 	print("[smoke] Spieler bei ", player.global_position, " Boden=", player.is_on_floor())
 	var before := Economy.aura
-	print("[smoke] Trick-Start: '", player.tricks.start_slot(0), "'")
-	player.tricks.needle = 0.5
-	player.tricks.land()
+	print("[smoke] Zug: '", player.tricks.perform(&"basic_spin"), "' Ego=", player.camera_rig.first_person, " Figur versteckt=", not player.visual.model.visible)
 	print("[smoke] Aura +", Economy.aura - before, " Combo ", player.tricks.combo)
 	for key: StringName in ui.screens:
 		ui.open(key)
@@ -38,9 +36,9 @@ static func run(main: Node) -> void:
 	for i in 10:
 		await tree.physics_frame
 	player.tricks._cooldowns.clear()
-	print("[smoke] Board-Trick-Start: '", player.tricks.start_slot(1), "'")
-	player.tricks.needle = 0.5
-	player.tricks.land()
+	while player.tricks.is_busy():
+		await tree.process_frame
+	print("[smoke] Board-Zug: '", player.tricks.perform(&"mini_pose"), "'")
 	print("[smoke] Board-Trick Aura +", Economy.aura - before_board)
 	for i in 60:
 		await tree.process_frame
@@ -55,11 +53,20 @@ static func run(main: Node) -> void:
 	var c_before := player.tricks.combo
 	while player.tricks.is_busy():
 		await tree.process_frame
-	await _tap(tree, tc, "trick_2")
-	print("[smoke] Touch: Trick gestartet=", player.tricks.phase == TrickSystem.Phase.TIMING)
-	player.tricks.needle = 0.5
-	await _tap(tree, tc, "trick_land")
-	print("[smoke] Touch: gelandet=", player.tricks.combo > c_before or player.tricks.phase != TrickSystem.Phase.TIMING)
+	# ZIEHEN halten, ↓ ↑ tippen (Ghost), bei ~50 % loslassen
+	var vape_btn: Vector2 = tc._buttons.filter(func(b): return b["action"] == "vape")[0]["c"]
+	_touch(tc, 4, vape_btn, true)
+	await tree.process_frame
+	await tree.process_frame
+	print("[smoke] Touch: Ziehen=", player.tricks.is_inhaling())
+	await _tap(tree, tc, "combo_down")
+	await _tap(tree, tc, "combo_up")
+	print("[smoke] Touch: Kombo=", player.tricks.typed)
+	while player.tricks.charge < 50.0 and player.tricks.is_inhaling():
+		await tree.process_frame
+	_touch(tc, 4, vape_btn, false)
+	await tree.process_frame
+	print("[smoke] Touch: Ghost geblasen=", player.tricks.combo > c_before)
 	var pos0 := player.global_position
 	_touch(tc, 5, Vector2(tc.size.x * 0.15, tc.size.y * 0.75), true)
 	var drag := InputEventScreenDrag.new()

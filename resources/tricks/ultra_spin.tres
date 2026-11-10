@@ -19,3 +19,5 @@ sound_pitch = 0.9
 unlock_lifetime_aura = 80000
 cloud_shape = &"tornado"
 cloud_count = 1
+keys = "RDLU"
+min_charge = 60

@@ -1,6 +1,7 @@
 class_name CameraRig
 extends Node3D
-## Third-Person-Kamera: Maussteuerung, SpringArm gegen Wände, weiches Nachziehen, FOV-Kick beim Sprinten.
+## Kamera: Ego-Perspektive (Standard, V wechselt) oder Third-Person mit SpringArm gegen Wände.
+## Maussteuerung, weiches Nachziehen (nur Third-Person), FOV-Kick beim Sprinten.
 
 @export var target: Node3D
 @export var height := 1.6
@@ -9,6 +10,9 @@ extends Node3D
 @export var pitch_min := -1.2
 @export var pitch_max := 0.6
 
+## Augenhöhe in der Ego-Perspektive
+const EYE := 1.62
+var first_person := true
 var yaw := 0.0
 var pitch := -0.25
 var camera: Camera3D
@@ -39,7 +43,7 @@ func rotate_by_mouse(relative: Vector2) -> void:
 	var sens := 0.0025 * Settings.mouse_sensitivity
 	yaw -= relative.x * sens
 	pitch -= relative.y * sens * (-1.0 if Settings.invert_y else 1.0)
-	pitch = clampf(pitch, pitch_min, pitch_max)
+	pitch = clampf(pitch, pitch_min, 1.3 if first_person else pitch_max)
 
 
 func set_sprint(on: bool) -> void:
@@ -53,13 +57,24 @@ func shake(amount: float) -> void:
 func _process(delta: float) -> void:
 	if target == null:
 		return
-	var goal := target.global_position + Vector3.UP * height
-	global_position = global_position.lerp(goal, minf(1.0, delta * follow_speed))
+	if first_person:
+		_arm.spring_length = 0.0
+		global_position = target.global_position + Vector3.UP * EYE
+	else:
+		_arm.spring_length = distance
+		var goal := target.global_position + Vector3.UP * height
+		global_position = global_position.lerp(goal, minf(1.0, delta * follow_speed))
 	rotation = Vector3(pitch, yaw, 0)
 	camera.fov = lerpf(camera.fov, Settings.fov + _fov_extra, minf(1.0, delta * 6.0))
 	_shake = maxf(0.0, _shake - delta * 2.5)
 	camera.h_offset = randf_range(-1.0, 1.0) * _shake * 0.15
 	camera.v_offset = randf_range(-1.0, 1.0) * _shake * 0.15
+
+
+func set_first_person(on: bool) -> void:
+	first_person = on
+	if not on:
+		pitch = clampf(pitch, pitch_min, pitch_max)
 
 
 ## Blickrichtung (horizontal) für die Bewegung.

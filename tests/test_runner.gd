@@ -105,13 +105,27 @@ func test_purchases() -> void:
 
 func test_tricks() -> void:
 	section("Tricks")
-	check(TrickSystem.evaluate(0.5, 0.3) == &"perfect", "Mitte = perfekt")
-	check(TrickSystem.evaluate(0.5 + 0.3 * 0.4, 0.3) == &"good", "Rand = gut")
-	check(TrickSystem.evaluate(0.95, 0.3) == &"fail", "daneben = verpatzt")
-	var hard := TrickDB.get_trick(&"aura_explosion")
-	var easy := TrickDB.get_trick(&"basic_spin")
-	check(hard.timing_window() < easy.timing_window(), "schwere Tricks = kleineres Fenster")
 	SaveSystem.reset_all()
+	var ghost := TrickDB.get_trick(&"mini_pose")
+	check(TrickSystem.judge(ghost, 80.0)[0] == &"perfect", "80 % = perfekt")
+	check(TrickSystem.judge(ghost, 50.0)[0] == &"good", "50 % = gut")
+	check(TrickSystem.judge(ghost, 10.0)[0] == &"fail", "zu wenig gezogen = Fail")
+	check(TrickSystem.judge(ghost, 100.0)[0] == &"fail", "100 % = Husten")
+	check(TrickSystem.judge(null, 60.0)[0] == &"fail", "falsche Kombo = Fail")
+	check(TrickSystem.match_keys("DU") == ghost, "↓↑ = Ghost")
+	check(TrickSystem.match_keys("") == TrickDB.get_trick(&"basic_spin"), "ohne Kombo = einfache Wolke")
+	check(TrickSystem.is_prefix("D") and not TrickSystem.is_prefix("LLL"), "Kombo-Anfang erkannt")
+	check(TrickSystem.match_keys("UUDDLRLR") == null, "gesperrte Kombo zählt nicht")
+	var keys := {}
+	for t: TrickDef in TrickDB.all():
+		check(not keys.has(t.keys), "Kombo eindeutig: " + t.display_name)
+		keys[t.keys] = true
+	check(TrickSystem.rate_for(null) * TrickSystem.TIMING_TIMEOUT >= 100.0, "langsamste Vape schafft 100 % vor dem Server-Fenster")
+	var slowest: ItemDef = null
+	for it: ItemDef in ItemDB.by_category(&"gadget"):
+		if slowest == null or it.rarity > slowest.rarity:
+			slowest = it
+	check(100.0 / TrickSystem.rate_for(slowest) <= TrickSystem.TIMING_TIMEOUT, "auch die größte Vape bleibt im Server-Fenster")
 	check(not TrickDB.is_unlocked(&"double_spin"), "double_spin anfangs gesperrt")
 	Economy.earn(1500, "Test")
 	check(TrickDB.is_unlocked(&"double_spin"), "double_spin bei 1500 Lifetime frei")
@@ -122,14 +136,22 @@ func test_tricks() -> void:
 	var aura_before := Economy.aura
 	for id: StringName in [&"finger_flip", &"side_twist", &"basic_spin"]:
 		ts._cooldowns.clear()
-		check(ts.start_trick(id) == "", "Start " + id)
-		ts.needle = 0.5
-		ts.land()
+		check(ts.perform(id) == "", "Zug " + id)
 		ts.phase = TrickSystem.Phase.READY
 	check(ts.combo == 3, "Combo zählt auf 3 (%d)" % ts.combo)
 	check(Economy.aura - aura_before > 250, "Kette Erster Zug gibt Bonus")
-	ts.start_trick(&"finger_flip")
-	check(ts.start_trick(&"finger_flip") != "", "Cooldown/Beschäftigt verhindert Spam")
+	var combo_before := ts.combo
+	ts.perform(&"basic_spin")
+	check(ts.combo == combo_before, "Abklingzeit verhindert Spam")
+	ts.phase = TrickSystem.Phase.READY
+	var aura_f := Economy.aura
+	ts.start_inhale()
+	ts.push_key("L")
+	ts.push_key("L")
+	ts.push_key("L")
+	ts.charge = 60.0
+	ts.release()
+	check(ts.combo == 0 and Economy.aura < aura_f, "falsche Kombo kostet Aura und Combo")
 	ts.free()
 
 

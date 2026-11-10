@@ -19,3 +19,5 @@ sound_pitch = 1.2
 unlock_lifetime_aura = 8000
 cloud_shape = &"bullseye"
 cloud_count = 1
+keys = "UDU"
+min_charge = 50

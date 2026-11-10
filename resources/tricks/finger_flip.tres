@@ -19,3 +19,5 @@ sound_pitch = 1.1
 unlock_lifetime_aura = 0
 cloud_shape = &"rings"
 cloud_count = 1
+keys = "UUU"
+min_charge = 40

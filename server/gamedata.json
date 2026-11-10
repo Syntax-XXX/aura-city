@@ -595,7 +595,7 @@
 			"period": 300
 		},
 		"secret_multiplier": 10,
-		"timing_timeout": 2.4
+		"timing_timeout": 5
 	},
 	"districts": [
 		"spawn",

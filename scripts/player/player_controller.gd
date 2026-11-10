@@ -1,6 +1,6 @@
 class_name PlayerController
 extends CharacterBody3D
-## Third-Person-Steuerung mit sanfter Beschleunigung, Coyote-Time, Sprung-Puffer und Landeerkennung.
+## Ego-Steuerung (V = Third-Person) mit sanfter Beschleunigung, Coyote-Time, Sprung-Puffer und Landeerkennung.
 ## Hält Figur, Animator, Kamera, Trick-System, Interaktion und kosmetische Effekte zusammen.
 
 @export_group("Bewegung")
@@ -36,6 +36,7 @@ var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 
 const BOARD_SPEEDS := {&"street": 12.0, &"neon": 15.0, &"cloud": 17.0, &"jet": 20.0, &"aurora": 23.0, &"void": 25.0}
 var boarding := false
 var _board: Node3D
+var fp_vape: FpVape
 
 
 func _ready() -> void:
@@ -63,6 +64,9 @@ func _ready() -> void:
 	tricks.player = self
 	tricks.camera_rig = camera_rig
 	add_child(tricks)
+	fp_vape = FpVape.new()
+	fp_vape.tricks = tricks
+	camera_rig.camera.add_child(fp_vape)
 	_rank_label = Label3D.new()
 	_rank_label.position = Vector3(0, 2.35, 0)
 	_rank_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
@@ -155,11 +159,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("jump"):
 		_jump_buffer = jump_buffer
-	elif event.is_action_pressed("trick_land"):
-		if tricks.phase == TrickSystem.Phase.TIMING:
-			tricks.land()
-		elif Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	elif event.is_action_pressed("vape"):
+		var err := tricks.start_inhale()
+		if err != "" and err != "Beschäftigt":
+			Events.toast.emit(err, Color("fca5a5"))
+	elif event.is_action_released("vape"):
+		tricks.release()
+	elif event.is_action_pressed("mouse_capture") and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED and not TouchControls.wanted():
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	elif event.is_action_pressed("toggle_view"):
+		camera_rig.set_first_person(not camera_rig.first_person)
 	elif event.is_action_pressed("interact") and _nearest:
 		_nearest.interact(self)
 	elif event.is_action_pressed("hoverboard"):
@@ -169,11 +178,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if emote and not tricks.is_busy():
 			animator.play_action(emote.variant, 2.4, true)
 	else:
-		for i in 4:
-			if event.is_action_pressed("trick_%d" % (i + 1)):
-				var err := tricks.start_slot(i)
-				if err != "":
-					Events.toast.emit(err, Color("fca5a5"))
+		for k in ["up", "down", "left", "right"]:
+			if event.is_action_pressed("combo_" + k):
+				tricks.push_key(k[0].to_upper())
 				break
 
 
@@ -211,8 +218,10 @@ func _physics_process(delta: float) -> void:
 		_coyote = 0.0
 		animator.set_state(CharacterAnimator.State.JUMP)
 	move_and_slide()
-	# Figur in Laufrichtung drehen
-	if horizontal.length() > 0.3 and not busy:
+	# Ego: Figur schaut immer in Blickrichtung; sonst in Laufrichtung drehen
+	if camera_rig.first_person:
+		rotation.y = camera_rig.yaw
+	elif horizontal.length() > 0.3 and not busy:
 		var target_yaw := atan2(-horizontal.x, -horizontal.z)
 		rotation.y = lerp_angle(rotation.y, target_yaw, minf(1.0, delta * turn_speed))
 	camera_rig.set_sprint(sprinting or (boarding and horizontal.length() > 10.0))
@@ -220,6 +229,7 @@ func _physics_process(delta: float) -> void:
 	_was_on_floor = is_on_floor()
 	_trail.emitting = (bool(_trail.get_meta("has_trail", false)) or boarding) and horizontal.length() > 2.0
 	_update_interaction()
+	_apply_view()
 	# Aus der Welt gefallen → zurück zum Spawn
 	if global_position.y < -60.0 and global_position.y > -150.0:
 		teleport(Vector3(0, 2, 8))
@@ -326,6 +336,15 @@ func _make_board(item: ItemDef) -> Node3D:
 	r.position = Vector3(0, 0.155, 0)
 	root.add_child(r)
 	return root
+
+
+## Ego-Perspektive: eigene Figur und Namensschild aus, Vape in der Hand an (Board bleibt sichtbar).
+func _apply_view() -> void:
+	var fp := camera_rig.first_person
+	if visual.model and visual.model.visible == fp:
+		visual.model.visible = not fp
+	_rank_label.visible = not fp
+	fp_vape.visible = fp and not boarding
 
 
 func teleport(target_pos: Vector3) -> void:

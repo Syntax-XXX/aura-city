@@ -23,7 +23,7 @@ func _process(delta: float) -> void:
 	if _t >= WARMUP + WINDOW:
 		var fps := _frames / WINDOW
 		if fps < MIN_FPS:
-			Settings.graphics_quality -= 1
+			Settings.apply_preset(Settings.graphics_quality - 1)
 			Settings.apply()
 			_steps += 1
 			Events.toast.emit("Grafik automatisch auf „%s“ gesenkt (%d FPS) – änderbar in den Einstellungen" % [["Niedrig", "Mittel", "Hoch"][Settings.graphics_quality], roundi(fps)], Color("fbbf24"))

@@ -2,7 +2,7 @@ class_name TouchControls
 extends Control
 ## Touch-Steuerung für Handy/Tablet:
 ##  links: schwebender Bewegungsstick · rechts: Wischen dreht die Kamera
-##  Buttons: Landen (groß), Springen, Tricks 1–4, Board, Sprint (umschaltbar), Interagieren, Menü
+##  Buttons: ZIEHEN (groß, halten), Pfeil-Kreuz für Kombos, Springen, Board, Sprint (umschaltbar), Interagieren, Menü
 ## Buttons erzeugen echte Eingabe-Aktionen (Input.parse_input_event) → Spiel-Logik bleibt unverändert.
 
 const STICK_RADIUS := 110.0
@@ -37,12 +37,13 @@ func _layout() -> void:
 	var right := s.x - 40.0
 	var bottom := s.y - 40.0
 	_buttons = [
-		{"c": Vector2(right - r * 1.6, bottom - r * 1.6), "r": r * 1.25, "action": "trick_land", "label": "AUSATMEN", "color": Color("facc15")},
+		{"c": Vector2(right - r * 1.6, bottom - r * 1.6), "r": r * 1.25, "action": "vape", "label": "ZIEHEN", "color": Color("facc15")},
 		{"c": Vector2(right - r * 4.2, bottom - r * 0.9), "r": r * 0.85, "action": "jump", "label": "⤒", "color": Color("38bdf8")},
-		{"c": Vector2(right - r * 1.0, bottom - r * 4.3), "r": r * 0.62, "action": "trick_1", "label": "1", "color": Color("c084fc")},
-		{"c": Vector2(right - r * 2.5, bottom - r * 4.0), "r": r * 0.62, "action": "trick_2", "label": "2", "color": Color("c084fc")},
-		{"c": Vector2(right - r * 3.7, bottom - r * 3.0), "r": r * 0.62, "action": "trick_3", "label": "3", "color": Color("c084fc")},
-		{"c": Vector2(right - r * 4.6, bottom - r * 2.2), "r": r * 0.62, "action": "trick_4", "label": "4", "color": Color("c084fc")},
+		# Pfeil-Kreuz links über dem Stick-Bereich der rechten Hand
+		{"c": Vector2(right - r * 3.0, bottom - r * 4.4), "r": r * 0.55, "action": "combo_up", "label": "↑", "color": Color("c084fc")},
+		{"c": Vector2(right - r * 3.0, bottom - r * 2.6), "r": r * 0.55, "action": "combo_down", "label": "↓", "color": Color("c084fc")},
+		{"c": Vector2(right - r * 4.0, bottom - r * 3.5), "r": r * 0.55, "action": "combo_left", "label": "←", "color": Color("c084fc")},
+		{"c": Vector2(right - r * 2.0, bottom - r * 3.5), "r": r * 0.55, "action": "combo_right", "label": "→", "color": Color("c084fc")},
 		{"c": Vector2(right - r * 0.8, bottom - r * 6.0), "r": r * 0.55, "action": "hoverboard", "label": "BOARD", "color": Color("22d3ee")},
 		{"c": Vector2(right - r * 2.3, bottom - r * 6.0), "r": r * 0.55, "action": "sprint", "label": "SPRINT", "color": Color("4ade80"), "toggle": true},
 		{"c": Vector2(right - r * 3.8, bottom - r * 5.6), "r": r * 0.55, "action": "emote", "label": "EMOTE", "color": Color("f9a8d4")},

@@ -21,7 +21,7 @@ var sky_dome: MeshInstance3D
 var weather: Weather
 var sun: DirectionalLight3D
 var _env: Environment
-var _applied_view_quality := -1
+var _applied_view_quality := -1.0
 
 
 ## Nur Umgebung + Boden (für die Lab-Szene in tests/lab_scene.gd)
@@ -137,17 +137,18 @@ func _build_environment() -> void:
 ## Grafikstufe anwenden: Schatten, Kantenglättung, Renderauflösung, Sichtweite, Glow.
 func apply_quality() -> void:
 	var q := Settings.graphics_quality
-	sun.shadow_enabled = q >= 1
+	sun.shadow_enabled = Settings.shadows
 	sun.directional_shadow_max_distance = [40.0, 60.0, 90.0][q]
 	_env.glow_enabled = q >= 1
-	_env.fog_density = [0.009, 0.0065, 0.0055][q]
+	# kürzere Sichtweite → dichterer Nebel verdeckt den Übergang
+	_env.fog_density = lerpf(0.0095, 0.0055, inverse_lerp(0.4, 1.0, Settings.view_distance))
 	var vp := get_viewport()
 	if vp:
-		vp.msaa_3d = [Viewport.MSAA_DISABLED, Viewport.MSAA_2X, Viewport.MSAA_4X][q]
-		vp.scaling_3d_scale = [0.75, 1.0, 1.0][q]
-	if q != _applied_view_quality:
-		_applied_view_quality = q
-		_limit_view_distance(self, [0.6, 0.85, 1.0][q])
+		vp.msaa_3d = [Viewport.MSAA_DISABLED, Viewport.MSAA_2X, Viewport.MSAA_4X][Settings.msaa]
+		vp.scaling_3d_scale = Settings.render_scale
+	if not is_equal_approx(Settings.view_distance, _applied_view_quality):
+		_applied_view_quality = Settings.view_distance
+		_limit_view_distance(self, Settings.view_distance)
 
 
 func _build_base() -> void:

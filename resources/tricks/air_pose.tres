@@ -19,3 +19,5 @@ sound_pitch = 1.1
 unlock_lifetime_aura = 15000
 cloud_shape = &"jellyfish"
 cloud_count = 1
+keys = "UUDDL"
+min_charge = 70

@@ -2,18 +2,20 @@ extends Node
 ## Registriert alle Eingabe-Aktionen beim Start (Tastatur + Maus).
 
 const BINDINGS := {
-	"move_forward": [KEY_W, KEY_UP],
-	"move_back": [KEY_S, KEY_DOWN],
-	"move_left": [KEY_A, KEY_LEFT],
-	"move_right": [KEY_D, KEY_RIGHT],
+	"move_forward": [KEY_W],
+	"move_back": [KEY_S],
+	"move_left": [KEY_A],
+	"move_right": [KEY_D],
 	"sprint": [KEY_SHIFT],
 	"jump": [KEY_SPACE],
 	"interact": [KEY_E],
-	"trick_1": [KEY_1],
-	"trick_2": [KEY_2],
-	"trick_3": [KEY_3],
-	"trick_4": [KEY_4],
-	"trick_land": [KEY_F, "mouse_left"],
+	"vape": [KEY_F, "mouse_right"],
+	"combo_up": [KEY_UP],
+	"combo_down": [KEY_DOWN],
+	"combo_left": [KEY_LEFT],
+	"combo_right": [KEY_RIGHT],
+	"mouse_capture": ["mouse_left"],
+	"toggle_view": [KEY_V],
 	"emote": [KEY_G],
 	"pause": [KEY_ESCAPE],
 	"open_shop": [KEY_B],
@@ -34,11 +36,11 @@ func _ready() -> void:
 		if not InputMap.has_action(action):
 			InputMap.add_action(action)
 		for key in BINDINGS[action]:
-			if key is String and key == "mouse_left":
+			if key is String:
 				if TouchControls.wanted():
-					continue # auf Touch-Geräten landet man mit dem LANDEN-Button, nicht mit jedem Tippen
+					continue # auf Touch-Geräten gibt es eigene Buttons (ZIEHEN), nicht jedes Tippen
 				var mb := InputEventMouseButton.new()
-				mb.button_index = MOUSE_BUTTON_LEFT
+				mb.button_index = MOUSE_BUTTON_LEFT if key == "mouse_left" else MOUSE_BUTTON_RIGHT
 				InputMap.action_add_event(action, mb)
 			else:
 				var ev := InputEventKey.new()

@@ -19,3 +19,5 @@ sound_pitch = 0.7
 unlock_lifetime_aura = 300000
 cloud_shape = &"mega"
 cloud_count = 1
+keys = "UUDDLRLR"
+min_charge = 85

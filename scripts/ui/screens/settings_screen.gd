@@ -26,15 +26,25 @@ func refresh() -> void:
 	UIKit.label("Steuerung", 20, UITheme.CYAN, _rows)
 	_slider("Maus-Empfindlichkeit", "mouse_sensitivity", 0.1, 3.0, 0.05, false)
 	_toggle("Y-Achse invertieren", "invert_y")
-	UIKit.label("Anzeige", 20, UITheme.CYAN, _rows)
-	_choice("Grafikqualität", "graphics_quality", ["Niedrig", "Mittel", "Hoch"])
+	UIKit.label("Grafik", 20, UITheme.CYAN, _rows)
+	_choice("Grafikstufe (Vorlage)", "graphics_quality", ["Niedrig", "Mittel", "Hoch"])
+	var tip := UIKit.label("Ruckelt es? Zuerst Auflösung und Sichtweite senken, dann Schatten aus.", 13, UITheme.MUTED, _rows)
+	tip.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_slider("3D-Auflösung", "render_scale", 0.5, 1.0, 0.05, true)
+	_slider("Sichtweite", "view_distance", 0.4, 1.0, 0.05, true)
+	_toggle("Schatten", "shadows")
+	_choice("Kantenglättung", "msaa", ["Aus", "2×", "4×"])
 	_choice("Effekte (Wolken, Funken)", "effects_quality", ["Sparsam", "Normal", "Voll"])
+	_fps_choice()
+	_toggle("VSync", "vsync")
+	_toggle("Grafik automatisch senken, wenn es ruckelt", "auto_quality")
+	UIKit.label("Anzeige", 20, UITheme.CYAN, _rows)
 	_slider("Sichtfeld (FOV)", "fov", 60.0, 100.0, 1.0, false)
 	_toggle("Vollbild", "fullscreen")
 	_toggle("FPS anzeigen", "show_fps")
 	_toggle("Tag/Nacht-Zyklus", "day_night_cycle")
 	UIKit.separator(_rows)
-	var keys := UIKit.label("Tasten: WASD laufen · Shift sprinten · Leertaste springen · 1–4 ziehen · F/Linksklick ausatmen · E interagieren · G Emote · Q Hoverboard · N Aura-Kiosk · P Foto-Modus · B Shop · I Inventar · C Garderobe · K Trickbuch · J Quests · O Erfolge · L Bestenliste · Esc Pause", 13, UITheme.MUTED, _rows)
+	var keys := UIKit.label("Tasten: WASD laufen · Shift sprinten · Leertaste springen · F / rechte Maustaste halten = ziehen, dabei Pfeiltasten = Kombo, loslassen = ausblasen · V Ego/Third-Person · E interagieren · G Emote · Q Hoverboard · N Aura-Kiosk · P Foto-Modus · B Shop · I Inventar · C Garderobe · K Wolkenbuch · J Quests · O Erfolge · L Bestenliste · Esc Pause", 13, UITheme.MUTED, _rows)
 	keys.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var danger := UIKit.hbox(_rows, 10)
 	UIKit.label("Spielstand: " + ProjectSettings.globalize_path(SaveSystem.save_path), 12, UITheme.MUTED, danger)
@@ -86,7 +96,27 @@ func _on_choice(index: int, key: String) -> void:
 	Settings.set(key, index)
 	if key == "graphics_quality":
 		Settings.auto_quality = false # eigene Wahl hat Vorrang
+		Settings.apply_preset(index)
+		Settings.apply()
+		refresh.call_deferred() # Feinregler auf die neue Vorlage setzen
+		return
 	Settings.apply()
+
+
+const FPS_OPTIONS := [0, 30, 60, 120, 144]
+
+
+func _fps_choice() -> void:
+	var h := UIKit.hbox(_rows, 12)
+	UIKit.label("FPS-Limit", 16, UITheme.TEXT, h).custom_minimum_size = Vector2(240, 0)
+	var o := OptionButton.new()
+	for v in FPS_OPTIONS:
+		o.add_item("Unbegrenzt" if v == 0 else "%d FPS" % v)
+	o.selected = maxi(0, FPS_OPTIONS.find(Settings.max_fps))
+	o.item_selected.connect(func(i: int):
+		Settings.max_fps = FPS_OPTIONS[i]
+		Settings.apply())
+	h.add_child(o)
 
 
 func _toggle(text: String, key: String) -> void:

@@ -19,3 +19,5 @@ sound_pitch = 1.15
 unlock_lifetime_aura = 0
 cloud_shape = &"waterfall"
 cloud_count = 1
+keys = "DD"
+min_charge = 35

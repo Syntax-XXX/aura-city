@@ -44,8 +44,8 @@ static func build(root: Node3D) -> void:
 	# Tutorial-Guide
 	DistrictBuilder.npc(root, "Guide Gabi", Vector3(3, 0, 10), PackedStringArray([
 		"Willkommen in AURA CITY! Hier zählt nur eins: Aura.",
-		"Drück 1–4 und zieh an deiner Vape. Dann läuft die Zug-Leiste – klick (oder F) zum Ausatmen, wenn die Nadel in der Mitte ist.",
-		"Mitte = PERFECT, grüne Zone = GOOD, daneben = Husten und Aura weg. Mehrere Wolken hintereinander = Combo-Multiplikator!",
+		"Halte F und zieh an deiner Vape. Währenddessen tippst du mit den Pfeiltasten eine Kombo – ↓ ↑ ist ein Ghost. Loslassen = ausblasen.",
+		"Ab 75 % = PERFECT. Bei 100 % hustest du, falsche Kombo = Aura weg. Alle Kombos stehen im Wolkenbuch [K]. Mehrere Wolken hintereinander = Combo-Multiplikator!",
 		"Mit Aura kaufst du Kosmetik im Shop [B] und steigst im Rang auf. Höhere Ränge öffnen neue Distrikte.",
 		"Tipp: Hinter dem Brunnen soll es manchmal seltsam leuchten …",
 	]), 3.0)

@@ -45,6 +45,10 @@ static func _material(kind: StringName) -> StandardMaterial3D:
 		m.distance_fade_mode = BaseMaterial3D.DISTANCE_FADE_PIXEL_ALPHA
 		m.distance_fade_min_distance = 0.8
 		m.distance_fade_max_distance = 2.6
+		if kind in [&"vape", &"vring"]:
+			# Ego-Perspektive: Dampf direkt vorm Gesicht muss sichtbar bleiben
+			m.distance_fade_min_distance = 0.12
+			m.distance_fade_max_distance = 0.6
 		if kind == &"spark":
 			m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 		_materials[kind] = m

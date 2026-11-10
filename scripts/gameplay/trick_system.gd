@@ -1,19 +1,23 @@
 class_name TrickSystem
 extends Node
-## Dampf-Ablauf am Spieler (intern heißen Züge noch „Tricks“):
-##  1. Taste 1–4 = an der Vape ziehen (Zug aus dem Loadout) → Zug-Leiste läuft (Nadel pendelt).
-##  2. Linke Maustaste / F = ausatmen: Mitte = Perfect, grüne Zone = Good, daneben = Husten.
-##  3. Saubere Züge kurz hintereinander bilden eine Combo, feste Folgen = Ketten-Bonus.
-## Husten kostet Aura (Economy.FAIL_LOSS × Basis-Aura) und beendet die Combo.
+## Dampfen wie in Aura Farm V1 (intern heißen Wolken noch „Tricks“, der Server nutzt die IDs):
+##  1. F / rechte Maustaste HALTEN = ziehen → die Zug-Leiste füllt sich (Tempo hängt von der Vape ab).
+##  2. Währenddessen Pfeiltasten = Kombo eingeben (z. B. ↓ ↑ = Ghost). Ohne Kombo = einfache Wolke.
+##  3. Loslassen = ausblasen. Kombo passt + genug gezogen → Wolke + Aura (ab 75 % = Perfect).
+##  Falsche Kombo, zu wenig gezogen oder 100 % erreicht (Husten) → Aura weg, Combo vorbei.
 
-signal timing_started(trick: TrickDef, window: float, perfect_window: float)
-signal timing_updated(needle: float)
-signal timing_finished(quality: StringName)
+signal inhale_started
+## charge 0–100, typed = eingegebene Pfeile, target = passende Wolke (oder null), bad = Kombo falsch
+signal inhale_updated(charge: float, typed: String, target: TrickDef, bad: bool)
+signal inhale_finished(quality: StringName, trick: TrickDef, reason: String)
 
-enum Phase { READY, TIMING, PERFORMING }
+enum Phase { READY, INHALING, PERFORMING }
 
-const TIMING_TIMEOUT := 2.4
+## Längster möglicher Zug in Sekunden (langsamste Vape) – der Server rechnet damit sein Combo-Fenster.
+const TIMING_TIMEOUT := 5.0
 const COMBO_WINDOW := 3.2
+const PERFECT_CHARGE := 75.0
+const FAIL_PAUSE := 1.2
 
 @export var animator: CharacterAnimator
 @export var visual: CharacterVisual
@@ -21,18 +25,16 @@ var player: Node3D
 var camera_rig: CameraRig
 
 var phase: Phase = Phase.READY
-var current: TrickDef
-var needle := 0.0
+var charge := 0.0
+var typed := ""
 var combo := 0
 var combo_time_left := 0.0
 var combo_chain: Array[StringName] = []
 ## Von Challenges gesetzt (z. B. 1.5 während einer Challenge)
 var challenge_multiplier := 1.0
 
-var _needle_dir := 1.0
-var _timing_elapsed := 0.0
+var _pause_left := 0.0
 var _cooldowns := {} # StringName -> Sekunden
-var _rng := RandomNumberGenerator.new()
 
 
 func _process(delta: float) -> void:
@@ -41,25 +43,30 @@ func _process(delta: float) -> void:
 		if _cooldowns[id] <= 0.0:
 			_cooldowns.erase(id)
 	match phase:
-		Phase.TIMING:
-			_timing_elapsed += delta
-			needle += _needle_dir * current.needle_speed() * delta * 2.0
-			if needle >= 1.0:
-				needle = 1.0
-				_needle_dir = -1.0
-			elif needle <= 0.0:
-				needle = 0.0
-				_needle_dir = 1.0
-			timing_updated.emit(needle)
-			if _timing_elapsed >= TIMING_TIMEOUT:
-				_finish(&"fail")
+		Phase.INHALING:
+			charge += charge_rate() * delta
+			if charge >= 100.0:
+				charge = 100.0
+				_fail(TrickDB.get_trick(&"basic_spin"), "Zu lange gezogen – Hustenanfall!")
+			else:
+				_emit_update()
 		Phase.PERFORMING:
-			if animator and not animator.is_busy():
+			_pause_left -= delta
+			if _pause_left <= 0.0:
 				phase = Phase.READY
-	if combo > 0 and phase != Phase.PERFORMING and phase != Phase.TIMING:
+	if combo > 0 and phase == Phase.READY:
 		combo_time_left -= delta
 		if combo_time_left <= 0.0:
 			end_combo()
+
+
+## % pro Sekunde: größere Vapes ziehen langsamer (mehr Zeit für lange Kombos).
+static func rate_for(gadget: ItemDef) -> float:
+	return 30.0 - (gadget.rarity * 1.2 if gadget else 0.0)
+
+
+func charge_rate() -> float:
+	return TrickSystem.rate_for(Inventory.equipped_item(&"gadget"))
 
 
 func cooldown_left(id: StringName) -> float:
@@ -70,74 +77,135 @@ func is_busy() -> bool:
 	return phase != Phase.READY
 
 
-## Trick aus Loadout-Slot (0–3) starten. Liefert Fehlertext oder "".
-func start_slot(slot_index: int) -> String:
-	if slot_index < 0 or slot_index >= TrickDB.loadout.size():
-		return "Kein Trick"
-	return start_trick(TrickDB.loadout[slot_index])
+func is_inhaling() -> bool:
+	return phase == Phase.INHALING
 
 
-func start_trick(id: StringName) -> String:
-	var trick := TrickDB.get_trick(id)
+## Freigeschaltete Wolke mit genau dieser Kombo (oder null).
+static func match_keys(k: String) -> TrickDef:
+	for t: TrickDef in TrickDB.all():
+		if t.keys == k and TrickDB.is_unlocked(t.id):
+			return t
+	return null
+
+
+## Gibt es eine freigeschaltete Wolke, deren Kombo so anfängt?
+static func is_prefix(k: String) -> bool:
+	for t: TrickDef in TrickDB.all():
+		if t.keys.begins_with(k) and TrickDB.is_unlocked(t.id):
+			return true
+	return false
+
+
+## Qualität eines Zugs (rein, testbar): "" = kein Fehler, sonst Fehlergrund.
+static func judge(trick: TrickDef, charge_pct: float) -> Array:
 	if trick == null:
-		return "Unbekannter Trick"
-	if not TrickDB.is_unlocked(id):
-		return "Noch gesperrt"
+		return [&"fail", "Kombo verkackt"]
+	if charge_pct >= 100.0:
+		return [&"fail", "Zu lange gezogen – Hustenanfall!"]
+	if charge_pct < trick.min_charge:
+		return [&"fail", "Zu wenig gezogen für %s (%d/%d %%)" % [trick.display_name, int(charge_pct), trick.min_charge]]
+	return [&"perfect" if charge_pct >= maxf(PERFECT_CHARGE, minf(trick.min_charge + 15.0, 95.0)) else &"good", ""]
+
+
+func start_inhale() -> String:
 	if phase != Phase.READY:
 		return "Beschäftigt"
-	if cooldown_left(id) > 0.0:
-		return "Abklingzeit %.1f s" % cooldown_left(id)
-	current = trick
-	phase = Phase.TIMING
-	needle = _rng.randf_range(0.0, 0.25)
-	_needle_dir = 1.0
-	_timing_elapsed = 0.0
-	var window := trick.timing_window() * (1.0 + TrickDB.mastery_level(id) * 0.06) * Economy.boost("timing")
-	timing_started.emit(trick, window, window * 0.3)
-	if animator:
+	phase = Phase.INHALING
+	charge = 0.0
+	typed = ""
+	inhale_started.emit()
+	_emit_update()
+	Events.trick_started.emit(&"inhale")
+	Audio.play(&"trick_start", 0.8)
+	if animator and not _first_person():
 		animator.play_action(&"pull", TIMING_TIMEOUT)
-	Events.trick_started.emit(id)
-	Audio.play(&"trick_start", trick.sound_pitch)
 	return ""
 
 
-## Qualität aus Nadelposition (rein, testbar).
-static func evaluate(needle_pos: float, window: float) -> StringName:
-	var off := absf(needle_pos - 0.5)
-	if off <= window * 0.15:
-		return &"perfect"
-	if off <= window * 0.5:
-		return &"good"
-	return &"fail"
-
-
-## Spieler drückt „Landen“.
-func land() -> void:
-	if phase != Phase.TIMING:
+func push_key(k: String) -> void:
+	if phase != Phase.INHALING or not k in ["U", "D", "L", "R"]:
 		return
-	var window := current.timing_window() * (1.0 + TrickDB.mastery_level(current.id) * 0.06) * Economy.boost("timing")
-	_finish(evaluate(needle, window))
+	typed += k
+	Audio.play(&"click" if TrickSystem.is_prefix(typed) else &"fail", 1.2)
+	_emit_update()
 
 
-func _finish(quality: StringName) -> void:
-	timing_finished.emit(quality)
-	var trick := current
-	_cooldowns[trick.id] = trick.cooldown
-	if quality == &"fail":
-		phase = Phase.READY
-		if animator:
-			animator.play_action(&"cough", 0.6)
-		Audio.play(&"fail")
-		var head := player.global_position + Vector3.UP * 2.2 if player else Vector3.ZERO
-		Economy.lose(trick.base_aura * Economy.FAIL_LOSS, "Husten", head)
-		if player:
-			var fwd := -player.global_transform.basis.z
-			var mouth := visual.mouth_position(fwd) if visual else head
-			FX.cough(player.get_parent(), mouth, fwd)
-		Events.trick_failed.emit(trick.id)
-		end_combo()
+func release() -> void:
+	if phase != Phase.INHALING:
 		return
+	var bad := not TrickSystem.is_prefix(typed)
+	var trick: TrickDef = null if bad else TrickSystem.match_keys(typed)
+	var verdict := TrickSystem.judge(trick, charge)
+	if verdict[0] == &"fail":
+		# Bei „zu wenig gezogen“ zählt der Fehlschlag für die angepeilte Wolke
+		_fail(trick if trick else TrickDB.get_trick(&"basic_spin"), verdict[1])
+		return
+	if cooldown_left(trick.id) > 0.0:
+		phase = Phase.PERFORMING
+		_pause_left = 0.4
+		inhale_finished.emit(&"none", trick, "%s braucht noch %.1f s" % [trick.display_name, cooldown_left(trick.id)])
+		_cloud(TrickDB.get_trick(&"basic_spin"), Color(0.8, 0.8, 0.8), 0.6)
+		return
+	_finish(trick, verdict[0])
+
+
+## Für Tests und Touch-Demo: kompletten Zug mit Kombo und Zugstärke auf einmal ausführen.
+func perform(id: StringName, charge_pct := 80.0) -> String:
+	var t := TrickDB.get_trick(id)
+	if t == null:
+		return "Unbekannt"
+	var err := start_inhale()
+	if err != "":
+		return err
+	for k in t.keys:
+		push_key(k)
+	charge = charge_pct
+	release()
+	return ""
+
+
+func _emit_update() -> void:
+	var bad := not TrickSystem.is_prefix(typed)
+	inhale_updated.emit(charge, typed, null if bad else TrickSystem.match_keys(typed), bad)
+
+
+func _first_person() -> bool:
+	return camera_rig != null and camera_rig.first_person
+
+
+func _mouth() -> Array:
+	if camera_rig and camera_rig.first_person:
+		var cam := camera_rig.camera.global_transform
+		return [cam * Vector3(0, -0.12, -0.35), -cam.basis.z]
+	var fwd := -player.global_transform.basis.z
+	return [visual.mouth_position(fwd) if visual else player.global_position + Vector3.UP * 1.55, fwd]
+
+
+func _fail(trick: TrickDef, reason: String) -> void:
 	phase = Phase.PERFORMING
+	_pause_left = FAIL_PAUSE
+	_cooldowns[trick.id] = maxf(trick.cooldown, _cooldowns.get(trick.id, 0.0))
+	inhale_finished.emit(&"fail", trick, reason)
+	if animator and not _first_person():
+		animator.play_action(&"cough", FAIL_PAUSE)
+	Audio.play(&"fail")
+	Economy.lose(trick.base_aura * Economy.FAIL_LOSS, "Husten", player.global_position + Vector3.UP * 2.2 if player else Vector3.ZERO)
+	if player:
+		var m := _mouth()
+		FX.cough(player.get_parent(), m[0], m[1])
+		if camera_rig:
+			camera_rig.shake(0.25)
+	Events.toast.emit(reason, Color("fca5a5"))
+	Events.trick_failed.emit(trick.id)
+	end_combo()
+
+
+func _finish(trick: TrickDef, quality: StringName) -> void:
+	inhale_finished.emit(quality, trick, "")
+	_cooldowns[trick.id] = trick.cooldown
+	phase = Phase.PERFORMING
+	_pause_left = trick.duration
 	combo += 1
 	combo_chain.append(trick.id)
 	combo_time_left = COMBO_WINDOW
@@ -146,7 +214,7 @@ func _finish(quality: StringName) -> void:
 	var pos := player.global_position + Vector3.UP * 2.2 if player else Vector3.ZERO
 	var granted := Economy.earn(aura, trick.display_name, pos)
 	TrickDB.add_mastery_hit(trick.id)
-	if animator:
+	if animator and not _first_person():
 		animator.play_action(trick.animation, trick.duration)
 	_effects(trick, quality)
 	Audio.play(&"land_perfect" if quality == &"perfect" else &"land_good", trick.sound_pitch)
@@ -157,21 +225,25 @@ func _finish(quality: StringName) -> void:
 	_check_chains()
 
 
+func _cloud(trick: TrickDef, color: Color, strength: float) -> void:
+	if player == null:
+		return
+	var m := _mouth()
+	FX.vape_cloud(player.get_parent(), m[0], m[1], color, trick.cloud_shape, trick.cloud_count, strength)
+
+
 func _effects(trick: TrickDef, quality: StringName) -> void:
 	if player == null:
 		return
 	var world := player.get_parent()
 	var gadget: ItemDef = Inventory.equipped_item(&"gadget")
 	var cloud_color := gadget.accent_color if gadget else trick.effect_color
-	var strength := 1.0 + trick.tier * 0.6 + (0.3 if quality == &"perfect" else 0.0)
+	var strength := (1.0 + trick.tier * 0.6 + (0.3 if quality == &"perfect" else 0.0)) * (0.6 + charge / 100.0 * 0.6)
 	if gadget and gadget.rarity >= ItemDef.Rarity.LEGENDARY:
 		strength += 0.6
-	var fwd := -player.global_transform.basis.z
-	var mouth := visual.mouth_position(fwd) if visual else player.global_position + Vector3.UP * 1.55
-	FX.vape_cloud(world, mouth, fwd, cloud_color, trick.cloud_shape, trick.cloud_count, strength)
-	FX.sparkles(world, player.global_position + Vector3.UP * 1.2, trick.effect_color, 16 + trick.tier * 20, 1.0 + trick.tier * 0.4)
-	if trick.tier == TrickDef.Tier.LEGENDARY or quality == &"perfect":
-		FX.ring(world, player.global_position + Vector3.UP * 0.2, trick.effect_color, 2.0 + trick.tier * 1.5)
+	_cloud(trick, cloud_color, strength)
+	if trick.tier > 0 or quality == &"perfect":
+		FX.sparkles(world, player.global_position + Vector3.UP * 1.2, trick.effect_color, 10 + trick.tier * 16, 1.0 + trick.tier * 0.4)
 	if trick.tier == TrickDef.Tier.LEGENDARY and camera_rig:
 		camera_rig.shake(0.6 if trick.id == &"aura_explosion" else 0.35)
 

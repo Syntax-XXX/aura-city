@@ -19,3 +19,5 @@ sound_pitch = 1.0
 unlock_lifetime_aura = 0
 cloud_shape = &"puff"
 cloud_count = 1
+keys = ""
+min_charge = 15

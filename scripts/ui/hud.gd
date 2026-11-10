@@ -1,7 +1,7 @@
 class_name HUD
 extends Control
-## Spiel-HUD: Aura (animiert), Rang + Fortschritt, Level, Aura/min, Combo, Timing-Leiste,
-## Trick-Slots mit Cooldown, Quest-Tracker, Interaktions-Hinweis, Challenge-Status,
+## Spiel-HUD: Aura (animiert), Rang + Fortschritt, Level, Aura/min, Combo, Zug-Leiste mit Kombo,
+## Kombo-Spickzettel mit Abklingzeit, Quest-Tracker, Interaktions-Hinweis, Challenge-Status,
 ## Event-Banner, Uhrzeit/Bezirk, FPS.
 
 var player: PlayerController
@@ -21,9 +21,10 @@ var _combo_bar: ProgressBar
 var _timing: Control
 var _timing_name: Label
 var _timing_bar: Control
-var _needle: ColorRect
-var _good_zone: ColorRect
-var _perfect_zone: ColorRect
+var _fill: ColorRect
+var _min_mark: ColorRect
+var _perfect_mark: ColorRect
+var _typed: Label
 var _slots: Array[Dictionary] = []
 var _quest_box: VBoxContainer
 var _prompt: Label
@@ -48,7 +49,7 @@ func _ready() -> void:
 	_build_timing()
 	_build_slots()
 	_build_center_texts()
-	var legend := UIKit.label("" if TouchControls.wanted() else "[Q] Hoverboard   [N] Aura-Kiosk   [B] Shop   [K] Wolkenbuch   [P] Foto-Modus   [Esc] Menü", 12, Color(1, 1, 1, 0.55), self)
+	var legend := UIKit.label("" if TouchControls.wanted() else "[F/RMB halten] ziehen + ←↑↓→ Kombo   [V] Ansicht   [Q] Hoverboard   [N] Aura-Kiosk   [B] Shop   [K] Wolkenbuch   [P] Foto-Modus   [Esc] Menü", 12, Color(1, 1, 1, 0.55), self)
 	legend.add_theme_constant_override("outline_size", 4)
 	legend.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
 	UIKit.pin(legend, Control.PRESET_BOTTOM_LEFT, 12)
@@ -60,9 +61,9 @@ func _ready() -> void:
 	Events.district_entered.connect(_on_district)
 	Events.aura_rewarded.connect(_on_reward)
 	Events.quest_progressed.connect(_on_quest_progress)
-	player.tricks.timing_started.connect(_on_timing_started)
-	player.tricks.timing_updated.connect(_on_timing_updated)
-	player.tricks.timing_finished.connect(_on_timing_finished)
+	player.tricks.inhale_started.connect(_on_inhale_started)
+	player.tricks.inhale_updated.connect(_on_inhale_updated)
+	player.tricks.inhale_finished.connect(_on_inhale_finished)
 	_refresh_slots_labels()
 	_refresh_quests()
 
@@ -126,26 +127,32 @@ func _build_combo() -> void:
 func _build_timing() -> void:
 	_timing = VBoxContainer.new()
 	_timing.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_timing.custom_minimum_size = Vector2(TIMING_W, 70)
+	_timing.custom_minimum_size = Vector2(TIMING_W, 90)
 	add_child(_timing)
 	UIKit.pin(_timing, Control.PRESET_CENTER_BOTTOM, 120)
+	_typed = UIKit.label("", 34, UITheme.GREEN, _timing)
+	_typed.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_typed.add_theme_constant_override("outline_size", 8)
+	_typed.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
 	_timing_name = UIKit.label("", 20, Color.WHITE, _timing)
 	_timing_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_timing_bar = Panel.new()
-	_timing_bar.custom_minimum_size = Vector2(TIMING_W, 26)
-	_timing_bar.add_theme_stylebox_override("panel", UITheme.box(Color(0.05, 0.03, 0.1, 0.85), 13, UITheme.LINE, 2, 0))
+	_timing_bar.custom_minimum_size = Vector2(TIMING_W, 22)
+	_timing_bar.add_theme_stylebox_override("panel", UITheme.box(Color(0.05, 0.03, 0.1, 0.85), 11, UITheme.LINE, 2, 0))
 	_timing.add_child(_timing_bar)
-	_good_zone = ColorRect.new()
-	_good_zone.color = Color(UITheme.CYAN, 0.35)
-	_timing_bar.add_child(_good_zone)
-	_perfect_zone = ColorRect.new()
-	_perfect_zone.color = Color(UITheme.GOLD, 0.8)
-	_timing_bar.add_child(_perfect_zone)
-	_needle = ColorRect.new()
-	_needle.color = Color.WHITE
-	_needle.size = Vector2(4, 34)
-	_timing_bar.add_child(_needle)
-	var hint := UIKit.label("Tippe AUSATMEN, wenn die Nadel im Feld ist" if TouchControls.wanted() else "[%s] / Linksklick zum Ausatmen" % Controls.key_label("trick_land"), 13, UITheme.MUTED, _timing)
+	_fill = ColorRect.new()
+	_fill.color = UITheme.CYAN
+	_fill.size = Vector2(0, 22)
+	_timing_bar.add_child(_fill)
+	# Markierungen: Mindestzug der angepeilten Wolke und Perfect-Bereich
+	_min_mark = ColorRect.new()
+	_min_mark.color = Color.WHITE
+	_min_mark.size = Vector2(3, 30)
+	_timing_bar.add_child(_min_mark)
+	_perfect_mark = ColorRect.new()
+	_perfect_mark.color = Color(UITheme.GOLD, 0.45)
+	_timing_bar.add_child(_perfect_mark)
+	var hint := UIKit.label("ZIEHEN halten, Pfeile tippen, loslassen = ausblasen" if TouchControls.wanted() else "Pfeiltasten = Kombo · loslassen = ausblasen · nicht bis 100 % – sonst Husten", 13, UITheme.MUTED, _timing)
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_timing.visible = false
 
@@ -159,7 +166,7 @@ func _build_slots() -> void:
 		p.custom_minimum_size = Vector2(150, 64)
 		p.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var v := UIKit.vbox(p, 2)
-		var key := UIKit.label("[%d]" % (i + 1), 12, UITheme.CYAN, v)
+		var key := UIKit.label("", 13, UITheme.CYAN, v)
 		var name_l := UIKit.label("", 15, Color.WHITE, v)
 		name_l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		var cd := UIKit.progress(0, 1, UITheme.PURPLE, 4)
@@ -250,9 +257,11 @@ func _process(delta: float) -> void:
 		_refresh_slots_labels()
 
 
+## Spickzettel: die vier Wolken aus dem Loadout mit ihrer Kombo.
 func _refresh_slots_labels() -> void:
 	for i in 4:
 		var t := TrickDB.get_trick(TrickDB.loadout[i])
+		(_slots[i]["key"] as Label).text = (t.arrows() if t and t.keys != "" else "ohne Kombo") if t else ""
 		(_slots[i]["name"] as Label).text = t.display_name if t else "—"
 		(_slots[i]["name"] as Label).add_theme_color_override("font_color", t.effect_color.lightened(0.3) if t else UITheme.MUTED)
 
@@ -308,24 +317,34 @@ func _on_reward(amount: float, _reason: String, _pos: Vector3) -> void:
 	create_tween().tween_property(_aura_label, "scale", Vector2.ONE, 0.2)
 
 
-func _on_timing_started(trick: TrickDef, window: float, perfect_window: float) -> void:
+func _on_inhale_started() -> void:
 	_timing.visible = true
-	_timing_name.text = trick.display_name
-	_timing_name.add_theme_color_override("font_color", trick.effect_color.lightened(0.3))
-	# Leiste: Nadel 0..1, Zielmitte 0.5
-	_good_zone.position = Vector2((0.5 - window * 0.5) * TIMING_W, 0)
-	_good_zone.size = Vector2(window * TIMING_W, 26)
-	_perfect_zone.position = Vector2((0.5 - perfect_window * 0.5) * TIMING_W, 0)
-	_perfect_zone.size = Vector2(perfect_window * TIMING_W, 26)
 
 
-func _on_timing_updated(needle: float) -> void:
-	_needle.position = Vector2(needle * TIMING_W - 2, -4)
+func _on_inhale_updated(charge: float, typed: String, target: TrickDef, bad: bool) -> void:
+	_timing.visible = true
+	_fill.size = Vector2(charge / 100.0 * TIMING_W, 22)
+	_fill.color = UITheme.CYAN.lerp(UITheme.RED, clampf((charge - 70.0) / 30.0, 0.0, 1.0))
+	_typed.text = TrickDef.to_arrows(typed) if typed != "" else "…"
+	_typed.add_theme_color_override("font_color", UITheme.RED if bad else UITheme.GREEN)
+	var min_c := target.min_charge if target else 0
+	_min_mark.visible = target != null
+	_min_mark.position = Vector2(min_c / 100.0 * TIMING_W - 1.5, -4)
+	var p0 := maxf(TrickSystem.PERFECT_CHARGE, minf(min_c + 15.0, 95.0))
+	_perfect_mark.position = Vector2(p0 / 100.0 * TIMING_W, 0)
+	_perfect_mark.size = Vector2((100.0 - p0) / 100.0 * TIMING_W, 22)
+	if bad:
+		_timing_name.text = "Diese Kombo gibt es nicht"
+	elif target:
+		_timing_name.text = "%s  (mind. %d %%)" % [target.display_name, target.min_charge]
+	else:
+		_timing_name.text = "weiter tippen …"
+	_timing_name.add_theme_color_override("font_color", UITheme.RED if bad else (target.effect_color.lightened(0.3) if target else UITheme.MUTED))
 
 
-func _on_timing_finished(quality: StringName) -> void:
-	_timing_name.text = {&"perfect": "PERFEKT!", &"good": "Gut", &"fail": "Verpatzt"}.get(quality, "")
+func _on_inhale_finished(quality: StringName, trick: TrickDef, reason: String) -> void:
+	_timing_name.text = {&"perfect": "PERFEKT! %s", &"good": "%s"}.get(quality, "%s") % (trick.display_name if trick and reason == "" else reason)
 	_timing_name.add_theme_color_override("font_color", {&"perfect": UITheme.GOLD, &"good": UITheme.CYAN}.get(quality, UITheme.RED))
-	await get_tree().create_timer(0.45).timeout
-	if player.tricks.phase != TrickSystem.Phase.TIMING:
+	await get_tree().create_timer(0.6).timeout
+	if not player.tricks.is_inhaling():
 		_timing.visible = false

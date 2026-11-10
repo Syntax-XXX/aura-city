@@ -38,9 +38,7 @@ func run(main: Node, url: String) -> int:
 	for id: StringName in [&"finger_flip", &"side_twist", &"basic_spin", &"mini_pose"]:
 		while ts.is_busy() or ts.cooldown_left(id) > 0.0:
 			await tree.process_frame
-		check(ts.start_trick(id) == "", "Trick %s gestartet" % id)
-		ts.needle = 0.5
-		ts.land()
+		check(ts.perform(id) == "", "Zug %s geblasen" % id)
 		await tree.create_timer(TrickDB.get_trick(id).duration + 0.15).timeout
 		ts.phase = TrickSystem.Phase.READY
 	await Net.wait_flushed(5.0)
@@ -66,9 +64,7 @@ func run(main: Node, url: String) -> int:
 	var base2 := Economy.aura
 	while ts.is_busy() or ts.cooldown_left(&"side_twist") > 0.0:
 		await tree.process_frame
-	ts.start_trick(&"side_twist")
-	ts.needle = 0.5
-	ts.land()
+	ts.perform(&"side_twist")
 	await tree.create_timer(1.0).timeout
 	ts.phase = TrickSystem.Phase.READY
 	await Net.wait_flushed(5.0)

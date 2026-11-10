@@ -26,13 +26,20 @@ const TIER_NAMES := ["Beginner", "Advanced", "Legendary"]
 ## Wolkenform beim Ausatmen (siehe FX.vape_cloud) und wie oft sie wiederholt wird
 @export var cloud_shape: StringName = &"puff"
 @export var cloud_count := 1
+## Pfeil-Kombo beim Ziehen: U/D/L/R, leer = einfache Wolke ohne Kombo
+@export var keys := ""
+## So weit (0–100 %) muss mindestens gezogen sein
+@export var min_charge := 0
 
 
-## Größe des Treffer-Fensters (0–1 der Leiste); schwierige Tricks sind enger.
-func timing_window() -> float:
-	return clampf(0.34 - difficulty * 0.022, 0.1, 0.34)
+
+## Kombo als Pfeile zum Anzeigen.
+func arrows() -> String:
+	return TrickDef.to_arrows(keys)
 
 
-## Geschwindigkeit der Timing-Nadel (Durchläufe pro Sekunde).
-func needle_speed() -> float:
-	return 0.55 + difficulty * 0.09
+static func to_arrows(k: String) -> String:
+	var out := PackedStringArray()
+	for c in k:
+		out.append({"U": "↑", "D": "↓", "L": "←", "R": "→"}.get(c, c))
+	return " ".join(out)

@@ -73,9 +73,7 @@ static func run(main: Node, dir: String) -> void:
 	await _save(main, dir, "16_player_front")
 	Economy.earn(400000, "Test")
 	TrickDB.set_loadout_slot(0, &"double_spin")
-	player.tricks.start_slot(0)
-	player.tricks.needle = 0.5
-	player.tricks.land()
+	player.tricks.perform(&"double_spin")
 	await _frames(tree, 9)
 	await _save(main, dir, "17_trick_mid")
 	arm.spring_length = player.camera_rig.distance
@@ -90,7 +88,8 @@ static func run(main: Node, dir: String) -> void:
 	await _save(main, dir, "14_trickbook")
 	ui.close_current()
 	await _frames(tree, 10)
-	player.tricks.start_slot(0)
+	player.tricks.start_inhale()
+	player.tricks.push_key("D")
 	await _frames(tree, 8)
 	await _save(main, dir, "15_hud_timing")
 

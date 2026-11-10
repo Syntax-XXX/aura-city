@@ -31,7 +31,7 @@ Ein 3D-Open-World-Spiel (Godot 4.3, GDScript): Lauf durch eine riesige Stadt, zi
 - **Riesen-Map (900 × 900 m)** mit 9 Distrikten: Spawn City, Skate Park, Neon District, Luxury District,
   Hafen, Sunset Beach, Graffiti Yard, Downtown Skyline und eine geheime Dimension. Dazu Straßennetz mit Ring,
   Vororte, Teleporter-Hub am Spawn und eine Minimap.
-- **12 Wolkenformen** (Kleine Wolke, O-Ring, Ghost … Wolkenkratzer) mit Zug-Leiste (Perfect/Good, daneben = Husten und Aura weg), Combos bis ×6, benannten Ketten,
+- **12 Wolkenformen** (Kleine Wolke, O-Ring, Ghost … Wolkenkratzer) mit Pfeil-Kombos beim Ziehen (ab 75 % Perfect, 100 % = Husten, falsche Kombo = Aura weg), Combos bis ×6, benannten Ketten,
   Meisterschaft (5 Stufen) und Freischaltung über Lifetime-Aura.
 - **Aura-Wirtschaft:** 8 Ränge (NPC → Beyond Reality), Level, Aura/min, Aura Rush alle 5 Minuten,
   Tagesbelohnung mit 7-Tage-Serie.
@@ -51,8 +51,10 @@ Ein 3D-Open-World-Spiel (Godot 4.3, GDScript): Lauf durch eine riesige Stadt, zi
 | WASD / Pfeile | Laufen (Shift = Sprinten) |
 | Maus | Kamera |
 | Leertaste | Springen |
-| 1–4 | an der Vape ziehen |
-| F / Linksklick | ausatmen (im Timing-Fenster) |
+| F / rechte Maustaste halten | an der Vape ziehen |
+| Pfeiltasten (beim Ziehen) | Kombo eingeben, z. B. ↓ ↑ = Ghost |
+| loslassen | ausblasen |
+| V | Ego-Perspektive / Third-Person |
 | E | Interagieren (Shops, NPCs, Schilder, Teleporter, Challenges) |
 | G | Emote |
 | Q | Hoverboard auf/ab (Shift = Boost) |
@@ -92,7 +94,7 @@ docker compose up -d --build                # oder als Container
 ## Tests
 
 ```bash
-godot --headless -- --tests                         # 84 Godot-Tests (Wirtschaft, Shop, Speichern, Tricks, Szene, Map)
+godot --headless -- --tests                         # 104 Godot-Tests (Wirtschaft, Shop, Speichern, Tricks, Szene, Map)
 cd server && node --test test/game.test.js          # 16 Server-Tests (Regeln + Anti-Cheat)
 godot --headless -- --online-test http://127.0.0.1:3710   # End-to-End gegen laufenden Server
 godot --headless -- --smoke                         # startet das echte Spiel und öffnet jedes Menü

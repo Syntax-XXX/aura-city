@@ -19,3 +19,5 @@ sound_pitch = 1.05
 unlock_lifetime_aura = 0
 cloud_shape = &"ghost"
 cloud_count = 1
+keys = "DU"
+min_charge = 30

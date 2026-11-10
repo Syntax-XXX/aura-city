@@ -59,7 +59,8 @@ func _trick_row(t: TrickDef) -> void:
 	var head := UIKit.hbox(v, 8)
 	UIKit.label(t.display_name if open else "🔒 " + t.display_name, 18, Color.WHITE if open else UITheme.MUTED, head)
 	UIKit.chip(["Anfänger", "Fortgeschritten", "Legendär"][t.tier], [UITheme.GREEN, UITheme.CYAN, UITheme.GOLD][t.tier], head)
-	UIKit.label("Schwierigkeit %d/10 · ✦ %s Basis · %.1fs Cooldown" % [t.difficulty, UIFormat.number(t.base_aura), t.cooldown], 13, UITheme.MUTED, v)
+	UIKit.label("Kombo:  %s" % (t.arrows() if t.keys != "" else "keine – einfach ziehen und loslassen"), 20, UITheme.GREEN if open else UITheme.MUTED, v)
+	UIKit.label("mind. %d %% ziehen · ✦ %s Basis · %.1fs Abklingzeit" % [t.min_charge, UIFormat.number(t.base_aura), t.cooldown], 13, UITheme.MUTED, v)
 	var d := UIKit.label(t.description, 13, UITheme.TEXT, v)
 	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	if open:
@@ -67,7 +68,7 @@ func _trick_row(t: TrickDef) -> void:
 		var p := TrickDB.mastery_progress(t.id)
 		UIKit.label("Meisterschaft %s  (%d/%d)" % ["★".repeat(lvl) + "☆".repeat(5 - lvl), p.x, p.y], 13, UITheme.GOLD, v)
 		var slots := UIKit.vbox(h, 4)
-		UIKit.label("Auf Taste:", 12, UITheme.MUTED, slots)
+		UIKit.label("Auf Spickzettel:", 12, UITheme.MUTED, slots)
 		var sh := UIKit.hbox(slots, 4)
 		for i in 4:
 			var b := UIKit.button(str(i + 1), _assign.bind(i, t.id), sh, Vector2(40, 40))
