@@ -1,7 +1,7 @@
 # AURA CITY
 
-Ein 3D-Open-World-Spiel (Godot 4.3, GDScript): Lauf durch eine riesige Stadt, lande Tricks mit
-Timing, baue Combos und Ketten, farme Aura, steig im Rang auf und schalte Distrikte, Tricks und Kosmetik frei.
+Ein 3D-Open-World-Spiel (Godot 4.3, GDScript): Lauf durch eine riesige Stadt, zieh an deiner
+(erfundenen) Vape, blas Wolkenformen mit Timing, baue Combos und Ketten, farme Aura, steig im Rang auf und schalte Distrikte, Wolken und Kosmetik frei.
 
 | Tag | Abend | Nacht |
 |---|---|---|
@@ -17,7 +17,7 @@ Timing, baue Combos und Ketten, farme Aura, steig im Rang auf und schalte Distri
 - **Echte Figuren:** Quaternius-Stadtfiguren (CC0) mit über 45 retargeteten Animationen
   (Laufen, Sprinten, Springen, Tanzen, Rollen, Spells …). Outfit bestimmt den Körper (männlich/weiblich wählbar),
   Frisuren werden von anderen Figuren übernommen, Accessoires/Schuhe/Gadget hängen an Knochen.
-- **Lebendige Stadt:** Passanten auf den Gehwegen, NPCs mit eigenen Wolken-Tricks und Reaktionen,
+- **Lebendige Stadt:** Passanten auf den Gehwegen, dampfende NPCs (Ringe, Ghosts) und Reaktionen,
   Verkehr auf der Ringstraße (Autos bremsen vor dir), geparkte Autos, Laternen, Parks.
 - **Grafik:** PBR-Texturen (Poly Haven), Bäume/Büsche/Steine (Quaternius), eigener Himmels-Shader
   mit Sonne, Wolken, Abendrot und Sternen, animiertes Wasser, Tag/Nacht mit Farbverläufen,
@@ -31,7 +31,7 @@ Timing, baue Combos und Ketten, farme Aura, steig im Rang auf und schalte Distri
 - **Riesen-Map (900 × 900 m)** mit 9 Distrikten: Spawn City, Skate Park, Neon District, Luxury District,
   Hafen, Sunset Beach, Graffiti Yard, Downtown Skyline und eine geheime Dimension. Dazu Straßennetz mit Ring,
   Vororte, Teleporter-Hub am Spawn und eine Minimap.
-- **12 Tricks** (Anfänger → Legendär) mit Timing-Leiste (Perfect/Good), Combos bis ×6, benannten Ketten,
+- **12 Wolkenformen** (Kleine Wolke, O-Ring, Ghost … Wolkenkratzer) mit Zug-Leiste (Perfect/Good, daneben = Husten und Aura weg), Combos bis ×6, benannten Ketten,
   Meisterschaft (5 Stufen) und Freischaltung über Lifetime-Aura.
 - **Aura-Wirtschaft:** 8 Ränge (NPC → Beyond Reality), Level, Aura/min, Aura Rush alle 5 Minuten,
   Tagesbelohnung mit 7-Tage-Serie.
@@ -40,7 +40,7 @@ Timing, baue Combos und Ketten, farme Aura, steig im Rang auf und schalte Distri
 - **Quests & Erfolge:** tägliche/wöchentliche Quests, 14 Erfolge (auch geheime).
 - **21 Challenges** (Perfects / Combo / Score), **63 Aura-Splitter**, davon 7 geheim und teils nur durch Klettern erreichbar.
 - **Online-Modus mit server-autoritativer Aura (Anti-Cheat)** und Online-Bestenliste. Ein Offline-Modus mit lokalem Spielstand ist ebenfalls dabei.
-- Komplettes UI: Hauptmenü, HUD, Shop, Inventar, Garderobe, Trickbuch, Quests, Erfolge, Einstellungen,
+- Komplettes UI: Hauptmenü, HUD, Shop, Inventar, Garderobe, Wolkenbuch, Quests, Erfolge, Einstellungen,
   Bestenliste, Pause, Tagesbelohnung, Dialoge, Toasts, Tutorial, Ladebildschirm.
 - Musik und Soundeffekte prozedural erzeugt; 3D-Assets und Texturen CC0 (siehe [assets/CREDITS.md](assets/CREDITS.md)).
 
@@ -51,14 +51,14 @@ Timing, baue Combos und Ketten, farme Aura, steig im Rang auf und schalte Distri
 | WASD / Pfeile | Laufen (Shift = Sprinten) |
 | Maus | Kamera |
 | Leertaste | Springen |
-| 1–4 | Trick starten |
-| F / Linksklick | Trick landen (im Timing-Fenster) |
+| 1–4 | an der Vape ziehen |
+| F / Linksklick | ausatmen (im Timing-Fenster) |
 | E | Interagieren (Shops, NPCs, Schilder, Teleporter, Challenges) |
 | G | Emote |
 | Q | Hoverboard auf/ab (Shift = Boost) |
 | N | Aura-Kiosk (Drinks) |
 | P | Foto-Modus (Enter = Foto) |
-| B / I / C / K / J / O / L | Shop / Inventar / Garderobe / Trickbuch / Quests / Erfolge / Bestenliste |
+| B / I / C / K / J / O / L | Shop / Inventar / Garderobe / Wolkenbuch / Quests / Erfolge / Bestenliste |
 | Esc | Pause / Menü schließen |
 
 ## Plattformen
@@ -92,7 +92,7 @@ docker compose up -d --build                # oder als Container
 ## Tests
 
 ```bash
-godot --headless -- --tests                         # 82 Godot-Tests (Wirtschaft, Shop, Speichern, Tricks, Szene, Map)
+godot --headless -- --tests                         # 84 Godot-Tests (Wirtschaft, Shop, Speichern, Tricks, Szene, Map)
 cd server && node --test test/game.test.js          # 16 Server-Tests (Regeln + Anti-Cheat)
 godot --headless -- --online-test http://127.0.0.1:3710   # End-to-End gegen laufenden Server
 godot --headless -- --smoke                         # startet das echte Spiel und öffnet jedes Menü
