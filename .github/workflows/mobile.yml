@@ -10,6 +10,10 @@ on:
       tag:
         description: "Release-Tag, an das APK/IPA gehängt werden (leer = nur Artefakte)"
         required: false
+      platform:
+        description: "all | android | ios"
+        required: false
+        default: all
 
 env:
   GODOT_VERSION: "4.3"
@@ -19,6 +23,7 @@ permissions:
 
 jobs:
   android:
+    if: github.event_name != 'workflow_dispatch' || inputs.platform != 'ios'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -78,7 +83,8 @@ jobs:
           fi
           test -f android/build/AndroidManifest.xml
           # Android 9+ blockiert unverschlüsseltes HTTP – der Aura-Server läuft im Heimnetz/Tailscale ohne TLS
-          sed -i 's/<application /<application android:usesCleartextTraffic="true" /' android/build/AndroidManifest.xml
+          # <application steht in der 4.3-Vorlage allein am Zeilenende
+          sed -i -E 's/<application($|[[:space:]>])/<application android:usesCleartextTraffic="true"\1/' android/build/AndroidManifest.xml
           grep -c usesCleartextTraffic android/build/AndroidManifest.xml
 
       - name: APK exportieren
@@ -108,6 +114,7 @@ jobs:
         run: gh release upload "$TAG" AuraCity-*-android-arm64.apk --clobber
 
   ios:
+    if: github.event_name != 'workflow_dispatch' || inputs.platform != 'android'
     runs-on: macos-latest
     timeout-minutes: 90
     steps:
