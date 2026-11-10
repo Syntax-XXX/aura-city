@@ -35,10 +35,17 @@ func _ready() -> void:
 ## Form und Farbe der ausgerüsteten Vape (Box-Varianten breiter, Stift-Varianten schlank).
 func refresh() -> void:
 	var item: ItemDef = Inventory.equipped_item(&"gadget")
-	var mesh := BoxMesh.new()
-	var boxy := item != null and item.variant in [&"box", &"orb"]
-	mesh.size = Vector3(0.05, 0.11, 0.03) if boxy else Vector3(0.022, 0.13, 0.022)
-	_body.mesh = mesh
+	var v: StringName = item.variant if item else &"pen"
+	if v == &"tank":
+		var cyl := CylinderMesh.new()
+		cyl.top_radius = 0.024
+		cyl.bottom_radius = 0.024
+		cyl.height = 0.12
+		_body.mesh = cyl
+	else:
+		var mesh := BoxMesh.new()
+		mesh.size = Vector3(0.05, 0.11, 0.03) if v in [&"box", &"orb"] else (Vector3(0.016, 0.11, 0.016) if v == &"stick" else Vector3(0.022, 0.13, 0.022))
+		_body.mesh = mesh
 	var mat := StandardMaterial3D.new()
 	mat.albedo_color = item.color if item else Color("8b5cf6")
 	mat.metallic = 0.4

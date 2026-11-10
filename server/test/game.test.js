@@ -198,23 +198,22 @@ test('Name wird bereinigt, Loadout nur mit freigeschalteten Tricks', () => {
   assert.deepEqual(p.loadout, ['mini_pose', 'finger_flip', 'basic_spin', 'side_twist']);
 });
 
-test('Aura-Drink: Rang + Preis geprüft, Boost wirkt serverseitig', () => {
+test('Vape: Kauf zählt für „Upgrade!“, ausgerüstete Vape erhöht Aura serverseitig', () => {
   const { p, ev } = setup();
-  const [id, d] = Object.entries(data.drinks).find(([, x]) => x.rank === 0);
-  assert.equal(ev(0, { type: 'drink', id }).error, 'Nicht genug Aura');
-  const [hid] = Object.entries(data.drinks).find(([, x]) => x.rank >= 3);
-  p.aura = 1e7;
-  assert.match(ev(10, { type: 'drink', id: hid }).error, /Rang/);
-  p.aura = d.price;
-  assert.ok(ev(20, { type: 'drink', id }).ok);
-  // Preis abgezogen; Erfolg „Erfrischt“ (300) wird schon mit Boost gutgeschrieben
-  assert.equal(p.aura, Math.round(data.achievements.first_drink.reward * d.aura));
-  assert.ok(p.ach.unlocked.first_drink);
-  p.aura = 0;
   const t = data.tricks.basic_spin;
-  const r = ev(1000, { type: 'trick', id: 'basic_spin', quality: 'good' });
-  assert.equal(r.aura, Math.round(Math.round(t.base_aura * (1 + t.difficulty * 0.08)) * d.aura));
-  // nach Ablauf kein Boost mehr
-  const r2 = ev(d.seconds * 1000 + 5000, { type: 'trick', id: 'basic_spin', quality: 'good' });
-  assert.equal(r2.aura, Math.round(t.base_aura * (1 + t.difficulty * 0.08)));
+  const base = Math.round(t.base_aura * (1 + t.difficulty * 0.08));
+  const vape = data.items.gadget_cloudpen_pink;
+  assert.equal(ev(0, { type: 'buy', id: 'gadget_cloudpen_pink' }).error, 'Nicht genug Aura');
+  p.aura = vape.price;
+  assert.ok(ev(10, { type: 'buy', id: 'gadget_cloudpen_pink' }).ok);
+  assert.ok(p.ach.unlocked.first_vape);
+  // ohne Ausrüsten: Starter-Pod ×1
+  p.aura = 0;
+  assert.equal(ev(1000, { type: 'trick', id: 'basic_spin', quality: 'good' }).aura, base);
+  assert.ok(ev(1100, { type: 'equip', slot: 'gadget', id: 'gadget_cloudpen_pink' }).ok);
+  const r = ev(30000, { type: 'trick', id: 'basic_spin', quality: 'good' }); // außerhalb des Combo-Fensters
+  assert.equal(r.aura, Math.round(base * vape.vape_aura));
+  assert.ok(vape.vape_aura > 1);
+  // fremde Vape ausrüsten geht nicht
+  assert.equal(ev(30100, { type: 'equip', slot: 'gadget', id: 'gadget_cosmic' }).ok, false);
 });

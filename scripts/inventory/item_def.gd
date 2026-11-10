@@ -32,6 +32,8 @@ const CATEGORY_NAMES := {
 @export var accent_color := Color.WHITE
 ## Variante für Modelle/Animationen (z. B. Frisur "spiky", Emote "wave")
 @export var variant: StringName = &""
+## Nur Vapes: Aura-Multiplikator auf jede Wolke (0 = nach Rarität)
+@export var vape_aura := 0.0
 ## Freischalt-Bedingungen: Rang-Index, Lifetime-Aura, Achievement
 @export var required_rank := 0
 @export var required_lifetime_aura := 0

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"gadget_cybermod"
+display_name = "Cyber-Mod"
+description = "Chrom, RGB, Bildschirm. Ruhiger, langer Zug."
+price = 90000
+rarity = 3
+category = &"gadget"
+icon_glyph = "▣"
+color = Color(0.392, 0.455, 0.545, 1)
+accent_color = Color(0.133, 0.827, 0.933, 1)
+variant = &"box"
+vape_aura = 1.45
+required_rank = 3

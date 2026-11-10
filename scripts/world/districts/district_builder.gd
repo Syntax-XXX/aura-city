@@ -70,7 +70,7 @@ static func station(parent: Node3D, screen: StringName, label: String, pos: Vect
 	place(parent, s, pos)
 
 
-## Getränkeautomat „Aura-Kiosk“ (öffnet die Drink-Auswahl).
+## Vape-Shop-Automat (öffnet den Shop direkt bei den Vapes).
 static func kiosk(parent: Node3D, pos: Vector3, yaw := 0.0) -> void:
 	var k := Node3D.new()
 	k.rotation.y = yaw
@@ -79,10 +79,13 @@ static func kiosk(parent: Node3D, pos: Vector3, yaw := 0.0) -> void:
 	WorldKit.box(k, Vector3(1.0, 1.3, 0.05), Vector3(0, 1.25, 0.41), WorldKit.mat(Color("22d3ee"), 0.2, 0.0, 1.6), false)
 	for i in 3:
 		WorldKit.box(k, Vector3(0.22, 0.32, 0.06), Vector3(-0.3 + i * 0.3, 1.25, 0.45), WorldKit.mat([Color("a3e635"), Color("fbbf24"), Color("f9a8d4")][i], 0.3, 0.0, 1.2), false)
-	WorldKit.sign_text(k, Vector3(0, 2.6, 0), "Aura-Kiosk", Color("67e8f9"), 64, 0.0, true)
-	var s := ScreenStation.new()
-	s.screen = &"drinks"
-	s.prompt = "Aura-Kiosk"
+	WorldKit.sign_text(k, Vector3(0, 2.6, 0), "Vape-Shop", Color("67e8f9"), 64, 0.0, true)
+	var s := ShopTerminal.new()
+	s.shop_name = "Vape-Shop"
+	s.min_rarity = ItemDef.Rarity.COMMON
+	s.max_rarity = ItemDef.Rarity.SECRET
+	s.category = &"gadget"
+	s.prompt = "Vape-Shop"
 	place(k, s, Vector3(0, 0, 0.9))
 
 

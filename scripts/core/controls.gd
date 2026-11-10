@@ -25,7 +25,6 @@ const BINDINGS := {
 	"open_quests": [KEY_J],
 	"open_achievements": [KEY_O],
 	"open_leaderboard": [KEY_L],
-	"open_drinks": [KEY_N],
 	"hoverboard": [KEY_Q],
 	"photo_mode": [KEY_P],
 }

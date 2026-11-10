@@ -19,7 +19,7 @@ func _ready() -> void:
 	Events.item_unlocked.connect(func(_id): _set_max(&"legendary_items", Inventory.count_at_least(ItemDef.Rarity.LEGENDARY)))
 	Events.collectible_found.connect(_on_collectible)
 	Events.challenge_completed.connect(_on_challenge)
-	Events.drink_used.connect(func(_id): _inc(&"drinks"))
+	Events.item_purchased.connect(func(id: StringName): if ItemDB.get_item(id) and ItemDB.get_item(id).category == &"gadget": _inc(&"vapes"))
 	Events.district_entered.connect(_on_district)
 	Events.secret_found.connect(func(_id): _set_max(&"secret_found", maxi(1, stat(&"secret_found"))))
 

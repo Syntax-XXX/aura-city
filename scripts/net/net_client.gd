@@ -122,7 +122,7 @@ func _flush() -> void:
 	var results: Array = res.get("results", [])
 	for i in mini(results.size(), batch.size()):
 		var r: Dictionary = results[i]
-		if not r.get("ok", false) and batch[i]["type"] in ["buy", "daily", "equip", "name", "drink"]:
+		if not r.get("ok", false) and batch[i]["type"] in ["buy", "daily", "equip", "name"]:
 			Audio.play(&"denied")
 			Events.toast.emit("Server: " + str(r.get("error", "abgelehnt")), Color("fca5a5"))
 	apply_profile(res["profile"], _queue.is_empty())

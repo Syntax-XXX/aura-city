@@ -53,7 +53,7 @@ func _ready() -> void:
 			["Baron von Aura", LuxuryDistrict.CENTER + Vector3(-20, 0, 8), 30000, 60.0, 28000, &"business"],
 			["Sigma Sigrid", Downtown.CENTER + Vector3(-14, 0, 24), 60000, 70.0, 60000, &"business"]]:
 		DistrictBuilder.rival(self, r[0], r[1], r[2], r[3], r[4], r[5], Color("f43f5e"))
-	# Aura-Kioske (Drinks) – einer pro Distrikt
+	# Vape-Shop-Automaten – einer pro Distrikt
 	for k in [[Vector3(24, 0, 4), -PI / 2], [SkatePark.CENTER + Vector3(30, 0, -30), 0.0], [NeonDistrict.CENTER + Vector3(-26, 0, -8), PI / 2],
 			[LuxuryDistrict.CENTER + Vector3(30, 0, 4), -PI / 2], [Harbor.CENTER + Vector3(-8, 0, 20), PI], [SunsetBeach.CENTER + Vector3(-24, 0, -6), PI / 2],
 			[IndustrialYard.CENTER + Vector3(-20, 0, 4), 0.0], [Downtown.CENTER + Vector3(14, 0, -3), -PI / 2]]:

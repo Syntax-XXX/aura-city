@@ -5,13 +5,14 @@
 [resource]
 script = ExtResource("1_s")
 id = &"gadget_orb"
-display_name = "Nebula Orb"
-description = "Eine schwebende Mini-Galaxie."
+display_name = "Box-Mod 80 W"
+description = "Jetzt wird's ernst: dicke Wolken, ruhiger Zug."
 price = 35000
 rarity = 3
 category = &"gadget"
-icon_glyph = "●"
+icon_glyph = "▣"
 color = Color(0.192, 0.180, 0.506, 1)
 accent_color = Color(0.941, 0.671, 0.988, 1)
-variant = &"orb"
+variant = &"box"
 required_rank = 2
+vape_aura = 1.35

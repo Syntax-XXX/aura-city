@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_s")
 id = &"gadget_mistbox"
-display_name = "Mist Box"
-description = "Kantig. Dicke Effektwolken."
+display_name = "Pod Pro"
+description = "Solider Pod mit Display. Mehr Aura pro Wolke."
 price = 9000
 rarity = 2
 category = &"gadget"
@@ -14,3 +14,4 @@ icon_glyph = "▣"
 color = Color(0.122, 0.161, 0.216, 1)
 accent_color = Color(0.937, 0.267, 0.267, 1)
 variant = &"box"
+vape_aura = 1.2

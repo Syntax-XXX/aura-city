@@ -75,6 +75,12 @@ func test_economy() -> void:
 	check(Economy.spend(100) and Economy.aura == 500 and Economy.lifetime == 600, "spend senkt nur Aura")
 	check(Economy.lose(20, "Husten") == 20 and Economy.aura == 480 and Economy.lifetime == 600, "Husten kostet Aura, nicht Lifetime")
 	check(Economy.lose(10000, "Husten") == 480 and Economy.aura == 0, "Husten nie unter 0")
+	var vapes := ItemDB.by_category(&"gadget")
+	vapes.sort_custom(func(x: ItemDef, y: ItemDef): return x.price < y.price)
+	check(vapes.size() == 12 and vapes[0].display_name == "Starter-Pod" and vapes[-1].display_name == "Wolkenkratzer 9000", "12 Vapes: Starter-Pod … Wolkenkratzer 9000 (%d)" % vapes.size())
+	for i in range(1, vapes.size()):
+		check(Economy.vape_mult(vapes[i]) > Economy.vape_mult(vapes[i - 1]) and vapes[i].rarity >= vapes[i - 1].rarity, "teurere Vape = mehr Aura: " + vapes[i].display_name)
+	check(is_equal_approx(Economy.boost("aura"), 1.0), "Starter-Pod = Aura ×1")
 
 
 func test_purchases() -> void:

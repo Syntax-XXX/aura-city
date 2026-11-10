@@ -18,7 +18,7 @@ Stand: 2026-11-09 · Godot 4.3 (gl_compatibility) · GDScript · Server: Node �
 | Echtzeit-Multiplayer (andere Spieler sehen) | nicht umgesetzt |
 | Figuren + Animationen (Quaternius CC0, Retarget UAL → Stadtfiguren) | fertig |
 | Grafik (PBR, Himmel, Wasser, Natur, Props, Verkehr) | fertig, nur Lab-Szene gerendert |
-| Hoverboards, Aura-Drinks, Aura-Battles, Foto-Modus, Distrikt-Musik | fertig |
+| Hoverboards, Vape-Shop (12 Vapes), Aura-Battles, Foto-Modus, Distrikt-Musik | fertig |
 | Exporte Windows/Linux + Forgejo-CI | Presets + `.forgejo/workflows/build.yml` vorhanden |
 
 ## Architektur

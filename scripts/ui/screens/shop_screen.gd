@@ -82,7 +82,14 @@ func _on_aura_changed(_aura: float, _delta: float) -> void:
 		_refresh_wallet()
 
 
+## Kategorie für das nächste Öffnen (Vape-Shop-Automat, Taste B → Vapes)
+static var next_category: StringName = &""
+
+
 func set_shop(n: String, min_r: int, max_r: int) -> void:
+	if _category:
+		_category.selected = _categories.find(next_category) + 1 if next_category != &"" else 0
+	next_category = &""
 	shop_name = n
 	min_rarity = min_r
 	max_rarity = max_r
@@ -165,6 +172,8 @@ func _update_detail() -> void:
 	_detail_rarity.text = "%s · %s" % [item.rarity_name(), ItemDef.CATEGORY_NAMES.get(item.category, "")]
 	_detail_rarity.add_theme_color_override("font_color", item.rarity_color())
 	_detail_desc.text = item.description
+	if item.category == &"gadget":
+		_detail_desc.text += "\n\nAura ×%s auf jede Wolke · Zug %d %%/s (%.1f s bis 100 %%)" % [str(Economy.vape_mult(item)), roundi(TrickSystem.rate_for(item)), 100.0 / TrickSystem.rate_for(item)]
 	var reason := Inventory.unlock_reason(item)
 	_buy.disabled = true
 	if Inventory.owns(item.id):

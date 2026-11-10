@@ -5,13 +5,14 @@
 [resource]
 script = ExtResource("1_s")
 id = &"gadget_cosmic"
-display_name = "Skyscraper 9000"
-description = "Der Effekt verdeckt den Himmel."
-price = 1000000
-rarity = 5
+display_name = "Wolkenkratzer 9000"
+description = "Endlevel. Doppelte Aura, Wolken so groß wie Häuser."
+price = 2500000
+rarity = 6
 category = &"gadget"
 icon_glyph = "▲"
 color = Color(0.973, 0.980, 0.988, 1)
 accent_color = Color(0.659, 0.333, 0.969, 1)
 variant = &"box"
-required_rank = 5
+required_rank = 6
+vape_aura = 2.0

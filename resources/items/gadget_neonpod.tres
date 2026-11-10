@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"gadget_neonpod"
+display_name = "Neon-Pod"
+description = "Leuchtet im Dunkeln. Die Wolke auch."
+price = 18000
+rarity = 2
+category = &"gadget"
+icon_glyph = "▮"
+color = Color(0.133, 0.827, 0.933, 1)
+accent_color = Color(0.941, 0.671, 0.988, 1)
+variant = &"pen"
+vape_aura = 1.25
+required_rank = 1

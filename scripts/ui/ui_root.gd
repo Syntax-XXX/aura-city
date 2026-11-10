@@ -8,7 +8,7 @@ signal quit_to_menu
 const HOTKEYS := {
 	"open_shop": &"shop", "open_inventory": &"inventory", "open_customize": &"customize",
 	"open_trickbook": &"trickbook", "open_quests": &"quests", "open_achievements": &"achievements",
-	"open_leaderboard": &"leaderboard", "open_drinks": &"drinks",
+	"open_leaderboard": &"leaderboard",
 }
 
 var player: PlayerController
@@ -44,7 +44,7 @@ func _ready() -> void:
 		&"shop": ShopScreen.new(), &"inventory": InventoryScreen.new(), &"customize": CustomizeScreen.new(),
 		&"trickbook": TrickbookScreen.new(), &"quests": QuestScreen.new(), &"achievements": AchievementScreen.new(),
 		&"leaderboard": LeaderboardScreen.new(), &"settings": SettingsScreen.new(), &"daily": DailyScreen.new(),
-		&"pause": PauseScreen.new(), &"drinks": DrinksScreen.new(),
+		&"pause": PauseScreen.new(),
 	}
 	for key: StringName in screens:
 		_root.add_child(screens[key])
@@ -56,7 +56,6 @@ func _ready() -> void:
 	_root.add_child(confirm)
 	(screens[&"shop"] as ShopScreen).confirm = confirm
 	(screens[&"settings"] as SettingsScreen).confirm = confirm
-	(screens[&"drinks"] as DrinksScreen).confirm = confirm
 	var pause := screens[&"pause"] as PauseScreen
 	pause.navigate.connect(open)
 	pause.quit_to_menu.connect(_on_quit_to_menu)
@@ -88,6 +87,7 @@ func _skip_tutorial() -> void:
 
 func open(screen_name: StringName) -> void:
 	if screen_name == &"shop":
+		ShopScreen.next_category = &"gadget" # Shop öffnet bei den Vapes
 		open_shop("Aura Katalog", ItemDef.Rarity.COMMON, ItemDef.Rarity.SECRET)
 		return
 	_show(screens.get(screen_name), screen_name)

@@ -5,13 +5,14 @@
 [resource]
 script = ExtResource("1_s")
 id = &"gadget_wand"
-display_name = "Aura Wand"
-description = "Für Profis der Show."
+display_name = "Dual-Coil 200 W"
+description = "Gold-Mod. Mehr Zeit für lange Kombos."
 price = 220000
 rarity = 4
 category = &"gadget"
 icon_glyph = "✦"
-color = Color(0.984, 0.749, 0.141, 1)
-accent_color = Color(0.133, 0.827, 0.933, 1)
-variant = &"wand"
+color = Color(0.831, 0.686, 0.216, 1)
+accent_color = Color(1, 1, 1, 1)
+variant = &"box"
 required_rank = 4
+vape_aura = 1.5

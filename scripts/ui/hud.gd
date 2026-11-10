@@ -49,7 +49,7 @@ func _ready() -> void:
 	_build_timing()
 	_build_slots()
 	_build_center_texts()
-	var legend := UIKit.label("" if TouchControls.wanted() else "[F/RMB halten] ziehen + ←↑↓→ Kombo   [V] Ansicht   [Q] Hoverboard   [N] Aura-Kiosk   [B] Shop   [K] Wolkenbuch   [P] Foto-Modus   [Esc] Menü", 12, Color(1, 1, 1, 0.55), self)
+	var legend := UIKit.label("" if TouchControls.wanted() else "[F/RMB halten] ziehen + ←↑↓→ Kombo   [V] Ansicht   [Q] Hoverboard   [B] Shop   [K] Wolkenbuch   [P] Foto-Modus   [Esc] Menü", 12, Color(1, 1, 1, 0.55), self)
 	legend.add_theme_constant_override("outline_size", 4)
 	legend.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
 	UIKit.pin(legend, Control.PRESET_BOTTOM_LEFT, 12)
@@ -234,12 +234,12 @@ func _process(delta: float) -> void:
 		p.modulate.a = 0.55 if left > 0.0 else 1.0
 	# Event
 	var ev := Economy.event_seconds_left()
-	var bl := Economy.boost_seconds_left()
-	_boost.visible = bl > 0.0
-	if bl > 0.0:
-		var dr := Drinks.get_drink(Economy.boost_id)
-		_boost.text = "%s %s · %s" % [dr.get("glyph", ""), dr.get("name", ""), UIFormat.seconds(bl)]
-		_boost.add_theme_color_override("font_color", Color(dr.get("color", "ffffff")))
+	var vape: ItemDef = Inventory.equipped_item(&"gadget")
+	var vm := Economy.vape_mult(vape)
+	_boost.visible = vape != null
+	if vape:
+		_boost.text = "▮ %s · Aura ×%s" % [vape.display_name, str(vm)]
+		_boost.add_theme_color_override("font_color", vape.accent_color.lightened(0.2))
 	_event.text = "⚡ AURA RUSH ×%s · %ds" % [str(Economy.event_multiplier), ceili(ev)] if ev > 0.0 else ""
 	if world and world.day_night:
 		_clock.text = world.day_night.clock_text()

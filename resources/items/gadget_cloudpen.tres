@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_s")
 id = &"gadget_cloudpen"
-display_name = "Cloud Pen"
-description = "Fiktives Gadget, das bunte Wolken-Effekte zaubert."
+display_name = "Starter-Pod"
+description = "Fürs Erste reicht's. Zieht schnell, kleine Wolken."
 price = 0
 rarity = 0
 category = &"gadget"
@@ -15,3 +15,4 @@ color = Color(0.545, 0.361, 0.965, 1)
 accent_color = Color(0.133, 0.827, 0.933, 1)
 variant = &"pen"
 starter = true
+vape_aura = 1.0

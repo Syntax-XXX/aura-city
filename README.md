@@ -23,7 +23,7 @@ Ein 3D-Open-World-Spiel (Godot 4.3, GDScript): Lauf durch eine riesige Stadt, zi
   mit Sonne, Wolken, Abendrot und Sternen, animiertes Wasser, Tag/Nacht mit Farbverläufen,
   Grafik- und Effekt-Qualitätsstufen.
 - **Hoverboards (Q)** in 6 Stufen (12–25 m/s) für die große Map.
-- **Aura-Kiosk (N):** 7 fiktive Drinks (Limo, Mate, Shakes …) mit zeitlichen Boosts – serverseitig geprüft.
+- **Vape-Shop:** 12 erfundene Vapes (Starter-Pod … Wolkenkratzer 9000) mit dauerhaftem Aura-Bonus ×1–×2 – serverseitig geprüft.
 - **Aura-Battles:** 8 NPC-Rivalen fordern dich heraus.
 - **Foto-Modus (P):** Zeit anhalten, frei fliegen, Screenshots speichern.
 - **Distrikt-Musik:** eigene prozedurale Themes pro Distrikt mit Überblendung.
@@ -58,7 +58,6 @@ Ein 3D-Open-World-Spiel (Godot 4.3, GDScript): Lauf durch eine riesige Stadt, zi
 | E | Interagieren (Shops, NPCs, Schilder, Teleporter, Challenges) |
 | G | Emote |
 | Q | Hoverboard auf/ab (Shift = Boost) |
-| N | Aura-Kiosk (Drinks) |
 | P | Foto-Modus (Enter = Foto) |
 | B / I / C / K / J / O / L | Shop / Inventar / Garderobe / Wolkenbuch / Quests / Erfolge / Bestenliste |
 | Esc | Pause / Menü schließen |
@@ -94,9 +93,10 @@ docker compose up -d --build                # oder als Container
 ## Tests
 
 ```bash
-godot --headless -- --tests                         # 104 Godot-Tests (Wirtschaft, Shop, Speichern, Tricks, Szene, Map)
+godot --headless -- --tests                         # 115 Godot-Tests (Wirtschaft, Shop, Speichern, Tricks, Szene, Map)
 cd server && node --test test/game.test.js          # 16 Server-Tests (Regeln + Anti-Cheat)
 godot --headless -- --online-test http://127.0.0.1:3710   # End-to-End gegen laufenden Server
 godot --headless -- --smoke                         # startet das echte Spiel und öffnet jedes Menü
+godot --headless --fixed-fps 60 -- --play          # Spieltest: ganze Map ablaufen, dampfen, CPU/Objekte messen
 xvfb-run godot -- --lab <ordner>                    # Vorzeige-Szene rendern (Screenshots)
 ```

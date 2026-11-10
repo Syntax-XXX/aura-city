@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_s")
 id = &"gadget_cloudpen_pink"
-display_name = "Cloud Pen Bubblegum"
-description = "Pinke Effektwolken."
+display_name = "Einweg-Puff"
+description = "Süß, bunt, mehr Wolke."
 price = 1500
 rarity = 1
 category = &"gadget"
@@ -14,3 +14,4 @@ icon_glyph = "✎"
 color = Color(0.957, 0.447, 0.714, 1)
 accent_color = Color(0.992, 0.878, 0.278, 1)
 variant = &"pen"
+vape_aura = 1.1

@@ -2,6 +2,7 @@ extends Node
 ## Spielablauf: Hauptmenü → Ladebildschirm → Welt + Spieler + UI → zurück ins Menü.
 ## Startargumente (nach „--“): --tests  führt die Testsuite aus,
 ##                             --smoke  startet das Spiel automatisch und beendet nach einer Probe.
+##                             --play   Spieltest über die ganze Map (laufen, dampfen, CPU/Objekte messen).
 
 var world: WorldRoot
 var player: PlayerController
@@ -72,6 +73,14 @@ func _ready() -> void:
 	if "--smoke" in args:
 		await start_game()
 		await SmokeTest.run(self)
+		get_tree().quit()
+	if "--cpu" in args:
+		await start_game()
+		await CpuProbe.run(self)
+		get_tree().quit()
+	if "--play" in args:
+		await start_game()
+		await PlayTest.run(self)
 		get_tree().quit()
 
 

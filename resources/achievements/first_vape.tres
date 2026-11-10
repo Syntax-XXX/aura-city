@@ -4,11 +4,11 @@
 
 [resource]
 script = ExtResource("1_s")
-id = &"first_drink"
-display_name = "Erfrischt"
-description = "Trinke deinen ersten Aura-Drink."
-icon_glyph = "◍"
-stat = &"drinks"
+id = &"first_vape"
+display_name = "Upgrade!"
+description = "Kauf dir eine neue Vape."
+icon_glyph = "▮"
+stat = &"vapes"
 goal = 1
 reward_aura = 300
 secret = false

@@ -239,8 +239,7 @@ func _effects(trick: TrickDef, quality: StringName) -> void:
 	var gadget: ItemDef = Inventory.equipped_item(&"gadget")
 	var cloud_color := gadget.accent_color if gadget else trick.effect_color
 	var strength := (1.0 + trick.tier * 0.6 + (0.3 if quality == &"perfect" else 0.0)) * (0.6 + charge / 100.0 * 0.6)
-	if gadget and gadget.rarity >= ItemDef.Rarity.LEGENDARY:
-		strength += 0.6
+	strength *= 0.6 + Economy.vape_mult(gadget) * 0.4 # bessere Vape = größere Wolken
 	_cloud(trick, cloud_color, strength)
 	if trick.tier > 0 or quality == &"perfect":
 		FX.sparkles(world, player.global_position + Vector3.UP * 1.2, trick.effect_color, 10 + trick.tier * 16, 1.0 + trick.tier * 0.4)

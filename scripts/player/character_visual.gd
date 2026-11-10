@@ -439,7 +439,7 @@ func _build_gadget(item: ItemDef) -> void:
 		var col := _mat(item.color, 0.35, 0.3)
 		var glow := _mat(item.accent_color, 0.3, 0.0, 2.2)
 		match item.variant:
-			&"pen", &"wand":
+			&"pen", &"wand", &"stick":
 				var body := CylinderMesh.new()
 				body.top_radius = 0.018
 				body.bottom_radius = 0.022
@@ -458,6 +458,18 @@ func _build_gadget(item: ItemDef) -> void:
 				screen.size = Vector3(0.06, 0.05, 0.005)
 				_add(h, screen, glow, c + Vector3(0, 0.08, 0.026))
 				tip_offset = Vector3(0, 0.13, 0)
+			&"tank":
+				var tank := CylinderMesh.new()
+				tank.top_radius = 0.035
+				tank.bottom_radius = 0.035
+				tank.height = 0.16
+				_add(h, tank, col, c + Vector3(0, 0.07, 0))
+				var glass := CylinderMesh.new()
+				glass.top_radius = 0.028
+				glass.bottom_radius = 0.028
+				glass.height = 0.05
+				_add(h, glass, glow, c + Vector3(0, 0.17, 0))
+				tip_offset = Vector3(0, 0.2, 0)
 			&"orb":
 				var orb := SphereMesh.new()
 				orb.radius = 0.06

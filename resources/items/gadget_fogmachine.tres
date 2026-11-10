@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_def.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = &"gadget_fogmachine"
+display_name = "Nebelmaschine"
+description = "Die Straße verschwindet hinter dir."
+price = 600000
+rarity = 5
+category = &"gadget"
+icon_glyph = "☁"
+color = Color(0.055, 0.647, 0.914, 1)
+accent_color = Color(0.878, 0.949, 0.996, 1)
+variant = &"tank"
+required_rank = 5
+vape_aura = 1.75

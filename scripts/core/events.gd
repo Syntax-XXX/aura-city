@@ -45,6 +45,5 @@ signal toast(text: String, color: Color)
 signal open_screen(screen_name: StringName)
 signal shop_requested(shop_name: String, min_rarity: int, max_rarity: int)
 signal secret_found(secret_id: StringName)
-signal drink_used(drink_id: String)
 signal settings_changed
 signal game_saved

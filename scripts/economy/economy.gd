@@ -25,9 +25,6 @@ var event_multiplier := 1.0
 var authority: EconomyAuthority = EconomyAuthority.new()
 var daily_last_claim := "" # JJJJ-MM-TT
 var daily_streak := 0
-## Aktiver Aura-Drink (Unix-Zeit des Ablaufs, siehe Drinks)
-var boost_id := ""
-var boost_until := 0.0
 
 var _event_left := 0.0
 var _history: Array = [] # [sekunden, betrag]
@@ -49,8 +46,6 @@ func reset() -> void:
 	rank_index = 0
 	daily_last_claim = ""
 	daily_streak = 0
-	boost_id = ""
-	boost_until = 0.0
 	_history.clear()
 
 
@@ -219,36 +214,24 @@ func _claimed_yesterday() -> bool:
 
 # ── Speichern ────────────────────────────────────────────
 func to_dict() -> Dictionary:
-	return {"aura": aura, "lifetime": lifetime, "daily_last_claim": daily_last_claim, "daily_streak": daily_streak, "boost_id": boost_id, "boost_until": boost_until}
+	return {"aura": aura, "lifetime": lifetime, "daily_last_claim": daily_last_claim, "daily_streak": daily_streak}
 
 
-# ── Aura-Drinks ──────────────────────────────────────────
-## Wert eines Boost-Effekts (1.0 = kein Boost).
-func boost(effect: String) -> float:
-	if boost_id == "" or Net.now() >= boost_until:
+# ── Vape-Bonus ───────────────────────────────────────────
+## Aura-Multiplikator je Vape: eigener Wert (ItemDef.vape_aura) oder nach Rarität. Der Server bekommt
+## den Wert pro Item über gamedata.json und rechnet identisch.
+const VAPE_AURA := [1.0, 1.1, 1.2, 1.35, 1.5, 1.75, 2.0]
+
+
+static func vape_mult(gadget: ItemDef) -> float:
+	if gadget == null:
 		return 1.0
-	return float(Drinks.get_drink(boost_id).get(effect, 1.0))
+	return gadget.vape_aura if gadget.vape_aura > 0.0 else VAPE_AURA[clampi(gadget.rarity, 0, VAPE_AURA.size() - 1)]
 
 
-func boost_seconds_left() -> float:
-	return maxf(0.0, boost_until - Net.now()) if boost_id != "" else 0.0
-
-
-## Drink kaufen und trinken. Leerer String = ok, sonst Fehlertext.
-func drink(id: String) -> String:
-	var d := Drinks.get_drink(id)
-	if d.is_empty():
-		return "Unbekannter Drink"
-	if rank_index < int(d["rank"]):
-		return "Benötigt Rang " + rank_name(int(d["rank"]))
-	if not spend(float(d["price"])):
-		return "Nicht genug Aura"
-	boost_id = id
-	boost_until = Net.now() + float(d["seconds"])
-	Net.send({"type": "drink", "id": id})
-	Events.drink_used.emit(id)
-	Events.toast.emit("%s aktiv: %d s" % [d["name"], int(d["seconds"])], Color(d["color"]))
-	return ""
+## Wert eines Bonus-Effekts (1.0 = kein Bonus). Nur „aura“ kommt von der ausgerüsteten Vape.
+func boost(effect: String) -> float:
+	return Economy.vape_mult(Inventory.equipped_item(&"gadget")) if effect == "aura" else 1.0
 
 
 ## Stand vom Server übernehmen (Online-Modus): einzige Quelle für Aura und Lifetime.
@@ -258,8 +241,6 @@ func apply_server(d: Dictionary) -> void:
 	lifetime = maxf(aura, float(d.get("lifetime", lifetime)))
 	daily_last_claim = str(d.get("daily_last_claim", daily_last_claim))
 	daily_streak = maxi(0, int(d.get("daily_streak", daily_streak)))
-	boost_id = str(d.get("boost_id", boost_id))
-	boost_until = float(d.get("boost_until", boost_until))
 	var delta := aura - old
 	if delta != 0.0:
 		if delta > 0.0:
@@ -274,6 +255,4 @@ func from_dict(d: Dictionary) -> void:
 	lifetime = maxf(aura, float(d.get("lifetime", 0.0)))
 	daily_last_claim = str(d.get("daily_last_claim", ""))
 	daily_streak = maxi(0, int(d.get("daily_streak", 0)))
-	boost_id = str(d.get("boost_id", ""))
-	boost_until = float(d.get("boost_until", 0.0))
 	rank_index = rank_for(lifetime)

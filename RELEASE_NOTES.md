@@ -1,12 +1,12 @@
-## Aura City 1.3.0 – Ego-Perspektive und Pfeil-Kombos
+## Aura City 1.4.0 – Vape-Shop mit 12 Vapes
 
 3D-Open-World übers Dampfen: ziehen, Wolken blasen, Aura farmen – Godot 4.3. Alle Vapes sind erfunden (Satire).
 
 ### Installieren
-- **Android:** `AuraCity-1.3.0-android-arm64.apk` aufs Handy laden und öffnen (Installation aus unbekannten Quellen erlauben).
-- **iPhone/iPad:** `AuraCity-1.3.0-ios-unsigned.ipa` mit AltStore oder SideStore installieren. Die App wird dabei mit deiner eigenen Apple-ID signiert; mit einer kostenlosen ID gilt das 7 Tage, danach in AltStore/SideStore aktualisieren.
-- **Windows:** `AuraCity-1.3.0-windows-x86_64.zip` entpacken, `AuraCity.exe` starten. Die Datei ist unsigniert, deshalb kann SmartScreen fragen („Weitere Informationen“ → „Trotzdem ausführen“).
-- **Linux:** `tar -xzf AuraCity-1.3.0-linux-x86_64.tar.gz && ./AuraCity.x86_64`
+- **Android:** `AuraCity-1.4.0-android-arm64.apk` aufs Handy laden und öffnen (Installation aus unbekannten Quellen erlauben).
+- **iPhone/iPad:** `AuraCity-1.4.0-ios-unsigned.ipa` mit AltStore oder SideStore installieren. Die App wird dabei mit deiner eigenen Apple-ID signiert; mit einer kostenlosen ID gilt das 7 Tage, danach in AltStore/SideStore aktualisieren.
+- **Windows:** `AuraCity-1.4.0-windows-x86_64.zip` entpacken, `AuraCity.exe` starten. Die Datei ist unsigniert, deshalb kann SmartScreen fragen („Weitere Informationen“ → „Trotzdem ausführen“).
+- **Linux:** `tar -xzf AuraCity-1.4.0-linux-x86_64.tar.gz && ./AuraCity.x86_64`
 - Prüfsummen: `SHA256SUMS`
 
 ### Online spielen
@@ -16,8 +16,15 @@ Hauptmenü → Server-Adresse eintragen → **Online spielen**. Die Aura berechn
 - 9 Distrikte auf 900 × 900 m: Straßen, Verkehr, Passanten, Tag/Nacht, Regen
 - Echte animierte Figuren (Quaternius, CC0) mit über 45 Animationen, Outfits, Frisuren, Accessoires
 - 12 Wolkenformen mit Pfeil-Kombos, Combos, Ketten und Meisterschaft; 29 Challenges inklusive 8 Aura-Battles gegen NPC-Rivalen
-- Hoverboards in 6 Stufen, Aura-Drinks mit Boosts, 67 Items, 17 Erfolge, Quests, Tagesbelohnung
+- Hoverboards in 6 Stufen, 12 Vapes mit Aura-Bonus, 73 Items, 17 Erfolge, Quests, Tagesbelohnung
 - Foto-Modus, Distrikt-Musik, Grafik- und Effekt-Qualitätsstufen
+
+### Neu in 1.4.0
+- **Keine Drinks mehr – dafür der Vape-Shop:** 12 Vapes von **Starter-Pod** (×1) über Einweg-Puff, Mango-Stick, Pod Pro, Neon-Pod, Box-Mod 80 W, Cyber-Mod, Dual-Coil 200 W, Drachen-Mod, Nebelmaschine und Galaxy-Tank bis **Wolkenkratzer 9000** (×2 Aura). Alle erfunden, keine echten Marken.
+- Jede Vape gibt dauerhaft einen **Aura-Bonus** auf jede Wolke (vom Server geprüft), macht größere Wolken und zieht langsamer (mehr Zeit für lange Kombos). Eigener Look: Stick, Pod, Box-Mod oder Tank.
+- Die Automaten in jedem Distrikt sind jetzt **Vape-Shops**, der Shop (B) öffnet direkt bei den Vapes und zeigt Bonus und Zug-Tempo.
+- Neuer Erfolg „Upgrade!“ für die erste gekaufte Vape
+- Automatischer Spieltest über die ganze Map (`--play`): keine Stellen zum Durchfallen, CPU-Last ~3 ms pro Frame
 
 ### Neu in 1.3.0
 - **Ego-Perspektive** wie in Aura Farm: Du siehst deine Vape in der Hand, sie wandert beim Ziehen zum Mund, die LED wird mit der Zugstärke rot. **V** wechselt zu Third-Person.
@@ -39,7 +46,7 @@ Hauptmenü → Server-Adresse eintragen → **Online spielen**. Die Aura berechn
 - Handys starten automatisch mit sparsamer Grafik
 
 ### Steuerung (PC)
-WASD laufen · Maus umschauen · Shift sprinten · Leertaste springen · F/rechte Maustaste halten = ziehen, Pfeiltasten = Kombo, loslassen = ausblasen · V Ansicht · E interagieren · Q Hoverboard · N Aura-Kiosk · P Foto-Modus · B Shop · Esc Menü
+WASD laufen · Maus umschauen · Shift sprinten · Leertaste springen · F/rechte Maustaste halten = ziehen, Pfeiltasten = Kombo, loslassen = ausblasen · V Ansicht · E interagieren · Q Hoverboard · P Foto-Modus · B Shop · Esc Menü
 
 ### Hinweise
 - Online auf dem Handy: im WLAN zu Hause `http://auracity.local`; unterwegs mit der Tailscale-App `http://100.126.128.24/auracity`. Beim ersten Start fragt iOS nach dem Zugriff auf das lokale Netzwerk – bitte erlauben.

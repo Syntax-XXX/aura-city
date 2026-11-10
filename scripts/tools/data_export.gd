@@ -8,7 +8,7 @@ static func run(main: Node, path: String) -> bool:
 		"version": 1,
 		"constants": {
 			"combo_window": TrickSystem.COMBO_WINDOW, "timing_timeout": TrickSystem.TIMING_TIMEOUT,
-			"combo_cap": Economy.COMBO_CAP, "fail_loss": Economy.FAIL_LOSS, "daily_base": Economy.DAILY_REWARD_BASE,
+			"combo_cap": Economy.COMBO_CAP, "fail_loss": Economy.FAIL_LOSS, "vape_aura": Economy.VAPE_AURA, "daily_base": Economy.DAILY_REWARD_BASE,
 			"quality_mult": {"perfect": Economy.QUALITY_MULT[&"perfect"], "good": Economy.QUALITY_MULT[&"good"]},
 			"mastery_steps": TrickDB.MASTERY_STEPS, "challenge_mult": 1.5,
 			"collectible_respawn": Collectible.RESPAWN_SECONDS, "secret_multiplier": 10,
@@ -20,10 +20,7 @@ static func run(main: Node, path: String) -> bool:
 		"slots": Inventory.SLOTS.map(func(s): return String(s)),
 		"tricks": {}, "items": {}, "quests": {}, "achievements": {}, "challenges": {}, "collectibles": {},
 		"districts": DistrictArea.NAMES.keys().map(func(k): return String(k)),
-		"drinks": {},
 	}
-	for d in Drinks.LIST:
-		data["drinks"][d["id"]] = {"name": d["name"], "price": d["price"], "rank": d["rank"], "seconds": d["seconds"], "aura": d["aura"]}
 	for t: TrickDef in TrickDB.all():
 		data["tricks"][String(t.id)] = {"name": t.display_name, "difficulty": t.difficulty, "base_aura": t.base_aura,
 			"duration": t.duration, "cooldown": t.cooldown, "combo_bonus": t.combo_bonus, "unlock": t.unlock_lifetime_aura}
@@ -31,6 +28,8 @@ static func run(main: Node, path: String) -> bool:
 		data["items"][String(i.id)] = {"name": i.display_name, "price": i.price, "rarity": i.rarity, "slot": String(i.slot()),
 			"required_rank": i.required_rank, "required_lifetime": i.required_lifetime_aura,
 			"required_achievement": String(i.required_achievement), "starter": i.starter}
+		if i.category == &"gadget":
+			data["items"][String(i.id)]["vape_aura"] = Economy.vape_mult(i)
 	for q: QuestDef in Quests.defs.values():
 		data["quests"][String(q.id)] = {"name": q.display_name, "period": q.period, "stat": String(q.stat), "goal": q.goal, "reward": q.reward_aura}
 	for a: AchievementDef in Achievements.defs.values():

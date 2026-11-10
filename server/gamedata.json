@@ -54,12 +54,6 @@
 			"reward": 200,
 			"stat": "lifetime_aura"
 		},
-		"first_drink": {
-			"goal": 1,
-			"name": "Erfrischt",
-			"reward": 300,
-			"stat": "drinks"
-		},
 		"first_legendary": {
 			"goal": 1,
 			"name": "First Legendary Item",
@@ -71,6 +65,12 @@
 			"name": "Erste Wolke",
 			"reward": 100,
 			"stat": "tricks"
+		},
+		"first_vape": {
+			"goal": 1,
+			"name": "Upgrade!",
+			"reward": 300,
+			"stat": "vapes"
 		},
 		"globetrotter": {
 			"goal": 9,
@@ -595,7 +595,16 @@
 			"period": 300
 		},
 		"secret_multiplier": 10,
-		"timing_timeout": 5
+		"timing_timeout": 5,
+		"vape_aura": [
+			1,
+			1.1,
+			1.2,
+			1.35,
+			1.5,
+			1.75,
+			2
+		]
 	},
 	"districts": [
 		"spawn",
@@ -608,57 +617,6 @@
 		"industrial",
 		"downtown"
 	],
-	"drinks": {
-		"cloud_shake": {
-			"aura": 1.6,
-			"name": "Cloud Shake",
-			"price": 15000,
-			"rank": 3,
-			"seconds": 240
-		},
-		"godlike_juice": {
-			"aura": 2,
-			"name": "Godlike Juice",
-			"price": 120000,
-			"rank": 5,
-			"seconds": 300
-		},
-		"mc_mate": {
-			"aura": 1.1,
-			"name": "Main-Character-Mate",
-			"price": 1500,
-			"rank": 1,
-			"seconds": 180
-		},
-		"neon_cola": {
-			"aura": 1.5,
-			"name": "Neon Cola",
-			"price": 5000,
-			"rank": 2,
-			"seconds": 180
-		},
-		"sigma_smoothie": {
-			"aura": 1.8,
-			"name": "Sigma Smoothie",
-			"price": 45000,
-			"rank": 4,
-			"seconds": 300
-		},
-		"sigma_sprudel": {
-			"aura": 1.25,
-			"name": "Sigma Sprudel",
-			"price": 600,
-			"rank": 0,
-			"seconds": 120
-		},
-		"void_elixir": {
-			"aura": 3,
-			"name": "Void Elixir",
-			"price": 400000,
-			"rank": 6,
-			"seconds": 300
-		}
-	},
 	"items": {
 		"acc_cap": {
 			"name": "Snapback",
@@ -911,64 +869,136 @@
 			"starter": false
 		},
 		"gadget_cloudpen": {
-			"name": "Cloud Pen",
+			"name": "Starter-Pod",
 			"price": 0,
 			"rarity": 0,
 			"required_achievement": "",
 			"required_lifetime": 0,
 			"required_rank": 0,
 			"slot": "gadget",
-			"starter": true
+			"starter": true,
+			"vape_aura": 1
 		},
 		"gadget_cloudpen_pink": {
-			"name": "Cloud Pen Bubblegum",
+			"name": "Einweg-Puff",
 			"price": 1500,
 			"rarity": 1,
 			"required_achievement": "",
 			"required_lifetime": 0,
 			"required_rank": 0,
 			"slot": "gadget",
-			"starter": false
+			"starter": false,
+			"vape_aura": 1.1
 		},
 		"gadget_cosmic": {
-			"name": "Skyscraper 9000",
-			"price": 1000000,
+			"name": "Wolkenkratzer 9000",
+			"price": 2500000,
+			"rarity": 6,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 6,
+			"slot": "gadget",
+			"starter": false,
+			"vape_aura": 2
+		},
+		"gadget_cybermod": {
+			"name": "Cyber-Mod",
+			"price": 90000,
+			"rarity": 3,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 3,
+			"slot": "gadget",
+			"starter": false,
+			"vape_aura": 1.45
+		},
+		"gadget_dragonmod": {
+			"name": "Drachen-Mod",
+			"price": 450000,
+			"rarity": 4,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 4,
+			"slot": "gadget",
+			"starter": false,
+			"vape_aura": 1.6
+		},
+		"gadget_fogmachine": {
+			"name": "Nebelmaschine",
+			"price": 600000,
 			"rarity": 5,
 			"required_achievement": "",
 			"required_lifetime": 0,
 			"required_rank": 5,
 			"slot": "gadget",
-			"starter": false
+			"starter": false,
+			"vape_aura": 1.75
+		},
+		"gadget_galaxy": {
+			"name": "Galaxy-Tank",
+			"price": 1200000,
+			"rarity": 5,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 5,
+			"slot": "gadget",
+			"starter": false,
+			"vape_aura": 1.85
+		},
+		"gadget_mango": {
+			"name": "Mango-Stick",
+			"price": 4000,
+			"rarity": 1,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 0,
+			"slot": "gadget",
+			"starter": false,
+			"vape_aura": 1.15
 		},
 		"gadget_mistbox": {
-			"name": "Mist Box",
+			"name": "Pod Pro",
 			"price": 9000,
 			"rarity": 2,
 			"required_achievement": "",
 			"required_lifetime": 0,
 			"required_rank": 0,
 			"slot": "gadget",
-			"starter": false
+			"starter": false,
+			"vape_aura": 1.2
+		},
+		"gadget_neonpod": {
+			"name": "Neon-Pod",
+			"price": 18000,
+			"rarity": 2,
+			"required_achievement": "",
+			"required_lifetime": 0,
+			"required_rank": 1,
+			"slot": "gadget",
+			"starter": false,
+			"vape_aura": 1.25
 		},
 		"gadget_orb": {
-			"name": "Nebula Orb",
+			"name": "Box-Mod 80 W",
 			"price": 35000,
 			"rarity": 3,
 			"required_achievement": "",
 			"required_lifetime": 0,
 			"required_rank": 2,
 			"slot": "gadget",
-			"starter": false
+			"starter": false,
+			"vape_aura": 1.35
 		},
 		"gadget_wand": {
-			"name": "Aura Wand",
+			"name": "Dual-Coil 200 W",
 			"price": 220000,
 			"rarity": 4,
 			"required_achievement": "",
 			"required_lifetime": 0,
 			"required_rank": 4,
 			"slot": "gadget",
-			"starter": false
+			"starter": false,
+			"vape_aura": 1.5
 		},
 		"hair_afro": {
 			"name": "Cloud Afro",
