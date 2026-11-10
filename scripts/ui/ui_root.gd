@@ -20,6 +20,7 @@ var tutorial: TutorialOverlay
 var screens: Dictionary = {} # StringName -> UIScreen
 var current: UIScreen
 var photo: PhotoMode
+var touch: TouchControls
 var _root: Control
 
 
@@ -35,6 +36,10 @@ func _ready() -> void:
 	hud.world = world
 	_root.add_child(hud)
 	_root.add_child(ToastStack.new())
+	if TouchControls.wanted():
+		touch = TouchControls.new()
+		touch.player = player
+		_root.add_child(touch)
 	screens = {
 		&"shop": ShopScreen.new(), &"inventory": InventoryScreen.new(), &"customize": CustomizeScreen.new(),
 		&"trickbook": TrickbookScreen.new(), &"quests": QuestScreen.new(), &"achievements": AchievementScreen.new(),
@@ -136,13 +141,15 @@ func is_ui_open() -> bool:
 func _update_mouse() -> void:
 	var open_ui := is_ui_open()
 	player.input_enabled = not open_ui
+	if touch:
+		touch.visible = not open_ui
 	if DisplayServer.get_name() == "headless" or (photo != null and photo.active):
 		return
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if open_ui else Input.MOUSE_MODE_CAPTURED
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not (event is InputEventKey or event is InputEventMouseButton) or not event.is_pressed() or event.is_echo():
+	if not (event is InputEventKey or event is InputEventMouseButton or event is InputEventAction) or not event.is_pressed() or event.is_echo():
 		return
 	if dialogue.visible:
 		if event.is_action_pressed("interact") or event.is_action_pressed("jump") or event.is_action_pressed("pause"):

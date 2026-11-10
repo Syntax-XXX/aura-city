@@ -35,6 +35,8 @@ func _ready() -> void:
 			InputMap.add_action(action)
 		for key in BINDINGS[action]:
 			if key is String and key == "mouse_left":
+				if TouchControls.wanted():
+					continue # auf Touch-Geräten landet man mit dem LANDEN-Button, nicht mit jedem Tippen
 				var mb := InputEventMouseButton.new()
 				mb.button_index = MOUSE_BUTTON_LEFT
 				InputMap.action_add_event(action, mb)

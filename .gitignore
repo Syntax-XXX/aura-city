@@ -4,3 +4,4 @@ export/
 build/
 server/data/
 node_modules/
+android/

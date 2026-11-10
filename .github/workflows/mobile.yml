@@ -1,0 +1,178 @@
+# Mobile-Builds auf GitHub (Forgejo hat kein macOS): Android-APK + unsignierte iOS-IPA (für AltStore/SideStore).
+# Start: Tag v* oder manuell (workflow_dispatch, optional mit Release-Tag zum Anhängen).
+name: Mobile (Android + iOS)
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release-Tag, an das APK/IPA gehängt werden (leer = nur Artefakte)"
+        required: false
+
+env:
+  GODOT_VERSION: "4.3"
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Godot + Export-Vorlagen holen
+        run: |
+          set -e
+          base="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable"
+          ed="Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          tp="Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          curl -fsSL -o "$ed" "$base/$ed"
+          curl -fsSL -o "$tp" "$base/$tp"
+          curl -fsSL -o SHA512-SUMS.txt "$base/SHA512-SUMS.txt"
+          grep -E " ($ed|$tp)\$" SHA512-SUMS.txt | sha512sum -c -
+          unzip -q "$ed" -d /tmp/godot && mv /tmp/godot/Godot_v*_linux.x86_64 /usr/local/bin/godot
+          T="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$T" && unzip -q "$tp" -d /tmp/tpl && mv /tmp/tpl/templates/* "$T/"
+          rm -f "$ed" "$tp"
+
+      - name: Android-SDK + Debug-Schlüssel einrichten
+        run: |
+          set -e
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;34.0.0" "platform-tools" >/dev/null
+          keytool -genkeypair -v -keystore "$HOME/debug.keystore" -storepass android -alias androiddebugkey -keypass android \
+            -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US" >/dev/null 2>&1
+          mkdir -p "$HOME/.config/godot"
+          cat > "$HOME/.config/godot/editor_settings-4.3.tres" <<EOT
+          [gd_resource type="EditorSettings" format=3]
+          [resource]
+          export/android/android_sdk_path = "$ANDROID_HOME"
+          export/android/java_sdk_path = "$JAVA_HOME"
+          export/android/debug_keystore = "$HOME/debug.keystore"
+          export/android/debug_keystore_user = "androiddebugkey"
+          export/android/debug_keystore_pass = "android"
+          EOT
+          sed -i 's/^ *//' "$HOME/.config/godot/editor_settings-4.3.tres"
+
+      - name: Import + Gradle-Vorlage (HTTP zum eigenen Server erlauben)
+        run: |
+          set -e
+          timeout 900 godot --headless --import >/dev/null 2>&1 || true
+          timeout 300 godot --headless --install-android-build-template >/dev/null 2>&1 || true
+          if [ ! -f android/build/AndroidManifest.xml ]; then
+            # Fallback: Gradle-Vorlage direkt aus den Export-Templates entpacken (so macht es der Editor)
+            T="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+            mkdir -p android/build
+            unzip -q "$T/android_source.zip" -d android/build
+            cp "$T/version.txt" android/.build_version 2>/dev/null || echo "${GODOT_VERSION}.stable" > android/.build_version
+            touch android/build/.gdignore
+          fi
+          test -f android/build/AndroidManifest.xml
+          # Android 9+ blockiert unverschlüsseltes HTTP – der Aura-Server läuft im Heimnetz/Tailscale ohne TLS
+          sed -i 's/<application /<application android:usesCleartextTraffic="true" /' android/build/AndroidManifest.xml
+          grep -c usesCleartextTraffic android/build/AndroidManifest.xml
+
+      - name: APK exportieren
+        env:
+          GODOT_ANDROID_KEYSTORE_RELEASE_PATH: /home/runner/debug.keystore
+          GODOT_ANDROID_KEYSTORE_RELEASE_USER: androiddebugkey
+          GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: android
+        run: |
+          set -e
+          mkdir -p build/android
+          timeout 1800 godot --headless --export-release Android build/android/AuraCity.apk 2>&1 | grep -vE "mesh_get_surface|Parameter \"m\" is null" | tail -40
+          test -s build/android/AuraCity.apk
+          VERSION="$(sed -n 's/^config\/version="\(.*\)"/\1/p' project.godot)"
+          cp build/android/AuraCity.apk "AuraCity-${VERSION}-android-arm64.apk"
+          ls -la *.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AuraCity-android
+          path: AuraCity-*-android-arm64.apk
+
+      - name: An GitHub-Release hängen
+        if: startsWith(github.ref, 'refs/tags/v') || inputs.tag != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: gh release upload "$TAG" AuraCity-*-android-arm64.apk --clobber
+
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Godot + Export-Vorlagen holen
+        run: |
+          set -e
+          base="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable"
+          ed="Godot_v${GODOT_VERSION}-stable_macos.universal.zip"
+          tp="Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          curl -fsSL -o "$ed" "$base/$ed"
+          curl -fsSL -o "$tp" "$base/$tp"
+          curl -fsSL -o SHA512-SUMS.txt "$base/SHA512-SUMS.txt"
+          grep -E " ($ed|$tp)\$" SHA512-SUMS.txt | shasum -a 512 -c -
+          unzip -q "$ed"
+          T="$HOME/Library/Application Support/Godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$T" && unzip -q "$tp" -d tpl && mv tpl/templates/* "$T/"
+          rm -rf tpl "$ed" "$tp"
+          echo "GODOT=$PWD/Godot.app/Contents/MacOS/Godot" >> "$GITHUB_ENV"
+
+      - name: Xcode-Projekt exportieren
+        run: |
+          set -e
+          "$GODOT" --headless --import >/dev/null 2>&1 || true
+          mkdir -p build/ios
+          "$GODOT" --headless --export-release iOS build/ios/AuraCity.ipa 2>&1 | grep -vE "mesh_get_surface|Parameter \"m\" is null" | tail -30
+          ls build/ios
+
+      - name: HTTP + lokales Netzwerk erlauben (Info.plist)
+        run: |
+          set -e
+          PL=$(find build/ios -name "*-Info.plist" -maxdepth 2 | head -1)
+          echo "Info.plist: $PL"
+          /usr/libexec/PlistBuddy -c "Delete :NSAppTransportSecurity" "$PL" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :NSAppTransportSecurity dict" "$PL"
+          /usr/libexec/PlistBuddy -c "Add :NSAppTransportSecurity:NSAllowsArbitraryLoads bool true" "$PL"
+          /usr/libexec/PlistBuddy -c "Add :NSAppTransportSecurity:NSAllowsLocalNetworking bool true" "$PL"
+          /usr/libexec/PlistBuddy -c "Delete :NSLocalNetworkUsageDescription" "$PL" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :NSLocalNetworkUsageDescription string 'Verbindung zum Aura-City-Server im Heimnetz.'" "$PL"
+          /usr/libexec/PlistBuddy -c "Delete :NSBonjourServices" "$PL" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :NSBonjourServices array" "$PL"
+          /usr/libexec/PlistBuddy -c "Add :NSBonjourServices:0 string _http._tcp" "$PL"
+
+      - name: Ohne Signatur kompilieren und .ipa packen
+        run: |
+          set -e
+          cd build/ios
+          xcodebuild -project AuraCity.xcodeproj -scheme AuraCity -configuration Release -sdk iphoneos \
+            -derivedDataPath dd CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" build | tail -20
+          APP=$(find dd/Build/Products -name "*.app" -maxdepth 2 | head -1)
+          mkdir -p Payload && cp -R "$APP" Payload/
+          VERSION="$(sed -n 's/^config\/version="\(.*\)"/\1/p' ../../project.godot)"
+          zip -qr "../../AuraCity-${VERSION}-ios-unsigned.ipa" Payload
+          ls -la ../../*.ipa
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AuraCity-ios-unsigned
+          path: AuraCity-*-ios-unsigned.ipa
+
+      - name: An GitHub-Release hängen
+        if: startsWith(github.ref, 'refs/tags/v') || inputs.tag != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: gh release upload "$TAG" AuraCity-*-ios-unsigned.ipa --clobber

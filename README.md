@@ -61,6 +61,11 @@ Timing, baue Combos und Ketten, farme Aura, steig im Rang auf und schalte Distri
 | B / I / C / K / J / O / L | Shop / Inventar / Garderobe / Trickbuch / Quests / Erfolge / Bestenliste |
 | Esc | Pause / Menü schließen |
 
+## Plattformen
+
+Windows, Linux, Android (APK) und iOS (unsignierte IPA für AltStore/SideStore) – alle Downloads im GitHub-Release.
+Auf Touch-Geräten erscheint automatisch die Touch-Steuerung.
+
 ## Starten
 
 ```bash

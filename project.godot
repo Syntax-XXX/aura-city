@@ -4,7 +4,7 @@ config_version=5
 [application]
 
 config/name="AURA CITY"
-config/version="1.0.0"
+config/version="1.1.0"
 config/description="Open-World-Hangout: Tricks, Aura, Kosmetik, Quests."
 run/main_scene="res://scenes/main/main.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
@@ -32,6 +32,7 @@ window/size/viewport_width=1600
 window/size/viewport_height=900
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+window/handheld/orientation=4
 
 [physics]
 
@@ -43,3 +44,4 @@ renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 anti_aliasing/quality/msaa_3d=2
 lights_and_shadows/directional_shadow/size=2048
+textures/vram_compression/import_etc2_astc=true

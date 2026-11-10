@@ -57,6 +57,9 @@ func has_file() -> bool:
 
 ## Laden ohne apply() – Audio ist beim Start noch nicht bereit (SaveSystem ruft apply()).
 func load_file() -> void:
+	if not has_file() and OS.has_feature("mobile"):
+		graphics_quality = 0 # Handy: sparsam starten
+		effects_quality = 0
 	var parsed = JSON.parse_string(FileAccess.get_file_as_string(path)) if has_file() else null
 	if parsed is Dictionary:
 		from_dict(parsed, false)
