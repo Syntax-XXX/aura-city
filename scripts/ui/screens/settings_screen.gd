@@ -84,6 +84,8 @@ func _choice(text: String, key: String, options: Array) -> void:
 
 func _on_choice(index: int, key: String) -> void:
 	Settings.set(key, index)
+	if key == "graphics_quality":
+		Settings.auto_quality = false # eigene Wahl hat Vorrang
 	Settings.apply()
 
 

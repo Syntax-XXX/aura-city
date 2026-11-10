@@ -32,7 +32,8 @@ Stand: 2026-11-09 · Godot 4.3 (gl_compatibility) · GDScript · Server: Node �
   (Shops, NPCs, Challenges, Splitter, Teleporter).
 - **UI:** `UIRoot` verwaltet Screens, Hotkeys, Maus-Modus und die Eingabesperre. Alle Screens erben von `UIScreen`.
 - **Ablauf:** `scripts/core/main.gd`: Hauptmenü → Ladebildschirm → Welt + Spieler + UI.
-  Startargumente nach `--`: `--tests`, `--smoke`, `--online-test <url>`, `--export-data <pfad>`.
+  Startargumente nach `--`: `--tests`, `--smoke`, `--online-test <url>`, `--export-data <pfad>`,
+  `--lab <ordner>` (Vorzeige-Szene rendern), `--shot <ordner>` (Stadtrundgang), `--count` (Render-Objekte), `--prof`.
 
 ## Online-Modus und Anti-Cheat
 
@@ -101,11 +102,16 @@ Clients kennen ihn ohne Abstimmung, und Online gleicht der Client die Zeit mit d
 
 ## Performance
 
+- Standard-Grafikstufe „Mittel“; `AutoQuality` senkt die Stufe nach dem Start automatisch, wenn die
+  Bildrate unter 35 FPS liegt (aus, sobald man die Grafikstufe selbst wählt).
+- Himmel als Kuppel-Mesh (`assets/shaders/sky_dome.gdshader`) statt Sky-Ressource: Tageszeit-Änderungen
+  lösen keine Radiance-Neuberechnung aus.
+- Fenster leuchten nachts über eine eigene Emissions-Textur (Multiplikation), Stärke von `DayNight`.
 - Effekte: feste Emitter-Pools (Wolken 6, Funken 6, Ringe 3), Partikel blenden nah an der Kamera aus
   (kein Vollbild-Overdraw), Menge nach Effekt-Qualität. Shader-Warm-up im Ladebildschirm.
 - Ausgeschaltete Laternen sind unsichtbar (Kompatibilitäts-Renderer zahlt sonst pro Licht einen Pass).
 - NPCs/Verkehr außerhalb von 75 m bzw. 160 m pausieren Physik und Animation.
-- Himmel wird nur 4×/s aktualisiert, Radiance-Map minimal (32), keine Reflexionen.
+- Himmel/Licht werden nur 4×/s aktualisiert, keine Reflexionen.
 - Kleine Objekte werden nur bis 140 m gerendert, mittelgroße bis 320 m, Schilder bis 260 m. Der Nebel kaschiert den Übergang.
 - Laternenlichter blenden ab 70 m aus.
 - Gebäude teilen sich Fenstertexturen und Materialien über einen Cache.

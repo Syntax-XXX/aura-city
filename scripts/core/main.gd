@@ -121,6 +121,8 @@ func start_game() -> void:
 	await get_tree().process_frame
 	loading.visible = false
 	Audio.start_world_audio()
+	if DisplayServer.get_name() != "headless":
+		ui.add_child(AutoQuality.new())
 	if not SaveSystem.tutorial_done:
 		ui.start_tutorial()
 

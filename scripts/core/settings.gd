@@ -14,7 +14,9 @@ var fullscreen := false
 var show_fps := false
 var day_night_cycle := true
 ## 0 = Niedrig, 1 = Mittel, 2 = Hoch
-var graphics_quality := 2
+var graphics_quality := 1
+## Grafik automatisch senken, wenn die Bildrate zu niedrig ist (aus, sobald man selbst wählt)
+var auto_quality := true
 var effects_quality := 1
 ## Figur: 0 = männlich, 1 = weiblich
 var avatar_body := 0
@@ -26,7 +28,7 @@ func to_dict() -> Dictionary:
 		"mouse_sensitivity": mouse_sensitivity, "invert_y": invert_y, "fov": fov,
 		"fullscreen": fullscreen, "show_fps": show_fps, "day_night_cycle": day_night_cycle,
 		"tutorial_done": tutorial_done,
-		"graphics_quality": graphics_quality, "effects_quality": effects_quality, "avatar_body": avatar_body,
+		"graphics_quality": graphics_quality, "auto_quality": auto_quality, "effects_quality": effects_quality, "avatar_body": avatar_body,
 	}
 
 
@@ -42,6 +44,7 @@ func from_dict(d: Dictionary, apply_now := true) -> void:
 	day_night_cycle = bool(d.get("day_night_cycle", day_night_cycle))
 	tutorial_done = bool(d.get("tutorial_done", tutorial_done))
 	graphics_quality = clampi(int(d.get("graphics_quality", graphics_quality)), 0, 2)
+	auto_quality = bool(d.get("auto_quality", auto_quality))
 	effects_quality = clampi(int(d.get("effects_quality", effects_quality)), 0, 2)
 	avatar_body = clampi(int(d.get("avatar_body", avatar_body)), 0, 1)
 	if apply_now:

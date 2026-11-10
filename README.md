@@ -3,6 +3,12 @@
 Ein 3D-Open-World-Spiel (Godot 4.3, GDScript): Lauf durch eine riesige Stadt, lande Tricks mit
 Timing, baue Combos und Ketten, farme Aura, steig im Rang auf und schalte Distrikte, Tricks und Kosmetik frei.
 
+| Tag | Abend | Nacht |
+|---|---|---|
+| ![Tag](docs/screenshots/tag.jpg) | ![Abend](docs/screenshots/abend.jpg) | ![Nacht](docs/screenshots/nacht.jpg) |
+
+<sub>Lab-Szene, Software-Rendering (llvmpipe) – auf echter Hardware mit Kantenglättung schärfer.</sub>
+
 > Satire-Hinweis: Die „Gadgets“ sind rein kosmetische Fantasie-Objekte mit bunten Wolken-Effekten.
 > Es gibt keine Inhalations- oder Nikotin-Mechanik.
 
