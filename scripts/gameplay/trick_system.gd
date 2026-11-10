@@ -1,10 +1,10 @@
 class_name TrickSystem
 extends Node
-## Trick-Ablauf am Spieler:
-##  1. Taste 1–4 startet den Trick aus dem Loadout → Timing-Leiste läuft (Nadel pendelt).
-##  2. Linke Maustaste / F „landet“ den Trick: grüne Zone = Good, Mitte = Perfect, daneben = Fail.
-##  3. Erfolgreiche Tricks in kurzer Folge bilden eine Combo (Multiplikator), feste Folgen = Ketten-Bonus.
-## Ein Fail kostet keine Aura – nur die Combo endet.
+## Dampf-Ablauf am Spieler (intern heißen Züge noch „Tricks“):
+##  1. Taste 1–4 = an der Vape ziehen (Zug aus dem Loadout) → Zug-Leiste läuft (Nadel pendelt).
+##  2. Linke Maustaste / F = ausatmen: Mitte = Perfect, grüne Zone = Good, daneben = Husten.
+##  3. Saubere Züge kurz hintereinander bilden eine Combo, feste Folgen = Ketten-Bonus.
+## Husten kostet Aura (Economy.FAIL_LOSS × Basis-Aura) und beendet die Combo.
 
 signal timing_started(trick: TrickDef, window: float, perfect_window: float)
 signal timing_updated(needle: float)
@@ -94,6 +94,8 @@ func start_trick(id: StringName) -> String:
 	_timing_elapsed = 0.0
 	var window := trick.timing_window() * (1.0 + TrickDB.mastery_level(id) * 0.06) * Economy.boost("timing")
 	timing_started.emit(trick, window, window * 0.3)
+	if animator:
+		animator.play_action(&"pull", TIMING_TIMEOUT)
 	Events.trick_started.emit(id)
 	Audio.play(&"trick_start", trick.sound_pitch)
 	return ""
@@ -124,8 +126,14 @@ func _finish(quality: StringName) -> void:
 	if quality == &"fail":
 		phase = Phase.READY
 		if animator:
-			animator.play_action(&"twist", 0.35)
+			animator.play_action(&"cough", 0.6)
 		Audio.play(&"fail")
+		var head := player.global_position + Vector3.UP * 2.2 if player else Vector3.ZERO
+		Economy.lose(trick.base_aura * Economy.FAIL_LOSS, "Husten", head)
+		if player:
+			var fwd := -player.global_transform.basis.z
+			var mouth := visual.mouth_position(fwd) if visual else head
+			FX.cough(player.get_parent(), mouth, fwd)
 		Events.trick_failed.emit(trick.id)
 		end_combo()
 		return
@@ -158,8 +166,9 @@ func _effects(trick: TrickDef, quality: StringName) -> void:
 	var strength := 1.0 + trick.tier * 0.6 + (0.3 if quality == &"perfect" else 0.0)
 	if gadget and gadget.rarity >= ItemDef.Rarity.LEGENDARY:
 		strength += 0.6
-	var tip := visual.gadget_tip.global_position if visual else player.global_position + Vector3.UP * 1.5
-	FX.cloud(world, tip, -player.global_transform.basis.z + Vector3.UP * 0.4, cloud_color, strength)
+	var fwd := -player.global_transform.basis.z
+	var mouth := visual.mouth_position(fwd) if visual else player.global_position + Vector3.UP * 1.55
+	FX.vape_cloud(world, mouth, fwd, cloud_color, trick.cloud_shape, trick.cloud_count, strength)
 	FX.sparkles(world, player.global_position + Vector3.UP * 1.2, trick.effect_color, 16 + trick.tier * 20, 1.0 + trick.tier * 0.4)
 	if trick.tier == TrickDef.Tier.LEGENDARY or quality == &"perfect":
 		FX.ring(world, player.global_position + Vector3.UP * 0.2, trick.effect_color, 2.0 + trick.tier * 1.5)
@@ -182,7 +191,7 @@ func _check_chains() -> void:
 			var pos := player.global_position + Vector3.UP * 2.8 if player else Vector3.ZERO
 			Economy.earn(float(chain["bonus"]) * challenge_multiplier, "Kette: " + str(chain["name"]), pos)
 			Events.chain_completed.emit(str(chain["name"]))
-			Events.toast.emit("Trick-Kette: %s!" % chain["name"], Color("facc15"))
+			Events.toast.emit("Wolken-Kette: %s!" % chain["name"], Color("facc15"))
 			Audio.play(&"reward")
 
 

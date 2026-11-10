@@ -57,7 +57,7 @@ func _ready() -> void:
 	add_child(visual)
 	var pool: Array = MODELS.get(style, MODELS[&"default"])
 	visual.apply_npc(pool[_rng.randi() % pool.size()], _rng)
-	has_gadget = _rng.randf() < 0.45
+	has_gadget = _rng.randf() < 0.75
 	if has_gadget:
 		var gadgets := ItemDB.by_category(&"gadget")
 		visual._build_gadget(gadgets[_rng.randi() % gadgets.size()])
@@ -163,8 +163,8 @@ func _physics_process(delta: float) -> void:
 		animator.set_state(CharacterAnimator.State.WALK if moving else CharacterAnimator.State.IDLE)
 	# Eigener Wolken-Trick (nur wenn der Spieler es sehen kann)
 	_trick_timer -= delta
-	if has_gadget and _trick_timer <= 0.0 and not moving and player and player.global_position.distance_to(global_position) < 35.0:
-		_trick_timer = _rng.randf_range(15.0, 40.0)
+	if has_gadget and _trick_timer <= 0.0 and player and player.global_position.distance_to(global_position) < 35.0:
+		_trick_timer = _rng.randf_range(8.0, 25.0)
 		_do_trick()
 	if _bubble_left > 0.0:
 		_bubble_left -= delta
@@ -172,9 +172,13 @@ func _physics_process(delta: float) -> void:
 
 
 func _do_trick() -> void:
-	animator.play_action([&"flip", &"pose", &"spin"][_rng.randi() % 3], 1.2)
-	var color := Color.from_hsv(_rng.randf(), 0.5, 1.0)
-	FX.cloud(get_parent(), visual.gadget_tip.global_position, -global_transform.basis.z + Vector3.UP * 0.4, color, 0.8)
+	# NPC dampft: meist eine normale Wolke, manchmal Ringe oder ein Ghost
+	if not animator.is_busy():
+		animator.play_action(&"exhale", 1.2)
+	var color := Color.from_hsv(_rng.randf(), 0.35, 1.0)
+	var fwd := -global_transform.basis.z
+	var shape: StringName = [&"puff", &"puff", &"puff", &"rings", &"ghost", &"waterfall"][_rng.randi() % 6]
+	FX.vape_cloud(get_parent(), visual.mouth_position(fwd), fwd, color, shape, 1, 0.8)
 
 
 func _on_trick(_id: StringName, quality: StringName, _aura: float, _combo: int) -> void:

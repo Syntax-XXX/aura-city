@@ -73,6 +73,8 @@ func test_economy() -> void:
 	check(not Economy.spend(1000), "spend ohne Deckung schlägt fehl")
 	check(Economy.aura == 600, "Aura bleibt bei fehlgeschlagenem spend")
 	check(Economy.spend(100) and Economy.aura == 500 and Economy.lifetime == 600, "spend senkt nur Aura")
+	check(Economy.lose(20, "Husten") == 20 and Economy.aura == 480 and Economy.lifetime == 600, "Husten kostet Aura, nicht Lifetime")
+	check(Economy.lose(10000, "Husten") == 480 and Economy.aura == 0, "Husten nie unter 0")
 
 
 func test_purchases() -> void:
@@ -125,7 +127,7 @@ func test_tricks() -> void:
 		ts.land()
 		ts.phase = TrickSystem.Phase.READY
 	check(ts.combo == 3, "Combo zählt auf 3 (%d)" % ts.combo)
-	check(Economy.aura - aura_before > 250, "Kette Street Starter gibt Bonus")
+	check(Economy.aura - aura_before > 250, "Kette Erster Zug gibt Bonus")
 	ts.start_trick(&"finger_flip")
 	check(ts.start_trick(&"finger_flip") != "", "Cooldown/Beschäftigt verhindert Spam")
 	ts.free()

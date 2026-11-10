@@ -5,15 +5,17 @@
 [resource]
 script = ExtResource("1_s")
 id = &"neon_flip"
-display_name = "Neon Flip"
-description = "Rückwärtssalto mit Neon-Spur."
+display_name = "Bullseye"
+description = "Ein kleiner Ring schießt durch einen großen."
 tier = 1
 difficulty = 6
 base_aura = 180
 duration = 1.0
 cooldown = 1.8
 combo_bonus = 0.4
-animation = &"neon_flip"
+animation = &"exhale_big"
 effect_color = Color(0.133, 0.827, 0.933, 1)
 sound_pitch = 1.2
 unlock_lifetime_aura = 8000
+cloud_shape = &"bullseye"
+cloud_count = 1

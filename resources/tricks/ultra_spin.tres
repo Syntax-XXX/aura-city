@@ -5,15 +5,17 @@
 [resource]
 script = ExtResource("1_s")
 id = &"ultra_spin"
-display_name = "Ultra Spin"
-description = "Fünffach-Drehung im Wirbelsturm."
+display_name = "Tornado"
+description = "Eine Wolkenspirale dreht sich nach oben."
 tier = 2
 difficulty = 8
 base_aura = 420
 duration = 1.2
 cooldown = 2.6
 combo_bonus = 0.5
-animation = &"ultra_spin"
+animation = &"exhale_big"
 effect_color = Color(0.910, 0.475, 0.976, 1)
 sound_pitch = 0.9
 unlock_lifetime_aura = 80000
+cloud_shape = &"tornado"
+cloud_count = 1

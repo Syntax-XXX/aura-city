@@ -66,11 +66,24 @@ static func run(main: Node, dir: String) -> void:
 		await RenderingServer.frame_post_draw
 		main.get_viewport().get_texture().get_image().save_jpg("%s/%s.jpg" % [dir, t[1]], 0.85)
 		print("[lab] ", t[1])
-	FX.cloud(w, Vector3(1, 1.6, 4), Vector3(0, 0.4, 1), Color("a855f7"), 2.0)
 	w.day_night.time_of_day = 0.45
 	w.day_night.apply()
-	for i in 10:
-		await tree.process_frame
-	await RenderingServer.frame_post_draw
-	main.get_viewport().get_texture().get_image().save_jpg("%s/lab_cloud.jpg" % dir, 0.85)
-	print("[lab] lab_cloud")
+	if OS.get_environment("LAB_VAPE") == "":
+		FX.cloud(w, Vector3(1, 1.6, 4), Vector3(0, 0.4, 1), Color("a855f7"), 2.0)
+		for i in 10:
+			await tree.process_frame
+		await RenderingServer.frame_post_draw
+		main.get_viewport().get_texture().get_image().save_jpg("%s/lab_cloud.jpg" % dir, 0.85)
+		print("[lab] lab_cloud")
+		return
+	# Dampfwolken-Formen (LAB_VAPE=1): Spieler-Figur bläst jede Form seitlich, je ein Bild
+	cam.position = me.position + Vector3(1.0, 1.6, 4.0)
+	cam.look_at(me.position + Vector3(1.0, 1.5, 0))
+	for shape: StringName in [&"puff", &"rings", &"ghost", &"waterfall", &"jellyfish", &"dragon", &"bullseye", &"tornado", &"mega"]:
+		var fwd := Vector3(1, 0, 0)
+		FX.vape_cloud(w, me.mouth_position(fwd), fwd, Color("a855f7"), shape, 1, 1.4)
+		await tree.create_timer(0.9).timeout
+		await RenderingServer.frame_post_draw
+		main.get_viewport().get_texture().get_image().save_jpg("%s/vape_%s.jpg" % [dir, shape], 0.85)
+		print("[lab] vape_", shape)
+		await tree.create_timer(2.5).timeout

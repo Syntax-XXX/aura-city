@@ -5,15 +5,17 @@
 [resource]
 script = ExtResource("1_s")
 id = &"mini_pose"
-display_name = "Mini Pose"
-description = "Kurz posen, Kamera liebt dich."
+display_name = "Ghost"
+description = "Wolke raus – und wieder zurückgeholt."
 tier = 0
 difficulty = 2
 base_aura = 55
 duration = 0.8
 cooldown = 1.0
 combo_bonus = 0.25
-animation = &"pose"
+animation = &"exhale"
 effect_color = Color(0.957, 0.447, 0.714, 1)
 sound_pitch = 1.05
 unlock_lifetime_aura = 0
+cloud_shape = &"ghost"
+cloud_count = 1

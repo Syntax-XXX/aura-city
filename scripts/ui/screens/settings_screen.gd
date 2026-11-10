@@ -34,7 +34,7 @@ func refresh() -> void:
 	_toggle("FPS anzeigen", "show_fps")
 	_toggle("Tag/Nacht-Zyklus", "day_night_cycle")
 	UIKit.separator(_rows)
-	var keys := UIKit.label("Tasten: WASD laufen · Shift sprinten · Leertaste springen · 1–4 Tricks · F/Linksklick landen · E interagieren · G Emote · Q Hoverboard · N Aura-Kiosk · P Foto-Modus · B Shop · I Inventar · C Garderobe · K Trickbuch · J Quests · O Erfolge · L Bestenliste · Esc Pause", 13, UITheme.MUTED, _rows)
+	var keys := UIKit.label("Tasten: WASD laufen · Shift sprinten · Leertaste springen · 1–4 ziehen · F/Linksklick ausatmen · E interagieren · G Emote · Q Hoverboard · N Aura-Kiosk · P Foto-Modus · B Shop · I Inventar · C Garderobe · K Trickbuch · J Quests · O Erfolge · L Bestenliste · Esc Pause", 13, UITheme.MUTED, _rows)
 	keys.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var danger := UIKit.hbox(_rows, 10)
 	UIKit.label("Spielstand: " + ProjectSettings.globalize_path(SaveSystem.save_path), 12, UITheme.MUTED, danger)
@@ -103,7 +103,7 @@ func _on_toggle(on: bool, key: String) -> void:
 
 
 func _ask_reset() -> void:
-	confirm.ask("Wirklich ALLES löschen? Aura, Items, Tricks und Erfolge sind dann weg.", "Löschen", _reset)
+	confirm.ask("Wirklich ALLES löschen? Aura, Items, Wolken und Erfolge sind dann weg.", "Löschen", _reset)
 
 
 func _reset() -> void:

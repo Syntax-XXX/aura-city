@@ -8,7 +8,7 @@ static func run(main: Node, path: String) -> bool:
 		"version": 1,
 		"constants": {
 			"combo_window": TrickSystem.COMBO_WINDOW, "timing_timeout": TrickSystem.TIMING_TIMEOUT,
-			"combo_cap": Economy.COMBO_CAP, "daily_base": Economy.DAILY_REWARD_BASE,
+			"combo_cap": Economy.COMBO_CAP, "fail_loss": Economy.FAIL_LOSS, "daily_base": Economy.DAILY_REWARD_BASE,
 			"quality_mult": {"perfect": Economy.QUALITY_MULT[&"perfect"], "good": Economy.QUALITY_MULT[&"good"]},
 			"mastery_steps": TrickDB.MASTERY_STEPS, "challenge_mult": 1.5,
 			"collectible_respawn": Collectible.RESPAWN_SECONDS, "secret_multiplier": 10,

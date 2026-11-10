@@ -11,7 +11,7 @@ func build_content() -> void:
 	var v := UIKit.vbox(null, 10)
 	UIKit.scroll(content, v).size_flags_vertical = Control.SIZE_EXPAND_FILL
 	for entry in [
-		["AURA CITY", "Ein Godot-4-Spiel über Tricks, Combos und Aura. Satire – alle Gadgets sind rein kosmetisch."],
+		["AURA CITY", "Ein Godot-4-Spiel über Dampfwolken, Combos und Aura. Satire – alle Vapes sind erfunden."],
 		["Figuren & Animationen", "Ultimate Animated Character Pack und Universal Animation Library von Quaternius (CC0) – quaternius.com"],
 		["Natur, Straßen, Autos", "Stylized Nature MegaKit, Modular Street Pack, Car Pack von Quaternius (CC0)"],
 		["Texturen", "Gras, Asphalt, Pflaster, Sand, Beton, Fliesen, Holz von Poly Haven (CC0) – polyhaven.com"],

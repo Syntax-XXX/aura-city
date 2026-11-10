@@ -17,7 +17,7 @@ func _init() -> void:
 
 func build_content() -> void:
 	UIKit.primary("Weiterspielen", close, content)
-	for entry in [["Shop-Übersicht", &"shop"], ["Inventar", &"inventory"], ["Garderobe", &"customize"], ["Trickbuch", &"trickbook"], ["Quests", &"quests"], ["Aura-Kiosk (Drinks)", &"drinks"], ["Erfolge", &"achievements"], ["Bestenliste", &"leaderboard"], ["Einstellungen", &"settings"]]:
+	for entry in [["Shop-Übersicht", &"shop"], ["Inventar", &"inventory"], ["Garderobe", &"customize"], ["Wolkenbuch", &"trickbook"], ["Quests", &"quests"], ["Aura-Kiosk (Drinks)", &"drinks"], ["Erfolge", &"achievements"], ["Bestenliste", &"leaderboard"], ["Einstellungen", &"settings"]]:
 		UIKit.button(entry[0], navigate.emit.bind(entry[1]), content)
 	UIKit.separator(content)
 	_skip = UIKit.button("Tutorial überspringen", skip_tutorial.emit, content)

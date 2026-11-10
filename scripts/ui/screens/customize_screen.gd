@@ -4,7 +4,7 @@ extends UIScreen
 
 const SLOT_NAMES := {
 	&"skin": "Haut", &"hair": "Frisur", &"outfit": "Outfit", &"shoes": "Schuhe", &"accessory": "Accessoire",
-	&"gadget": "Gadget", &"trail": "Spur", &"particle": "Partikel", &"title": "Titel", &"emote": "Emote [G]", &"animation": "Idle-Stil", &"board": "Hoverboard [Q]",
+	&"gadget": "Vape", &"trail": "Spur", &"particle": "Partikel", &"title": "Titel", &"emote": "Emote [G]", &"animation": "Idle-Stil", &"board": "Hoverboard [Q]",
 }
 
 var _list: VBoxContainer

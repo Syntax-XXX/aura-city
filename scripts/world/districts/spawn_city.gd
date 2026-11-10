@@ -39,13 +39,13 @@ static func build(root: Node3D) -> void:
 	DistrictBuilder.place(root, board, Vector3(18, 0, -19))
 	DistrictBuilder.station(root, &"daily", "Tagesbelohnung", Vector3(-6, 0, 18), Color("f472b6"), true)
 	DistrictBuilder.station(root, &"customize", "Garderobe", Vector3(6, 0, 18), Color("38bdf8"))
-	DistrictBuilder.station(root, &"trickbook", "Trickbuch", Vector3(18, 0, 16), Color("c084fc"))
+	DistrictBuilder.station(root, &"trickbook", "Wolkenbuch", Vector3(18, 0, 16), Color("c084fc"))
 	DistrictBuilder.station(root, &"quests", "Quest-Board", Vector3(-18, 0, 16), Color("4ade80"))
 	# Tutorial-Guide
 	DistrictBuilder.npc(root, "Guide Gabi", Vector3(3, 0, 10), PackedStringArray([
 		"Willkommen in AURA CITY! Hier zählt nur eins: Aura.",
-		"Drück 1–4 für einen Trick. Dann läuft die Timing-Leiste – klick (oder F), wenn die Nadel in der Mitte ist.",
-		"Mitte = PERFECT, grüne Zone = GOOD. Mehrere Tricks hintereinander = Combo-Multiplikator!",
+		"Drück 1–4 und zieh an deiner Vape. Dann läuft die Zug-Leiste – klick (oder F) zum Ausatmen, wenn die Nadel in der Mitte ist.",
+		"Mitte = PERFECT, grüne Zone = GOOD, daneben = Husten und Aura weg. Mehrere Wolken hintereinander = Combo-Multiplikator!",
 		"Mit Aura kaufst du Kosmetik im Shop [B] und steigst im Rang auf. Höhere Ränge öffnen neue Distrikte.",
 		"Tipp: Hinter dem Brunnen soll es manchmal seltsam leuchten …",
 	]), 3.0)

@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_s")
 id = &"daily_tricks"
-display_name = "Trick-Routine"
-description = "Lande 10 Tricks"
+display_name = "Dampf-Routine"
+description = "Blas 10 saubere Wolken"
 period = 0
 stat = &"trick"
 goal = 10

@@ -5,20 +5,20 @@ extends PanelContainer
 const STEPS := [
 	["Willkommen in Aura City!", "Laufe mit WASD, Shift = sprinten, Maus = Kamera."],
 	["Springen", "Drück die Leertaste."],
-	["Dein erster Trick", "Drück 1 und dann F (oder Linksklick), wenn die Nadel im leuchtenden Bereich ist."],
-	["Combo!", "Lande zwei Tricks kurz hintereinander – das ergibt einen Aura-Multiplikator."],
+	["Dein erster Zug", "Drück 1 zum Ziehen und dann F (oder Linksklick), wenn die Nadel im leuchtenden Bereich ist – sonst hustest du und verlierst Aura."],
+	["Combo!", "Mach zwei saubere Wolken kurz hintereinander – das ergibt einen Aura-Multiplikator."],
 	["Shopping", "Öffne den Shop mit B. Neue Items gibt es auch in den Bezirks-Shops."],
-	["Hoverboard", "Drück Q: Mit dem Board bist du auf der riesigen Map viel schneller. Shift = Boost, 1–4 = Board-Tricks."],
+	["Hoverboard", "Drück Q: Mit dem Board bist du auf der riesigen Map viel schneller. Shift = Boost, 1–4 = dampfen geht auch auf dem Board."],
 ]
 
 ## Varianten für Touch-Geräte
 const STEPS_TOUCH := [
 	["Willkommen in Aura City!", "Zieh links auf dem Bildschirm, um zu laufen. Wisch rechts, um die Kamera zu drehen."],
 	["Springen", "Tippe auf ⤒."],
-	["Dein erster Trick", "Tippe 1 und dann LANDEN, wenn die Nadel im leuchtenden Bereich ist."],
-	["Combo!", "Lande zwei Tricks kurz hintereinander – das ergibt einen Aura-Multiplikator."],
+	["Dein erster Zug", "Tippe 1 zum Ziehen und dann AUSATMEN, wenn die Nadel im leuchtenden Bereich ist – sonst hustest du und verlierst Aura."],
+	["Combo!", "Mach zwei saubere Wolken kurz hintereinander – das ergibt einen Aura-Multiplikator."],
 	["Shopping", "Tippe oben auf SHOP. Neue Items gibt es auch in den Bezirks-Shops."],
-	["Hoverboard", "Tippe BOARD: Damit bist du auf der riesigen Map viel schneller. Tricks gehen auch auf dem Board."],
+	["Hoverboard", "Tippe BOARD: Damit bist du auf der riesigen Map viel schneller. Dampfen geht auch auf dem Board."],
 ]
 
 var player: PlayerController

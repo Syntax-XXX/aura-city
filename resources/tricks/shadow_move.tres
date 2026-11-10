@@ -5,15 +5,17 @@
 [resource]
 script = ExtResource("1_s")
 id = &"shadow_move"
-display_name = "Shadow Move"
-description = "Kurz verschwinden, woanders auftauchen."
+display_name = "Drache"
+description = "Wolken nach vorn und zu beiden Seiten."
 tier = 1
 difficulty = 5
 base_aura = 140
 duration = 0.9
 cooldown = 1.6
 combo_bonus = 0.35
-animation = &"shadow"
+animation = &"exhale_big"
 effect_color = Color(0.388, 0.400, 0.945, 1)
 sound_pitch = 0.85
 unlock_lifetime_aura = 4000
+cloud_shape = &"dragon"
+cloud_count = 1

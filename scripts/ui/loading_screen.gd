@@ -5,7 +5,7 @@ extends Control
 const TIPS := [
 	"Perfekte Landungen geben ×1,5 Aura – achte auf den goldenen Bereich.",
 	"Combos steigern den Multiplikator bis ×6. Nicht zu lange warten!",
-	"Bestimmte Trick-Reihenfolgen sind Ketten mit großem Bonus – siehe Trickbuch [K].",
+	"Bestimmte Zug-Reihenfolgen sind Ketten mit großem Bonus – siehe Wolkenbuch [K].",
 	"Während eines Aura Rush gibt es doppelte Aura.",
 	"Hinter manchen Ecken verstecken sich geheime Splitter …",
 	"Jeden Tag die Tagesbelohnung am Spawn abholen – die Serie zählt!",

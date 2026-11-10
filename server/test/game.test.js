@@ -39,6 +39,18 @@ test('Trick-Aura wie im Client berechnet', () => {
   assert.ok(p.ach.unlocked.first_trick);
 });
 
+test('Husten (fail) kostet Aura, nie unter 0', () => {
+  const { p, ev } = setup();
+  const t = data.tricks.basic_spin;
+  ev(0, { type: 'trick', id: 'basic_spin', quality: 'good' });
+  const before = p.aura;
+  assert.ok(ev(5000, { type: 'trick', id: 'basic_spin', quality: 'fail' }).ok);
+  assert.equal(p.aura, before - Math.round(t.base_aura * data.constants.fail_loss));
+  p.aura = 3;
+  ev(10000, { type: 'trick', id: 'basic_spin', quality: 'fail' });
+  assert.equal(p.aura, 0);
+});
+
 test('gesperrter Trick wird abgelehnt', () => {
   const { p, ev } = setup();
   const r = ev(0, { type: 'trick', id: 'aura_explosion', quality: 'perfect' });
@@ -70,7 +82,7 @@ test('Speedhack: Client-Uhr schneller als echte Zeit', () => {
   assert.equal(back.reason, 'uhr_rueckwaerts');
 });
 
-test('Combo und Kette „Street Starter“ geben Bonus', () => {
+test('Combo und Kette „Erster Zug“ geben Bonus', () => {
   const { p, s, ev } = setup();
   let t = 0;
   for (const id of ['finger_flip', 'side_twist', 'basic_spin']) {
@@ -79,7 +91,7 @@ test('Combo und Kette „Street Starter“ geben Bonus', () => {
     t += data.tricks[id].duration * 1000 + 300;
   }
   assert.equal(s.combo, 3);
-  const chain = data.chains.find((c) => c.name === 'Street Starter');
+  const chain = data.chains.find((c) => c.name === 'Erster Zug');
   assert.ok(p.lifetime > chain.bonus);
   // Fehlversuch beendet die Combo
   ev(t + 5000, { type: 'trick', id: 'mini_pose', quality: 'fail' });

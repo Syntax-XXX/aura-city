@@ -15,6 +15,8 @@ const RANKS := [
 const QUALITY_MULT := {&"perfect": 1.5, &"good": 1.0}
 const DAILY_REWARD_BASE := 250
 const COMBO_CAP := 6.0
+## Verkackter Zug (Husten) kostet diesen Anteil der Basis-Aura des Zugs
+const FAIL_LOSS := 0.5
 
 var aura := 0.0
 var lifetime := 0.0
@@ -81,6 +83,19 @@ func spend(amount: float) -> bool:
 	aura -= amount
 	Events.aura_changed.emit(aura, -amount)
 	return true
+
+
+## Aura-Verlust (z. B. Husten). Online zieht der Server ab, hier nur Anzeige.
+func lose(amount: float, reason: String, world_position := Vector3.ZERO) -> float:
+	var loss := minf(roundf(amount), aura)
+	if loss <= 0.0:
+		return 0.0
+	Events.aura_rewarded.emit(-loss, reason, world_position)
+	if Net.online:
+		return loss
+	aura -= loss
+	Events.aura_changed.emit(aura, -loss)
+	return loss
 
 
 func can_afford(amount: float) -> bool:

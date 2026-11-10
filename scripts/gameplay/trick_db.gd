@@ -4,10 +4,10 @@ extends Node
 
 ## Benannte Trick-Ketten: genau diese Reihenfolge innerhalb einer Combo gibt einen Bonus.
 const CHAINS := [
-	{"name": "Spin Cycle", "sequence": [&"basic_spin", &"double_spin", &"ultra_spin"], "bonus": 1500},
-	{"name": "Model Walk", "sequence": [&"mini_pose", &"air_pose", &"cosmic_pose"], "bonus": 2000},
-	{"name": "Street Starter", "sequence": [&"finger_flip", &"side_twist", &"basic_spin"], "bonus": 250},
-	{"name": "Night Shift", "sequence": [&"shadow_move", &"neon_flip", &"phantom_combo"], "bonus": 3000},
+	{"name": "Ring-Meister", "sequence": [&"basic_spin", &"double_spin", &"ultra_spin"], "bonus": 1500},
+	{"name": "Geisterstunde", "sequence": [&"mini_pose", &"air_pose", &"cosmic_pose"], "bonus": 2000},
+	{"name": "Erster Zug", "sequence": [&"finger_flip", &"side_twist", &"basic_spin"], "bonus": 250},
+	{"name": "Drachennacht", "sequence": [&"shadow_move", &"neon_flip", &"phantom_combo"], "bonus": 3000},
 ]
 ## Treffer pro Meisterschaftsstufe (Stufe 1..5)
 const MASTERY_STEPS := [5, 15, 40, 100, 250]
@@ -57,7 +57,7 @@ func check_unlocks(lifetime_aura: float) -> void:
 		if not unlocked.has(t.id) and lifetime_aura >= t.unlock_lifetime_aura:
 			unlocked[t.id] = true
 			Events.trick_unlocked.emit(t.id)
-			Events.toast.emit("Neuer Trick freigeschaltet: %s" % t.display_name, t.effect_color)
+			Events.toast.emit("Neue Wolke freigeschaltet: %s" % t.display_name, t.effect_color)
 
 
 func mastery_level(id: StringName) -> int:

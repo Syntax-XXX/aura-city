@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_s")
 id = &"trick_100"
-display_name = "Trick Machine"
-description = "Lande 100 Tricks."
+display_name = "Dampfmaschine"
+description = "Blas 100 saubere Wolken."
 icon_glyph = "⚙"
 stat = &"tricks"
 goal = 100

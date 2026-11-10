@@ -5,15 +5,17 @@
 [resource]
 script = ExtResource("1_s")
 id = &"cosmic_pose"
-display_name = "Cosmic Pose"
-description = "Die Sterne posen mit."
+display_name = "Riesen-Ghost"
+description = "Ein Ghost so groß wie du."
 tier = 2
 difficulty = 9
 base_aura = 520
 duration = 1.4
 cooldown = 3.0
 combo_bonus = 0.55
-animation = &"cosmic"
+animation = &"exhale_big"
 effect_color = Color(0.992, 0.878, 0.278, 1)
 sound_pitch = 1.25
 unlock_lifetime_aura = 150000
+cloud_shape = &"ghost"
+cloud_count = 2

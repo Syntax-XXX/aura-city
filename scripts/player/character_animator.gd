@@ -7,6 +7,10 @@ enum State { IDLE, WALK, RUN, JUMP, FALL, LAND, TRICK, EMOTE }
 
 ## Aktion: [Animation, Startanteil, Drehungen (Y), Höhe (m), Salti (X)]
 const ACTIONS := {
+	&"exhale": ["ual/Idle_Talking", 0.0, 0.0, 0.0, 0.0],
+	&"exhale_big": ["CharacterArmature|Victory", 0.0, 0.0, 0.0, 0.0],
+	&"pull": ["ual/Interact", 0.0, 0.0, 0.0, 0.0],
+	&"cough": ["ual/Punch_Cross", 0.0, 0.0, 0.0, 0.0],
 	&"spin": ["ual/Dance", 0.25, 1.0, 0.15, 0.0],
 	&"flip": ["ual/Interact", 0.0, 0.0, 0.0, 0.0],
 	&"pose": ["CharacterArmature|Victory", 0.0, 0.0, 0.0, 0.0],

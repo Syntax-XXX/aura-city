@@ -72,6 +72,8 @@ static func rush_left(unix: float) -> float:
 func _on_aura_rewarded(amount: float, _reason: String, pos: Vector3) -> void:
 	if pos != Vector3.ZERO and amount > 0.0:
 		FX.floating_text(self, pos, "+%s ✦" % UIFormat.number(amount), Color("facc15"))
+	elif pos != Vector3.ZERO and amount < 0.0:
+		FX.floating_text(self, pos, "−%s ✦" % UIFormat.number(-amount), Color("f87171"))
 
 
 func _build_environment() -> void:

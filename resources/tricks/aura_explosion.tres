@@ -5,15 +5,17 @@
 [resource]
 script = ExtResource("1_s")
 id = &"aura_explosion"
-display_name = "Aura Explosion"
-description = "Die ganze Straße spürt deine Aura."
+display_name = "Wolkenkratzer"
+description = "Die größte Wolke der Stadt. Alle schauen hin."
 tier = 2
 difficulty = 10
 base_aura = 800
 duration = 1.6
 cooldown = 4.0
 combo_bonus = 0.6
-animation = &"explosion"
+animation = &"exhale_big"
 effect_color = Color(0.957, 0.247, 0.369, 1)
 sound_pitch = 0.7
 unlock_lifetime_aura = 300000
+cloud_shape = &"mega"
+cloud_count = 1

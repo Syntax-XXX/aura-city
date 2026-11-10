@@ -5,15 +5,17 @@
 [resource]
 script = ExtResource("1_s")
 id = &"air_pose"
-display_name = "Air Pose"
-description = "Pose mitten in der Luft."
+display_name = "Qualle"
+description = "Ein Ring mit Wolken-Tentakeln."
 tier = 1
 difficulty = 6
 base_aura = 200
 duration = 1.1
 cooldown = 2.0
 combo_bonus = 0.4
-animation = &"air_pose"
+animation = &"exhale_big"
 effect_color = Color(0.976, 0.659, 0.831, 1)
 sound_pitch = 1.1
 unlock_lifetime_aura = 15000
+cloud_shape = &"jellyfish"
+cloud_count = 1

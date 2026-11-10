@@ -68,7 +68,7 @@
 		},
 		"first_trick": {
 			"goal": 1,
-			"name": "First Trick",
+			"name": "Erste Wolke",
 			"reward": 100,
 			"stat": "tricks"
 		},
@@ -98,7 +98,7 @@
 		},
 		"trick_100": {
 			"goal": 100,
-			"name": "Trick Machine",
+			"name": "Dampfmaschine",
 			"reward": 2000,
 			"stat": "tricks"
 		}
@@ -106,7 +106,7 @@
 	"chains": [
 		{
 			"bonus": 1500,
-			"name": "Spin Cycle",
+			"name": "Ring-Meister",
 			"sequence": [
 				"basic_spin",
 				"double_spin",
@@ -115,7 +115,7 @@
 		},
 		{
 			"bonus": 2000,
-			"name": "Model Walk",
+			"name": "Geisterstunde",
 			"sequence": [
 				"mini_pose",
 				"air_pose",
@@ -124,7 +124,7 @@
 		},
 		{
 			"bonus": 250,
-			"name": "Street Starter",
+			"name": "Erster Zug",
 			"sequence": [
 				"finger_flip",
 				"side_twist",
@@ -133,7 +133,7 @@
 		},
 		{
 			"bonus": 3000,
-			"name": "Night Shift",
+			"name": "Drachennacht",
 			"sequence": [
 				"shadow_move",
 				"neon_flip",
@@ -577,6 +577,7 @@
 		"combo_cap": 6,
 		"combo_window": 3.2,
 		"daily_base": 250,
+		"fail_loss": 0.5,
 		"mastery_steps": [
 			5,
 			15,
@@ -1354,7 +1355,7 @@
 		},
 		"daily_tricks": {
 			"goal": 10,
-			"name": "Trick-Routine",
+			"name": "Dampf-Routine",
 			"period": 0,
 			"reward": 300,
 			"stat": "trick"
@@ -1442,7 +1443,7 @@
 			"cooldown": 2,
 			"difficulty": 6,
 			"duration": 1.1,
-			"name": "Air Pose",
+			"name": "Qualle",
 			"unlock": 15000
 		},
 		"aura_explosion": {
@@ -1451,7 +1452,7 @@
 			"cooldown": 4,
 			"difficulty": 10,
 			"duration": 1.6,
-			"name": "Aura Explosion",
+			"name": "Wolkenkratzer",
 			"unlock": 300000
 		},
 		"basic_spin": {
@@ -1460,7 +1461,7 @@
 			"cooldown": 0.8,
 			"difficulty": 1,
 			"duration": 0.7,
-			"name": "Basic Spin",
+			"name": "Kleine Wolke",
 			"unlock": 0
 		},
 		"cosmic_pose": {
@@ -1469,7 +1470,7 @@
 			"cooldown": 3,
 			"difficulty": 9,
 			"duration": 1.4,
-			"name": "Cosmic Pose",
+			"name": "Riesen-Ghost",
 			"unlock": 150000
 		},
 		"double_spin": {
@@ -1478,7 +1479,7 @@
 			"cooldown": 1.4,
 			"difficulty": 4,
 			"duration": 0.9,
-			"name": "Double Spin",
+			"name": "O-Ring-Kette",
 			"unlock": 1500
 		},
 		"finger_flip": {
@@ -1487,7 +1488,7 @@
 			"cooldown": 0.8,
 			"difficulty": 2,
 			"duration": 0.6,
-			"name": "Finger Flip",
+			"name": "O-Ring",
 			"unlock": 0
 		},
 		"mini_pose": {
@@ -1496,7 +1497,7 @@
 			"cooldown": 1,
 			"difficulty": 2,
 			"duration": 0.8,
-			"name": "Mini Pose",
+			"name": "Ghost",
 			"unlock": 0
 		},
 		"neon_flip": {
@@ -1505,7 +1506,7 @@
 			"cooldown": 1.8,
 			"difficulty": 6,
 			"duration": 1,
-			"name": "Neon Flip",
+			"name": "Bullseye",
 			"unlock": 8000
 		},
 		"phantom_combo": {
@@ -1514,7 +1515,7 @@
 			"cooldown": 2.6,
 			"difficulty": 8,
 			"duration": 1.3,
-			"name": "Phantom Combo",
+			"name": "Triple Ghost",
 			"unlock": 40000
 		},
 		"shadow_move": {
@@ -1523,7 +1524,7 @@
 			"cooldown": 1.6,
 			"difficulty": 5,
 			"duration": 0.9,
-			"name": "Shadow Move",
+			"name": "Drache",
 			"unlock": 4000
 		},
 		"side_twist": {
@@ -1532,7 +1533,7 @@
 			"cooldown": 1,
 			"difficulty": 3,
 			"duration": 0.7,
-			"name": "Side Twist",
+			"name": "Wasserfall",
 			"unlock": 0
 		},
 		"ultra_spin": {
@@ -1541,7 +1542,7 @@
 			"cooldown": 2.6,
 			"difficulty": 8,
 			"duration": 1.2,
-			"name": "Ultra Spin",
+			"name": "Tornado",
 			"unlock": 80000
 		}
 	},

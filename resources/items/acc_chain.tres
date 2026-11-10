@@ -6,7 +6,7 @@
 script = ExtResource("1_s")
 id = &"acc_chain"
 display_name = "Aura Chain"
-description = "Glänzt bei jedem Trick."
+description = "Glänzt bei jeder Wolke."
 price = 28000
 rarity = 3
 category = &"accessory"

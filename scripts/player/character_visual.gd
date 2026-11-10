@@ -211,6 +211,15 @@ func _holder(bone: String) -> Node3D:
 	return holder
 
 
+## Ungefähre Mundhöhe in Weltkoordinaten (Kopfmitte, etwas tiefer); Fallback ohne Modell.
+func mouth_position(forward: Vector3) -> Vector3:
+	if skeleton == null or model == null:
+		return global_position + Vector3.UP * 1.55 + forward * 0.25
+	var head := _local_box("Head")
+	var p := _holder("Head").to_global(head.get_center() - Vector3(0, head.size.y * 0.2, 0))
+	return p + forward * 0.18
+
+
 ## Box relativ zum Knochenursprung (Modellraum).
 func _local_box(bone: String) -> AABB:
 	var boxes := _bounds(model_name)

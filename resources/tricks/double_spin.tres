@@ -5,15 +5,17 @@
 [resource]
 script = ExtResource("1_s")
 id = &"double_spin"
-display_name = "Double Spin"
-description = "Zwei volle Drehungen."
+display_name = "O-Ring-Kette"
+description = "Drei Ringe hintereinander."
 tier = 1
 difficulty = 4
 base_aura = 110
 duration = 0.9
 cooldown = 1.4
 combo_bonus = 0.35
-animation = &"double_spin"
+animation = &"exhale"
 effect_color = Color(0.659, 0.333, 0.969, 1)
 sound_pitch = 0.95
 unlock_lifetime_aura = 1500
+cloud_shape = &"rings"
+cloud_count = 3

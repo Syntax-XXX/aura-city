@@ -37,7 +37,7 @@ func _layout() -> void:
 	var right := s.x - 40.0
 	var bottom := s.y - 40.0
 	_buttons = [
-		{"c": Vector2(right - r * 1.6, bottom - r * 1.6), "r": r * 1.25, "action": "trick_land", "label": "LANDEN", "color": Color("facc15")},
+		{"c": Vector2(right - r * 1.6, bottom - r * 1.6), "r": r * 1.25, "action": "trick_land", "label": "AUSATMEN", "color": Color("facc15")},
 		{"c": Vector2(right - r * 4.2, bottom - r * 0.9), "r": r * 0.85, "action": "jump", "label": "⤒", "color": Color("38bdf8")},
 		{"c": Vector2(right - r * 1.0, bottom - r * 4.3), "r": r * 0.62, "action": "trick_1", "label": "1", "color": Color("c084fc")},
 		{"c": Vector2(right - r * 2.5, bottom - r * 4.0), "r": r * 0.62, "action": "trick_2", "label": "2", "color": Color("c084fc")},

@@ -9,7 +9,7 @@ var _chains: VBoxContainer
 
 
 func _init() -> void:
-	screen_title = "Trickbuch"
+	screen_title = "Wolkenbuch"
 	window_size = Vector2(1240, 720)
 
 
@@ -39,7 +39,7 @@ func refresh() -> void:
 	for c in _chains.get_children():
 		c.queue_free()
 	UIKit.label("Ketten", 20, UITheme.CYAN, _chains)
-	var info := UIKit.label("Tricks in genau dieser Reihenfolge innerhalb einer Combo geben einen Bonus.", 13, UITheme.MUTED, _chains)
+	var info := UIKit.label("Züge in genau dieser Reihenfolge innerhalb einer Combo geben einen Bonus.", 13, UITheme.MUTED, _chains)
 	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	for chain in TrickDB.CHAINS:
 		var names: PackedStringArray = []

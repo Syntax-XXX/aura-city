@@ -218,6 +218,10 @@ const HANDLERS = {
     if (lastSame !== undefined && ctx.t - lastSame < def.cooldown * 1000 - TOLERANCE_MS) return this.violation(p, 'cooldown', `${ev.id} ${ctx.t - lastSame} ms`);
     s.lastById[ev.id] = ctx.t;
     if (quality === 'fail') {
+      // Husten: kostet Aura (nie unter 0)
+      const loss = Math.min(p.aura, Math.round(def.base_aura * (this.G.constants.fail_loss ?? 0.5)));
+      p.aura -= loss;
+      ctx.lost = (ctx.lost || 0) + loss;
       s.combo = 0; s.chain = [];
       s.lastLand = { t: ctx.t, duration: 0 };
       return { ok: true };

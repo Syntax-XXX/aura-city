@@ -48,7 +48,7 @@ func _ready() -> void:
 	_build_timing()
 	_build_slots()
 	_build_center_texts()
-	var legend := UIKit.label("" if TouchControls.wanted() else "[Q] Hoverboard   [N] Aura-Kiosk   [B] Shop   [K] Trickbuch   [P] Foto-Modus   [Esc] Menü", 12, Color(1, 1, 1, 0.55), self)
+	var legend := UIKit.label("" if TouchControls.wanted() else "[Q] Hoverboard   [N] Aura-Kiosk   [B] Shop   [K] Wolkenbuch   [P] Foto-Modus   [Esc] Menü", 12, Color(1, 1, 1, 0.55), self)
 	legend.add_theme_constant_override("outline_size", 4)
 	legend.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
 	UIKit.pin(legend, Control.PRESET_BOTTOM_LEFT, 12)
@@ -145,7 +145,7 @@ func _build_timing() -> void:
 	_needle.color = Color.WHITE
 	_needle.size = Vector2(4, 34)
 	_timing_bar.add_child(_needle)
-	var hint := UIKit.label("Tippe LANDEN, wenn die Nadel im Feld ist" if TouchControls.wanted() else "[%s] / Linksklick zum Landen" % Controls.key_label("trick_land"), 13, UITheme.MUTED, _timing)
+	var hint := UIKit.label("Tippe AUSATMEN, wenn die Nadel im Feld ist" if TouchControls.wanted() else "[%s] / Linksklick zum Ausatmen" % Controls.key_label("trick_land"), 13, UITheme.MUTED, _timing)
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_timing.visible = false
 

@@ -1,6 +1,6 @@
 class_name TrickDef
 extends Resource
-## Ein Trick. Liegt als .tres unter res://resources/tricks/.
+## Ein Dampf-Zug (Wolkenform). Liegt als .tres unter res://resources/tricks/ (IDs historisch, Server nutzt sie).
 
 enum Tier { BEGINNER, ADVANCED, LEGENDARY }
 const TIER_NAMES := ["Beginner", "Advanced", "Legendary"]
@@ -23,6 +23,9 @@ const TIER_NAMES := ["Beginner", "Advanced", "Legendary"]
 @export var sound_pitch := 1.0
 ## Freischaltung über Lifetime-Aura (0 = von Anfang an)
 @export var unlock_lifetime_aura := 0
+## Wolkenform beim Ausatmen (siehe FX.vape_cloud) und wie oft sie wiederholt wird
+@export var cloud_shape: StringName = &"puff"
+@export var cloud_count := 1
 
 
 ## Größe des Treffer-Fensters (0–1 der Leiste); schwierige Tricks sind enger.

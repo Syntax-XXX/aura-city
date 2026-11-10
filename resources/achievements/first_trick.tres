@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_s")
 id = &"first_trick"
-display_name = "First Trick"
-description = "Lande deinen ersten Trick."
+display_name = "Erste Wolke"
+description = "Blas deine erste saubere Wolke."
 icon_glyph = "✦"
 stat = &"tricks"
 goal = 1

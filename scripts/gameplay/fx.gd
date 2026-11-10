@@ -6,7 +6,7 @@ extends RefCounted
 ##  - Partikel blenden nah an der Kamera aus (kein bildschirmfüllendes Transparenz-Stapeln)
 ##  - Menge/Größe skaliert mit Settings.effects_quality
 
-const POOL_SIZE := {&"cloud": 6, &"spark": 6, &"ring": 3}
+const POOL_SIZE := {&"cloud": 6, &"spark": 6, &"ring": 3, &"vape": 12, &"vring": 6}
 const QUALITY_MULT := [0.35, 0.7, 1.0]
 
 static var _pools := {} # Art -> Array[CPUParticles3D]
@@ -72,7 +72,7 @@ static func _emitter(parent: Node, kind: StringName) -> CPUParticles3D:
 		quad.material = _material(kind)
 		p.mesh = quad
 		var ramp := Gradient.new()
-		ramp.set_color(0, Color(1, 1, 1, 0.75 if kind == &"cloud" else 1.0))
+		ramp.set_color(0, Color(1, 1, 1, 0.75 if kind in [&"cloud", &"vape", &"vring"] else 1.0))
 		ramp.set_color(1, Color(1, 1, 1, 0.0))
 		p.color_ramp = ramp
 		parent.add_child(p)
@@ -117,6 +117,113 @@ static func cloud(parent: Node, pos: Vector3, dir: Vector3, color: Color, streng
 		curve.add_point(Vector2(0, 0.5))
 		curve.add_point(Vector2(1, 1.5))
 		p.scale_amount_curve = curve
+
+
+## Eine Dampfwolke: setzt ALLE Eigenschaften neu, weil Emitter aus dem Pool wiederverwendet werden.
+static func _puff(parent: Node, pos: Vector3, vel: Vector3, color: Color, amount: int, size: float,
+		life := 1.6, spread := 18.0, gravity := Vector3(0, 0.35, 0)) -> void:
+	if not is_instance_valid(parent) or not parent.is_inside_tree():
+		return
+	var p := _emitter(parent, &"vape")
+	_fire(p, pos, maxi(2, int(amount * quality())), life, color.lerp(Color.WHITE, 0.65), size)
+	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	p.emission_sphere_radius = size * 0.15
+	var speed := vel.length()
+	p.direction = vel.normalized() if speed > 0.01 else Vector3.UP
+	p.spread = spread
+	p.flatness = 0.0
+	p.initial_velocity_min = speed * 0.7
+	p.initial_velocity_max = speed
+	p.gravity = gravity
+	p.damping_min = speed * 0.6
+	p.damping_max = speed * 0.9
+	p.scale_amount_min = 0.7
+	p.scale_amount_max = 1.2
+	if p.scale_amount_curve == null:
+		var curve := Curve.new()
+		curve.add_point(Vector2(0, 0.4))
+		curve.add_point(Vector2(1, 1.8))
+		p.scale_amount_curve = curve
+
+
+## Wandernder Dampfring (Ring-Emitter senkrecht zur Flugrichtung, alle Partikel gleich schnell).
+static func _vape_ring(parent: Node, pos: Vector3, dir: Vector3, color: Color, radius: float, speed := 1.6) -> void:
+	if not is_instance_valid(parent) or not parent.is_inside_tree():
+		return
+	var p := _emitter(parent, &"vring")
+	_fire(p, pos, maxi(10, int(26 * quality())), 2.2, color.lerp(Color.WHITE, 0.65), radius * 0.55)
+	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_RING
+	p.emission_ring_axis = dir.normalized()
+	p.emission_ring_radius = radius
+	p.emission_ring_inner_radius = radius * 0.85
+	p.emission_ring_height = 0.02
+	p.direction = dir.normalized()
+	p.spread = 0.0
+	p.flatness = 0.0
+	p.initial_velocity_min = speed
+	p.initial_velocity_max = speed
+	p.gravity = Vector3(0, 0.15, 0)
+	p.damping_min = speed * 0.3
+	p.damping_max = speed * 0.3
+	p.scale_amount_min = 1.0
+	p.scale_amount_max = 1.0
+
+
+static func _later(parent: Node, seconds: float, f: Callable) -> void:
+	if seconds <= 0.0:
+		f.call()
+	elif is_instance_valid(parent) and parent.is_inside_tree():
+		parent.get_tree().create_timer(seconds).timeout.connect(f)
+
+
+## Dampfwolke in einer Form (fiktive Vape, rein visuell). shape: puff, rings, ghost, waterfall,
+## jellyfish, dragon, bullseye, tornado, mega. count wiederholt die Form, strength = Vape-Stufe.
+static func vape_cloud(parent: Node, mouth: Vector3, forward: Vector3, color: Color, shape: StringName, count := 1, strength := 1.0) -> void:
+	var f := Vector3(forward.x, 0, forward.z).normalized()
+	if f == Vector3.ZERO:
+		f = Vector3.FORWARD
+	var side := f.cross(Vector3.UP).normalized()
+	var s := clampf(strength, 0.6, 3.0)
+	for i in maxi(count, 1):
+		var t := i * 0.45
+		var big := s * (1.6 if shape == &"ghost" and count == 2 else 1.0)
+		match shape:
+			&"rings":
+				_later(parent, t, func(): _vape_ring(parent, mouth + f * 0.15, f, color, 0.12 * s))
+			&"ghost":
+				# Ball raus, kurz stehen lassen, dann zurück zum Mund ziehen
+				_later(parent, t, func(): _puff(parent, mouth + f * 0.1, f * 0.9, color, int(14 * big), 0.22 * big, 1.1, 10.0, Vector3.ZERO))
+				_later(parent, t + 0.7, func(): _puff(parent, mouth + f * 0.55 * big, -f * 0.9, color, int(10 * big), 0.2 * big, 0.6, 8.0, Vector3.ZERO))
+			&"waterfall":
+				_later(parent, t, func(): _puff(parent, mouth + f * 0.1, f * 0.4 + Vector3.DOWN * 0.2, color, int(18 * s), 0.2 * s, 2.4, 25.0, Vector3(0, -0.45, 0)))
+			&"jellyfish":
+				_later(parent, t, func(): _vape_ring(parent, mouth + f * 0.15, f + Vector3.UP * 0.6, color, 0.16 * s, 1.2))
+				_later(parent, t + 0.25, func(): _puff(parent, mouth + f * 0.3, f * 0.6, color, int(12 * s), 0.14 * s, 2.0, 12.0, Vector3(0, -0.3, 0)))
+			&"dragon":
+				_later(parent, t, func():
+					_puff(parent, mouth + f * 0.1, f * 2.0, color, int(14 * s), 0.18 * s, 1.4, 12.0)
+					_puff(parent, mouth + side * 0.05, (side + Vector3.DOWN * 0.4) * 1.4, color, int(8 * s), 0.13 * s, 1.2, 10.0)
+					_puff(parent, mouth - side * 0.05, (-side + Vector3.DOWN * 0.4) * 1.4, color, int(8 * s), 0.13 * s, 1.2, 10.0))
+			&"bullseye":
+				_later(parent, t, func(): _vape_ring(parent, mouth + f * 0.15, f, color, 0.3 * s, 0.9))
+				_later(parent, t + 0.55, func(): _vape_ring(parent, mouth + f * 0.15, f, color, 0.08 * s, 2.6))
+			&"tornado":
+				for k in 10:
+					var a := k * 0.7
+					var off := (side * cos(a) + f * sin(a)) * (0.15 + k * 0.04) * s + Vector3.UP * k * 0.12 * s
+					_later(parent, t + k * 0.08, func(): _puff(parent, mouth + f * 0.6 + off, Vector3.UP * 0.5, color, int(5 * s), 0.14 * s, 1.4, 20.0))
+			&"mega":
+				_later(parent, t, func():
+					_puff(parent, mouth + f * 0.2, f * 2.2 + Vector3.UP * 0.3, color, int(30 * s), 0.45 * s, 3.0, 35.0, Vector3(0, 0.25, 0))
+					_vape_ring(parent, mouth + f * 0.4, f, color, 0.35 * s, 1.0))
+			_:
+				_later(parent, t, func(): _puff(parent, mouth + f * 0.1, f * 1.4 + Vector3.UP * 0.2, color, int(12 * s), 0.2 * s))
+
+
+## Husten: kleine, zerfetzte graue Stöße.
+static func cough(parent: Node, mouth: Vector3, forward: Vector3) -> void:
+	for k in 3:
+		_later(parent, k * 0.18, func(): _puff(parent, mouth + forward * 0.1, (forward + Vector3(randf_range(-0.4, 0.4), randf_range(-0.3, 0.2), 0)) * 1.8, Color(0.75, 0.75, 0.75), 5, 0.1, 0.7, 40.0))
 
 
 static func sparkles(parent: Node, pos: Vector3, color: Color, amount := 24, radius := 1.0) -> void:

@@ -5,15 +5,17 @@
 [resource]
 script = ExtResource("1_s")
 id = &"finger_flip"
-display_name = "Finger Flip"
-description = "Das Gadget wirbelt durch die Finger."
+display_name = "O-Ring"
+description = "Ein sauberer Rauchring, der davonschwebt."
 tier = 0
 difficulty = 2
 base_aura = 50
 duration = 0.6
 cooldown = 0.8
 combo_bonus = 0.25
-animation = &"flip"
+animation = &"exhale"
 effect_color = Color(0.220, 0.741, 0.973, 1)
 sound_pitch = 1.1
 unlock_lifetime_aura = 0
+cloud_shape = &"rings"
+cloud_count = 1

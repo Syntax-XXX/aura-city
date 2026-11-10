@@ -13,7 +13,7 @@ const CATEGORY_SLOTS := {
 	&"accessory": &"accessory", &"hair": &"hair", &"shoes": &"shoes", &"board": &"board",
 }
 const CATEGORY_NAMES := {
-	&"gadget": "Cosmetic Gadgets", &"skin": "Skins", &"outfit": "Outfits", &"trail": "Trails",
+	&"gadget": "Vapes", &"skin": "Skins", &"outfit": "Outfits", &"trail": "Trails",
 	&"particle": "Particle Effects", &"animation": "Animations", &"emote": "Emotes", &"title": "Titles",
 	&"accessory": "Accessories", &"hair": "Hair", &"shoes": "Shoes", &"board": "Hoverboards",
 }

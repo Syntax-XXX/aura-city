@@ -40,5 +40,5 @@ static func build(root: Node3D) -> void:
 	for i in 4:
 		DistrictBuilder.npc(root, ["Skater Sky", "Rail Ray", "Ollie Olli", "Kick Kim"][i], c + Vector3(randf_range(-20, 20), 0, randf_range(-20, 20)), PackedStringArray(["Combo-Ketten bringen hier am meisten.", "Die Präzisions-Challenge ist brutal.", "Perfect-Landungen geben 50 % mehr!"]), 16.0, &"street")
 	DistrictBuilder.shards(root, "skate", c, 6, 34.0, 60)
-	DistrictBuilder.info(root, c + Vector3(-20, 0, 28), "Skate-Regeln", PackedStringArray(["Starte eine Challenge im leuchtenden Ring mit [E].", "Während einer Challenge gibt jeder Trick ×1,5 Aura.", "Kombiniere Tricks für Ketten-Boni – siehe Trickbuch [K]."]))
+	DistrictBuilder.info(root, c + Vector3(-20, 0, 28), "Skate-Regeln", PackedStringArray(["Starte eine Challenge im leuchtenden Ring mit [E].", "Während einer Challenge gibt jede Wolke ×1,5 Aura.", "Kombiniere Wolken für Ketten-Boni – siehe Wolkenbuch [K]."]))
 	DistrictBuilder.teleporter(root, c + Vector3(0, 0, 30), "Spawn City", Vector3(0, 1, 26))

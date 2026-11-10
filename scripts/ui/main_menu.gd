@@ -53,7 +53,7 @@ func _ready() -> void:
 	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_title.add_theme_constant_override("outline_size", 18)
 	_title.add_theme_color_override("font_outline_color", Color(0.55, 0.2, 0.95, 0.6))
-	var sub := UIKit.label("Tricks. Combos. Aura. Werde zur Legende der Stadt.", 18, UITheme.CYAN, v)
+	var sub := UIKit.label("Ziehen. Wolken. Aura. Werde zur Legende der Stadt.", 18, UITheme.CYAN, v)
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var card := UIKit.panel(v, Color(0.07, 0.05, 0.14, 0.88), UITheme.LINE, 18)
 	var cv := UIKit.vbox(card, 10)

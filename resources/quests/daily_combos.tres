@@ -6,7 +6,7 @@
 script = ExtResource("1_s")
 id = &"daily_combos"
 display_name = "Combo-Zeit"
-description = "Schaffe 3 Combos (mind. 3 Tricks)"
+description = "Schaffe 3 Combos (mind. 3 Wolken)"
 period = 0
 stat = &"combo"
 goal = 3
