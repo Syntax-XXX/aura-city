@@ -165,15 +165,16 @@ func _physics_process(delta: float) -> void:
 	_trick_timer -= delta
 	if has_gadget and _trick_timer <= 0.0 and player and player.global_position.distance_to(global_position) < 35.0:
 		_trick_timer = _rng.randf_range(8.0, 25.0)
-		_do_trick()
+		_do_trick(moving)
 	if _bubble_left > 0.0:
 		_bubble_left -= delta
 		_bubble.visible = _bubble_left > 0.0
 
 
-func _do_trick() -> void:
+func _do_trick(moving := false) -> void:
 	# NPC dampft: meist eine normale Wolke, manchmal Ringe oder ein Ghost
-	if not animator.is_busy():
+	# im Gehen nur die Wolke, sonst würde die Lauf-Animation einfrieren
+	if not moving and not animator.is_busy():
 		animator.play_action(&"exhale", 1.2)
 	var color := Color.from_hsv(_rng.randf(), 0.35, 1.0)
 	var fwd := -global_transform.basis.z
